@@ -1,0 +1,13 @@
+# conformance/comp/001/compat.lo
+# covers: COMP-001, COMP-002, COMP-003, COMP-004, COMP-005, COMP-006, COMP-007, COMP-008
+#lingua: EN
+
+# Each major version ships with lo-migrate.
+# lo-migrate migrates conforming programs from N to N+1 without semantic change.
+# Deprecated identifiers remain normative for at least one spec-MAJOR cycle.
+# Removal only in spec-MAJOR bump, documented in MIGRATION-{MAJOR}.md.
+# Language pack deprecation: pack >24 months old on spec-STABLE → deprecated.
+# Implementation declares spec_compatibility per CONV-034.
+
+function main() returns Unit:
+    return Unit

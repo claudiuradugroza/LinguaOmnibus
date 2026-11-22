@@ -1,0 +1,7 @@
+# conformance/mem/050/gc_optional.lo
+# covers: MEM-050, MEM-051, MEM-052, MEM-053, MEM-054
+#lingua: EN
+
+var b = Box::new(42)
+# MEM-053: no GC required — Box drop frees heap memory at scope end
+# MEM-050: GC optional — this program passes with or without GC

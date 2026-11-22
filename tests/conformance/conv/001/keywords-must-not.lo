@@ -1,0 +1,10 @@
+# conformance/conv/001/keywords-must-not.lo
+# covers: CONV-001
+#lingua: EN
+
+# lowercase "if" is prose, not a normative keyword.
+# The keyword must be all-caps "IF" to be normative.
+
+function main() returns Unit:
+    if true then:
+        pass

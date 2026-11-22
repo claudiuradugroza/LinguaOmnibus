@@ -1,0 +1,10 @@
+# conformance/lex/020/whitespace.lo
+# covers: LEX-020, LEX-021, LEX-022
+#lingua: EN
+
+# Whitespace is any code point with White_Space=Yes except line terminators.
+# U+000B SHOULD be accepted; lofmt normalizes it to U+0020.
+# U+00A0 (NBSP) MUST be accepted; lexer SHOULD emit warning L0100_nbsp_used.
+
+function main() returns Unit:
+    return Unit

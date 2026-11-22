@@ -1,0 +1,8 @@
+# conformance/conv/030/lir-version.lo
+# covers: CONV-031
+#lingua: EN
+
+# The LIR format MUST have its own version, independent of the language version.
+
+function main() returns Unit:
+    return Unit

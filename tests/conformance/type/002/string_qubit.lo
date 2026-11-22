@@ -1,0 +1,6 @@
+# conformance/type/002/string_qubit.lo
+# covers: TYPE-007, TYPE-008, TYPE-009, TYPE-010, TYPE-011
+#lingua: EN
+
+var s: string = "hello"
+var q: qubit = alloc_qubit()

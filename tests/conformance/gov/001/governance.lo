@@ -1,0 +1,15 @@
+# conformance/gov/001/governance.lo
+# covers: GOV-001, GOV-002, GOV-003, GOV-004, GOV-005, GOV-006, GOV-007, GOV-008
+#lingua: EN
+
+# New rule identifiers proposed via public RFC (GOV-001).
+# RFC reviewed and accepted by elected maintainers (GOV-002).
+# Maintainers elected by community (GOV-003).
+# Explicit fork rights guaranteed (GOV-004).
+# Specification normative in English only (GOV-005).
+# RFCs numbered sequentially (GOV-006).
+# Deprecation proposals follow RFC process (GOV-007).
+# Breaking changes require RFC + MIGRATION-{MAJOR}.md (GOV-008).
+
+function main() returns Unit:
+    return Unit

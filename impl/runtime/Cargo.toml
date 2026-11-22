@@ -1,0 +1,11 @@
+[package]
+name = "runtime"
+version = "0.1.0"
+edition = "2021"
+description = "Lingua Omnibus minimal runtime"
+
+[lib]
+name = "runtime"
+path = "src/lib.rs"
+
+[dependencies]

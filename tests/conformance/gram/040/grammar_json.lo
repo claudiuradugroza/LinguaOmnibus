@@ -1,0 +1,14 @@
+# conformance/gram/040/grammar_json.lo
+# covers: GRAM-040, GRAM-041, GRAM-042, GRAM-043, GRAM-044, GRAM-045, GRAM-046
+#lingua: EN
+
+# Language pack MUST provide grammar.json with word_order, word_segmentation,
+# script, bidi, preferred_decimal_sep, indent_unit, multiphrasal_keywords.
+# word_order: svo supported at spec-0.1; sov/vso rejected (G0001).
+# word_segmentation: space and none supported.
+# bidi: rtl/bidi — no grammatical change, logical order only.
+# indent_unit is a lofmt hint, not a lexer rule.
+# requires_explicit_lingua_directive: true forces explicit #lingua:.
+
+function main() returns Unit:
+    return Unit

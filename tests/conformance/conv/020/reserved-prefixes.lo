@@ -1,0 +1,9 @@
+# conformance/conv/020/reserved-prefixes.lo
+# covers: CONV-020, CONV-021
+#lingua: EN
+
+# The following prefixes are reserved and normative: CONV, LEX, GRAM, TYPE, MEM, EFF, LIR, BACK, LDB, TOOL, STD, SEC, COMP, GOV.
+# Prefixes RFC, X-, and [A-Z]+-[0-9]+ not listed are reserved for future documents.
+
+function main() returns Unit:
+    return Unit

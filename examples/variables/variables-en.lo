@@ -1,0 +1,11 @@
+#lingua: EN
+function main() returns Unit:
+    var x: int32 = 42
+    var y: f64 = 3.14
+    var s: string = "hello"
+    var b: bool = true
+    print(x)
+    print(y)
+    print(s)
+    print(b)
+    return ()

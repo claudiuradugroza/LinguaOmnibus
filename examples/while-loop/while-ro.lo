@@ -1,0 +1,9 @@
+#lingua: RO
+funcție main() returnează Unit:
+    variabilă i: int32 = 0
+    variabilă sumă: int32 = 0
+    while i <= 10:
+        sumă = sumă + i
+        i = i + 1
+    print(sumă)
+    return ()

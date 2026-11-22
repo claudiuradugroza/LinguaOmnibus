@@ -1,0 +1,10 @@
+# conformance/lex/030/identifiers_xid.lo
+# covers: LEX-030, LEX-031, LEX-032, LEX-033
+#lingua: JA
+
+# An identifier starts with XID_Start or underscore; continues with XID_Continue or underscore.
+# CJK, Hiragana, Katakana, Hangul, Arabic, Hebrew, Devanagari accepted.
+# Bidi control characters MUST NOT appear in an identifier; reject with L0200_bidi_in_identifier.
+
+関数 test_関数() 返す ():
+    返す ()

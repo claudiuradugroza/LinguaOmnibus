@@ -1,0 +1,10 @@
+# conformance/lir/030/binary_format.lo
+# covers: LIR-040, LIR-041, LIR-042
+#lingua: EN
+
+# LIR binary format: magic "LOIR", version, records (function, instruction, block).
+# Lossless round-trip between text and binary.
+# No absolute addresses or implementation-specific data in binary.
+
+function main() returns Unit:
+    return Unit

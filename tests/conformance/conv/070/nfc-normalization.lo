@@ -1,0 +1,8 @@
+# conformance/conv/070/nfc-normalization.lo
+# covers: CONV-071
+#lingua: EN
+
+# Source files not in NFC MUST be accepted; normalization performed by frontend.
+
+function main() returns Unit:
+    return Unit

@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lingua Omnibus — Spec-Driven Presentation v5.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#141820; --paper:#f5f4f1; --card:#fafaf8;
+  --accent:#2c5282; --accent-soft:#4a7fb5; --accent2:#2d6a4f; --accent3:#8b3a1e;
+  --gold:#c89030; --quantum:#6a9ed8;
+  --border:#e2ddd6; --border-dark:#c8c2b8;
+  --muted:#7a7165; --muted-light:#a89f94;
+  --code-bg:#eef1f7; --shadow:rgba(20,24,32,0.08); --shadow-lg:rgba(20,24,32,0.14);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.72;overflow-x:hidden}
+
+/* ── Lang bar ── */
+.lang-switcher-bar{background:var(--ink);padding:.45rem 2rem;display:flex;align-items:center;gap:.4rem;justify-content:flex-end;flex-wrap:wrap}
+.lang-switcher-label{font-family:'IBM Plex Mono',monospace;font-size:.64rem;color:#6b7a90;text-transform:uppercase;letter-spacing:.12em;margin-right:.5rem}
+.ls-btn{background:none;border:1px solid #2e3a50;color:#8a9ab8;font-family:'IBM Plex Mono',monospace;font-size:.68rem;padding:.22rem .6rem;border-radius:4px;cursor:pointer;transition:all .15s;letter-spacing:.05em}
+.ls-btn:hover{border-color:#4a6a99;color:#a8bcd8}
+.ls-btn.active{background:#2c3f60;border-color:#4a6a99;color:#c8d8f0}
+.ls-btn.partial{opacity:.65}
+
+/* ── Incomplete banner ── */
+#partial-banner{display:none;background:#fef9ee;border-bottom:1px solid #e8d4a0;padding:.6rem 2rem;text-align:center;font-size:.85rem;color:#6a5220}
+#partial-banner.show{display:block}
+#partial-banner strong{color:#8a3a10}
+
+/* ── Nav ── */
+nav{position:sticky;top:0;z-index:100;background:rgba(245,244,241,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:.75rem 2rem;display:flex;align-items:center;gap:2rem}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--accent);text-decoration:none;white-space:nowrap;font-weight:700}
+.nav-links{display:flex;gap:1.25rem;list-style:none;flex-wrap:wrap}
+.nav-links a{font-size:.79rem;font-weight:500;color:var(--muted);text-decoration:none;transition:color .15s}
+.nav-links a:hover{color:var(--accent)}
+.nav-right{margin-left:auto;display:flex;gap:.5rem;align-items:center}
+.badge-v{background:var(--accent);color:white;font-size:.68rem;font-family:'IBM Plex Mono',monospace;padding:.22rem .65rem;border-radius:4px;font-weight:500}
+.badge-spec{background:#edf8f2;color:var(--accent2);border:1px solid var(--accent2);font-size:.68rem;font-family:'IBM Plex Mono',monospace;padding:.2rem .6rem;border-radius:4px;font-weight:500}
+
+/* ── Hero ── */
+.hero{min-height:88vh;display:flex;flex-direction:column;justify-content:center;padding:5rem 3rem 4rem;position:relative;overflow:hidden}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(44,82,130,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(44,82,130,.045) 1px,transparent 1px);background-size:52px 52px;mask-image:radial-gradient(ellipse 80% 65% at 50% 50%,black,transparent)}
+.hero-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:.74rem;color:var(--accent-soft);letter-spacing:.16em;text-transform:uppercase;margin-bottom:1.4rem;display:flex;align-items:center;gap:.8rem;position:relative}
+.hero-eyebrow::before{content:'';display:inline-block;width:2.5rem;height:1px;background:var(--accent-soft)}
+h1.hero-title{font-family:'Playfair Display',serif;font-size:clamp(2.8rem,7vw,6rem);line-height:1.05;letter-spacing:-.02em;color:var(--ink);margin-bottom:1.2rem;max-width:920px;position:relative}
+h1.hero-title em{font-style:italic;color:var(--accent)}
+.hero-sub{font-size:1.08rem;color:var(--muted);max-width:640px;margin-bottom:2.2rem;font-weight:300;line-height:1.72;position:relative}
+.hero-sub strong{color:var(--ink);font-weight:600}
+.hero-tags{display:flex;gap:.55rem;flex-wrap:wrap;margin-bottom:2.5rem;position:relative}
+.hero-tag{background:var(--card);border:1px solid var(--border);border-radius:4px;padding:.28rem .85rem;font-size:.78rem;font-weight:500;color:var(--ink)}
+.hero-tag.spec{border-color:#4a7fb5;color:#2c4a72;background:#eef4fc}
+.hero-tag.gov{border-color:#6aaa86;color:#1a5038;background:#eef8f2}
+.hero-tag.free{border-color:#b8825a;color:#5a2a10;background:#faf2ec}
+.hero-stats{display:flex;gap:2.8rem;flex-wrap:wrap;position:relative}
+.stat-num{font-family:'Playfair Display',serif;font-size:2.3rem;color:var(--ink);line-height:1}
+.stat-label{font-size:.7rem;color:var(--muted-light);margin-top:.25rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+
+/* ── Marquee ── */
+.marquee-wrap{border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;padding:.65rem 0;background:var(--card)}
+.marquee-inner{display:flex;gap:2.5rem;animation:marquee 42s linear infinite;white-space:nowrap}
+.marquee-inner:hover{animation-play-state:paused}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.marquee-item{font-family:'IBM Plex Mono',monospace;font-size:.76rem;color:var(--muted);display:inline-flex;align-items:center;gap:.5rem}
+.marquee-item .id{color:var(--accent);font-weight:600}
+.marquee-sep{color:var(--border-dark)}
+
+/* ── Layout ── */
+.wrap{max-width:1280px;margin:0 auto;padding:0 3rem}
+section{padding:4.5rem 0;border-top:1px solid var(--border)}
+.sec-label{font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--muted-light);letter-spacing:.16em;text-transform:uppercase;margin-bottom:.9rem}
+h2.sec-title{font-family:'Playfair Display',serif;font-size:clamp(1.7rem,3.4vw,2.7rem);line-height:1.13;letter-spacing:-.01em;color:var(--ink);margin-bottom:1.3rem}
+h3{font-size:1.08rem;font-weight:600;color:var(--ink);margin:2rem 0 .6rem}
+p{margin-bottom:1.1rem;color:#3a3228}
+ul,ol{padding-left:1.5rem;margin-bottom:1rem}
+li{margin-bottom:.35rem;color:#3a3228}
+code{font-family:'IBM Plex Mono',monospace;background:var(--code-bg);border:1px solid #d4d0c8;border-radius:4px;padding:.1rem .4rem;font-size:.85em;color:var(--accent3)}
+pre{font-family:'IBM Plex Mono',monospace;font-size:.79rem;line-height:1.68;background:#131a28;color:#d8e4f0;padding:1.5rem 1.7rem;border-radius:10px;border:1px solid #1e2d45;margin:1.4rem 0;overflow-x:auto}
+.pre-light{background:var(--code-bg);color:var(--ink);border:1px solid var(--border);padding:1.1rem 1.3rem;font-size:.78rem}
+.kw{color:#7ab8f5}.fn{color:#c4a0f0}.str{color:#98c8a8}.num{color:#e8c87a}.cm{color:#5a7088;font-style:italic}.typ{color:#f0a878}.op{color:#80ccee}.id{color:#e0d8c0}.rule{color:#c89030;font-weight:600}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:2.5rem}
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:1.8rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;transition:border-color .2s,box-shadow .2s}
+.card:hover{border-color:var(--accent-soft);box-shadow:0 6px 20px -6px var(--shadow-lg)}
+.card-icon{font-size:1.5rem;margin-bottom:.7rem}
+.card h4{font-size:.95rem;font-weight:600;margin-bottom:.45rem;color:var(--ink)}
+.card p{font-size:.85rem;color:var(--muted);margin:0}
+
+table{width:100%;border-collapse:collapse;margin:1.6rem 0;font-size:.87rem;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+th{background:var(--ink);color:#d8e0ec;font-weight:600;font-size:.73rem;letter-spacing:.06em;text-transform:uppercase;padding:10px 14px;text-align:left}
+td{padding:10px 14px;border-bottom:1px solid var(--border);background:var(--card)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#f0ede8}
+
+.note{background:#eef4fc;border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:1rem 1.4rem;margin:1.4rem 0}
+.warn{background:#fef9ee;border-left:3px solid var(--gold);border-radius:0 10px 10px 0;padding:1rem 1.4rem;margin:1.4rem 0}
+.success{background:#edf8f2;border-left:3px solid var(--accent2);border-radius:0 10px 10px 0;padding:1rem 1.4rem;margin:1.4rem 0}
+
+/* ── Principles grid ── */
+.principles-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin:1.8rem 0}
+.principle{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.1rem 1.3rem;display:flex;gap:1rem;align-items:flex-start;transition:all .2s}
+.principle:hover{border-color:var(--accent-soft);transform:translateY(-1px);box-shadow:0 4px 12px -4px var(--shadow)}
+.principle-num{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--accent-soft);line-height:1;min-width:1.8rem}
+.principle-body strong{display:block;font-size:.9rem;margin-bottom:.2rem;color:var(--ink)}
+.principle-body p{font-size:.8rem;color:var(--muted);margin:0;line-height:1.5}
+
+/* ── Architecture layers ── */
+.arch-layer{border:1.5px solid var(--border);border-radius:10px;padding:1.2rem 1.6rem;margin:.4rem 0;background:var(--card)}
+.arch-layer-label{font-family:'IBM Plex Mono',monospace;font-size:.66rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted-light);margin-bottom:.4rem}
+.arch-layer-title{font-weight:600;font-size:.98rem;color:var(--ink)}
+.arch-arrow{text-align:center;color:var(--accent-soft);font-size:1.15rem;margin:.25rem 0}
+.arch-layer.L1{border-color:#7a9ec8;background:#f4f8fd}
+.arch-layer.L2{border-color:#6aaa86;background:#f2faf5}
+.arch-layer.L3{border-color:#b8825a;background:#faf4ef}
+.pill{display:inline-block;border-radius:5px;padding:.2rem .7rem;font-size:.76rem;font-weight:500;margin:.15rem}
+.pill.blue{background:#d0e8da;color:#1a5830}
+.pill.orange{background:#f5e0d0;color:#6a2800}
+
+/* ── Proof section ── */
+.proof-wrap{background:#0d1524;border-radius:14px;overflow:hidden;border:1px solid #1c2d45;margin:1.8rem 0}
+.proof-header{background:#091018;padding:.8rem 1.3rem;border-bottom:1px solid #1c2d45;font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:#4a6888;display:flex;justify-content:space-between;align-items:center}
+.proof-body{display:grid;grid-template-columns:repeat(3,1fr)}
+.proof-cell{padding:1.3rem 1.4rem;border-right:1px solid #1c2d45}
+.proof-cell:last-child{border-right:none}
+.proof-lang{font-family:'IBM Plex Mono',monospace;font-size:.62rem;color:#4a78aa;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.6rem}
+.proof-cell pre{background:none;border:none;padding:0;margin:0;font-size:.74rem;line-height:1.6;color:#b8cce0}
+.proof-output{background:#05090f;padding:1.3rem 1.4rem;border-top:1px solid #1c2d45}
+.proof-output-label{font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:#2a5068;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.6rem}
+.proof-output pre{background:none;border:none;padding:0;margin:0;font-size:.73rem;color:#88b898;line-height:1.65}
+
+/* ── Spec status table ── */
+.status-badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:.66rem;padding:.15rem .5rem;border-radius:4px;font-weight:600;letter-spacing:.04em}
+.status-draft{background:#edf8f2;color:var(--accent2);border:1px solid #b0d8c0}
+.status-next{background:#eef4fc;color:var(--accent);border:1px solid #b0c8e0}
+.status-planned{background:#f0ede8;color:var(--muted);border:1px solid var(--border-dark)}
+
+/* ── Repo tree ── */
+.repo-tree{background:#0d1524;border-radius:12px;padding:1.5rem 1.8rem;font-family:'IBM Plex Mono',monospace;font-size:.78rem;line-height:1.75;color:#b8cce0;border:1px solid #1c2d45;white-space:pre;overflow-x:auto}
+.repo-tree .dir{color:#7ab8f5}
+.repo-tree .file{color:#98c8a8}
+.repo-tree .cm{color:#5a7088;font-style:italic}
+
+/* ── Risk table ── */
+.risk-table td:first-child{font-weight:600;color:var(--ink)}
+.risk-table td:last-child{color:var(--accent2)}
+
+/* ── Roadmap ── */
+.timeline{border-left:2px solid var(--border);padding-left:1.8rem;margin-top:1rem}
+.tl-item{position:relative;margin-bottom:1.8rem}
+.tl-item::before{content:'';position:absolute;left:-2.15rem;top:.5rem;width:9px;height:9px;border-radius:50%;background:var(--accent);border:2px solid var(--paper)}
+.tl-item.done::before{background:var(--accent2)}
+.tl-item.next::before{background:var(--gold)}
+.tl-phase{font-family:'IBM Plex Mono',monospace;font-size:.66rem;color:var(--accent-soft);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.25rem}
+.tl-title{font-weight:600;font-size:.95rem;margin-bottom:.3rem}
+.tl-desc{font-size:.85rem;color:var(--muted)}
+
+/* ── CTA ── */
+.cta-box{background:linear-gradient(135deg,#2c5282,#1a3a5c);border-radius:16px;padding:2.5rem 2.5rem;color:white;margin:2rem 0}
+.cta-box h3{color:white;font-family:'Playfair Display',serif;font-size:1.6rem;margin:0 0 .8rem}
+.cta-box p{color:#c8d8e8;margin-bottom:1.5rem}
+.cta-buttons{display:flex;gap:.8rem;flex-wrap:wrap}
+.cta-btn{background:white;color:var(--accent);padding:.6rem 1.3rem;border-radius:6px;text-decoration:none;font-weight:600;font-size:.88rem;transition:transform .15s}
+.cta-btn:hover{transform:translateY(-1px)}
+.cta-btn.ghost{background:transparent;color:white;border:1.5px solid rgba(255,255,255,.4)}
+.cta-btn.ghost:hover{border-color:white}
+
+/* ── Footer ── */
+footer{border-top:1px solid var(--border);padding:3rem 3rem;text-align:center;color:var(--muted-light);font-size:.84rem}
+footer strong{color:var(--ink)}
+.footer-logo{font-family:'Playfair Display',serif;font-size:1.7rem;color:var(--ink);margin-bottom:.5rem}
+
+/* ── Animations ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.hero>*{animation:fadeUp .7s ease both}
+.hero>*:nth-child(2){animation-delay:.08s}
+.hero>*:nth-child(3){animation-delay:.16s}
+.hero>*:nth-child(4){animation-delay:.26s}
+.hero>*:nth-child(5){animation-delay:.34s}
+.hero>*:nth-child(6){animation-delay:.42s}
+
+@media (max-width:900px){
+  .wrap{padding:0 1.5rem}
+  .two-col,.three-col,.proof-body,.principles-grid{grid-template-columns:1fr}
+  .proof-cell{border-right:none;border-bottom:1px solid #1c2d45}
+  .hero{padding:4rem 1.5rem 3rem}
+  .hero-stats{gap:1.8rem}
+  nav{padding:.7rem 1.5rem}
+  .nav-links{display:none}
+  section{padding:3rem 0}
+}
+[data-i18n]{transition:opacity .2s}
+</style>
+</head>
+<body>
+
+<!-- LANG BAR -->
+<div class="lang-switcher-bar">
+  <span class="lang-switcher-label">interface ·</span>
+  <button class="ls-btn active" onclick="setLang('en',this)">🇬🇧 EN</button>
+  <button class="ls-btn" onclick="setLang('ro',this)">🇷🇴 RO</button>
+  <button class="ls-btn partial" onclick="setLang('fr',this)">🇫🇷 FR</button>
+  <button class="ls-btn partial" onclick="setLang('de',this)">🇩🇪 DE</button>
+  <button class="ls-btn partial" onclick="setLang('es',this)">🇪🇸 ES</button>
+  <button class="ls-btn partial" onclick="setLang('ja',this)">🇯🇵 JA</button>
+  <button class="ls-btn partial" onclick="setLang('ru',this)">🇷🇺 RU</button>
+  <button class="ls-btn partial" onclick="setLang('zh',this)">🇨🇳 ZH</button>
+</div>
+
+<div id="partial-banner">
+  <strong>Partial translation.</strong>
+  <span id="partial-msg">Full interface translation for this language is pending. It will arrive through the language pack system described in this document — at spec-0.1 only EN and RO packs are complete.</span>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">L.O.</a>
+  <ul class="nav-links">
+    <li><a href="#problem" data-i18n="nav_problem">Problem</a></li>
+    <li><a href="#principles" data-i18n="nav_principles">Principles</a></li>
+    <li><a href="#architecture" data-i18n="nav_architecture">Architecture</a></li>
+    <li><a href="#proof" data-i18n="nav_proof">Proof</a></li>
+    <li><a href="#status" data-i18n="nav_status">Spec Status</a></li>
+    <li><a href="#risks" data-i18n="nav_risks">Risks</a></li>
+    <li><a href="#roadmap" data-i18n="nav_roadmap">Roadmap</a></li>
+    <li><a href="#contribute" data-i18n="nav_contribute">Contribute</a></li>
+  </ul>
+  <div class="nav-right">
+    <span class="badge-spec">spec-0.1</span>
+    <span class="badge-v">v5.0</span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero wrap">
+  <div class="hero-grid"></div>
+  <div class="hero-eyebrow">Lingua Omnibus · <span data-i18n="hero_eyebrow">Spec-Driven Presentation</span></div>
+  <h1 class="hero-title">
+    <span data-i18n="hero_title_l1">Program in</span><br>
+    <em data-i18n="hero_title_l2">any human language.</em>
+  </h1>
+  <p class="hero-sub" data-i18n="hero_sub">
+    A <strong>spec-driven</strong>, <strong>community-governed</strong>, universally accessible
+    programming language. Same program in Romanian, Japanese or Arabic → <strong>byte-identical machine code</strong>.
+    Apache 2.0. Free forever. Created by <strong>Claudiu Groza (Vemeth)</strong>.
+  </p>
+  <div class="hero-tags">
+    <span class="hero-tag spec" data-i18n="tag_spec">📐 88 normative rules</span>
+    <span class="hero-tag spec" data-i18n="tag_tests">✅ 93 conformance tests</span>
+    <span class="hero-tag gov" data-i18n="tag_gov">🏛️ Foundation-governed</span>
+    <span class="hero-tag free" data-i18n="tag_free">🔓 Apache 2.0 · free forever</span>
+    <span class="hero-tag" data-i18n="tag_offline">📴 Offline-first</span>
+    <span class="hero-tag" data-i18n="tag_nolock">🔗 Zero vendor lock-in</span>
+  </div>
+  <div class="hero-stats">
+    <div><div class="stat-num">13</div><div class="stat-label" data-i18n="stat_principles">Constitutional Principles</div></div>
+    <div><div class="stat-num">3</div><div class="stat-label" data-i18n="stat_specs">Specs complete</div></div>
+    <div><div class="stat-num">88</div><div class="stat-label" data-i18n="stat_rules">Normative rules</div></div>
+    <div><div class="stat-num">∞</div><div class="stat-label" data-i18n="stat_langs">Natural languages</div></div>
+  </div>
+</div>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-inner" id="marqueeTrack"></div>
+</div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="wrap">
+    <div class="sec-label" data-i18n="sec_problem_label">01 · The Problem</div>
+    <h2 class="sec-title" data-i18n="sec_problem_title">700 million excluded by one barrier.</h2>
+    <div class="two-col">
+      <div>
+        <p style="font-size:1.05rem;font-weight:300;line-height:1.8" data-i18n="problem_p1">
+          Every modern programming language is, in essence, a <strong>dialect of English</strong>. 
+          <code>if</code>, <code>else</code>, <code>function</code>, <code>return</code> — 40+ keywords, one language.
+        </p>
+        <p data-i18n="problem_p2">
+          Non-English speakers must learn <strong>two languages</strong> to write one program.
+          This is not a technical limit. It is a <strong>historical accident</strong> that has been 
+          accepted for 70 years because nobody rebuilt the foundation.
+        </p>
+        <div class="note">
+          <strong data-i18n="problem_insight_label">The insight:</strong>
+          <span data-i18n="problem_insight">
+            <em>Semantics ≠ Syntax.</em> The meaning of <code>add(a, b)</code> is universal; 
+            the word <code>add</code> is not. Separate them, and any human language becomes a valid surface.
+          </span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <h4 data-i18n="problem_stat_title">By the numbers</h4>
+        <p data-i18n="problem_stat_body">
+          ~700M potential programmers excluded by the English barrier.<br>
+          ~7,000 living human languages.<br>
+          0 mainstream programming languages with native multilingual syntax.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRINCIPLES -->
+<section id="principles">
+  <div class="wrap">
+    <div class="sec-label" data-i18n="sec_principles_label">02 · The 13 Constitutional Principles</div>
+    <h2 class="sec-title" data-i18n="sec_principles_title">Every technical decision must pass all 13.</h2>
+    <p data-i18n="sec_principles_p">
+      These principles are <strong>regression tests</strong> for the vision. If a design choice violates any of them,
+      it is rejected — even if it is faster to implement. They are the reason Lingua Omnibus can be trusted by anyone.
+    </p>
+    <div class="principles-grid" id="principlesGrid"></div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section id="architecture">
+  <div class="wrap">
+    <div class="sec-label" data-i18n="sec_arch_label">03 · Architecture</div>
+    <h2 class="sec-title" data-i18n="sec_arch_title">Three layers. One semantics.</h2>
+    <p data-i18n="sec_arch_p">
+      Languages touch only Layer 1. Layers 2 and 3 never see natural language — they see only 
+      the <em>unified AST</em> and the <em>LIR</em>. That is why adding a language never requires 
+      changing the compiler.
+    </p>
+
+    <div class="arch-layer L1">
+      <div class="arch-layer-label" data-i18n="arch_l1_label">Layer 1 · Multilingual Frontend</div>
+      <div class="arch-layer-title" data-i18n="arch_l1_title">Per-pack parsers → unified AST</div>
+      <div style="margin-top:.7rem">
+        <span class="pill blue">EN · English</span>
+        <span class="pill blue">RO · Română</span>
+        <span class="pill blue">FR · Français</span>
+        <span class="pill blue">DE · Deutsch</span>
+        <span class="pill blue">ES · Español</span>
+        <span class="pill blue">JA · 日本語</span>
+        <span class="pill blue">+ any pack</span>
+      </div>
+      <p style="margin-top:.7rem;font-size:.83rem;color:var(--muted);margin-bottom:0" data-i18n="arch_l1_desc">
+        Each pack is pure data (JSON + tests). Adding a language MUST NOT require changing the compiler (CONV-061).
+      </p>
+    </div>
+    <div class="arch-arrow">↓</div>
+    <div class="arch-layer L2">
+      <div class="arch-layer-label" data-i18n="arch_l2_label">Layer 2 · LIR (Universal Semantic Core)</div>
+      <div class="arch-layer-title" data-i18n="arch_l2_title">Lingua Intermediate Representation</div>
+      <div style="margin-top:.7rem">
+        <span class="pill blue">Type inference</span>
+        <span class="pill blue">Constant folding</span>
+        <span class="pill blue">DCE</span>
+        <span class="pill blue">Inlining</span>
+        <span class="pill blue">Formal verification</span>
+      </div>
+      <p style="margin-top:.7rem;font-size:.83rem;color:var(--muted);margin-bottom:0" data-i18n="arch_l2_desc">
+        Language- and architecture-agnostic. Independent SemVer (CONV-031). Byte-identical output across packs (CONV-042).
+      </p>
+    </div>
+    <div class="arch-arrow">↓</div>
+    <div class="arch-layer L3">
+      <div class="arch-layer-label" data-i18n="arch_l3_label">Layer 3 · Multi-Target Backend</div>
+      <div class="arch-layer-title" data-i18n="arch_l3_title">Native code for every target</div>
+      <div style="margin-top:.7rem">
+        <span class="pill orange">x86_64</span>
+        <span class="pill orange">ARM64</span>
+        <span class="pill orange">RISC-V</span>
+        <span class="pill orange">PowerPC</span>
+        <span class="pill orange">WASM</span>
+        <span class="pill orange">QPU · OpenQASM 3.0</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROOF -->
+<section id="proof">
+  <div class="wrap">
+    <div class="sec-label" data-i18n="sec_proof_label">04 · The Unified AST Promise</div>
+    <h2 class="sec-title" data-i18n="sec_proof_title">Same program. Three languages. One AST.</h2>
+    <p data-i18n="sec_proof_p">
+      This is not marketing. It is <strong>GRAM-053</strong>, a normative rule from SPEC-02, verified on every commit 
+      by <code>conformance/gram/050/fib-en-ro.lo</code>. Two files that differ only in <code>#lingua:</code> 
+      MUST produce byte-identical canonical ASTs.
+    </p>
+
+    <div class="proof-wrap">
+      <div class="proof-header">
+        <span>fib.lo · 3 packs · 1 semantic output</span>
+        <span>loc dump-ast --canonical</span>
+      </div>
+      <div class="proof-body">
+        <div class="proof-cell">
+          <div class="proof-lang">🇬🇧 English · EN</div>
+<pre><span class="cm">#lingua: EN</span>
+<span class="kw">function</span> <span class="fn">fib</span>(n: <span class="typ">Integer</span>) <span class="kw">returns</span> <span class="typ">Integer</span>:
+    <span class="kw">if</span> n <span class="op">&lt;=</span> <span class="num">1</span> <span class="kw">then</span>:
+        <span class="kw">return</span> n
+    <span class="kw">else</span>:
+        <span class="kw">return</span> <span class="fn">fib</span>(n-<span class="num">1</span>) <span class="op">+</span> <span class="fn">fib</span>(n-<span class="num">2</span>)</pre>
+        </div>
+        <div class="proof-cell">
+          <div class="proof-lang">🇷🇴 Română · RO</div>
+<pre><span class="cm">#lingua: RO</span>
+<span class="kw">funcție</span> <span class="fn">fib</span>(n: <span class="typ">Întreg</span>) <span class="kw">returnează</span> <span class="typ">Întreg</span>:
+    <span class="kw">dacă</span> n <span class="op">≤</span> <span class="num">1</span> <span class="kw">atunci</span>:
+        <span class="kw">returnează</span> n
+    <span class="kw">altfel</span>:
+        <span class="kw">returnează</span> <span class="fn">fib</span>(n-<span class="num">1</span>) <span class="op">+</span> <span class="fn">fib</span>(n-<span class="num">2</span>)</pre>
+        </div>
+        <div class="proof-cell">
+          <div class="proof-lang">🇯🇵 日本語 · JA</div>
+<pre><span class="cm">#lingua: JA</span>
+<span class="kw">関数</span> <span class="fn">fib</span>(n: <span class="typ">整数</span>) <span class="kw">返す</span> <span class="typ">整数</span>:
+    <span class="kw">もし</span> n <span class="op">≤</span> <span class="num">1</span> <span class="kw">ならば</span>:
+        <span class="kw">返す</span> n
+    <span class="kw">そうでなければ</span>:
+        <span class="kw">返す</span> <span class="fn">fib</span>(n-<span class="num">1</span>) <span class="op">+</span> <span class="fn">fib</span>(n-<span class="num">2</span>)</pre>
+        </div>
+      </div>
+      <div class="proof-output">
+        <div class="proof-output-label">▶ canonical AST (identical for all three, byte-for-byte)</div>
+<pre>{<span class="str">"kind"</span>:<span class="str">"FnDecl"</span>,<span class="str">"name"</span>:<span class="str">"fib"</span>,<span class="str">"params"</span>:[{<span class="str">"kind"</span>:<span class="str">"Param"</span>,<span class="str">"name"</span>:<span class="str">"n"</span>,<span class="str">"type"</span>:<span class="str">"int"</span>}],
+ <span class="str">"ret"</span>:<span class="str">"int"</span>,<span class="str">"body"</span>:{<span class="str">"kind"</span>:<span class="str">"Block"</span>,<span class="str">"body"</span>:[{<span class="str">"kind"</span>:<span class="str">"IfStmt"</span>,
+   <span class="str">"cond"</span>:{<span class="str">"kind"</span>:<span class="str">"BinaryOp"</span>,<span class="str">"op"</span>:<span class="str">"&lt;="</span>,...},<span class="str">"then"</span>:{...},<span class="str">"else"</span>:{...}}]}}</pre>
+      </div>
+    </div>
+
+    <div class="success">
+      <strong data-i18n="proof_verified">Verified on every commit:</strong>
+      <span data-i18n="proof_verified_body">
+        <code>diff &lt;(loc dump-ast en.lo --canonical) &lt;(loc dump-ast ro.lo --canonical)</code> returns empty.
+        Binaries compiled from each are byte-identical (<strong>CONV-042</strong>).
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- LANGPACK AS DATA -->
+<section>
+  <div class="wrap">
+    <div class="sec-label" data-i18n="sec_pack_label">05 · Language Pack = Pure Data</div>
+    <h2 class="sec-title" data-i18n="sec_pack_title">Adding a language = adding a JSON file.</h2>
+    <p data-i18n="sec_pack_p">
+      This is <strong>CONV-061</strong>: adding a new natural language MUST NOT require changing the compiler.
+      If it does, that is a spec bug — filed as an RFC. The language pack is the contract.
+    </p>
+    <div class="two-col">
+      <div>
+        <h3 style="margin-top:0" data-i18n="pack_ro_title">Romanian pack (excerpt)</h3>
+<pre class="pre-light"><span class="cm">// langpacks/ro/keywords.json</span>
+{
+  <span class="str">"iso"</span>: <span class="str">"ro"</span>,
+  <span class="str">"name"</span>: <span class="str">"Română"</span>,
+  <span class="str">"version"</span>: <span class="str">"2026-01-01"</span>,
+  <span class="str">"script"</span>: <span class="str">"Latin"</span>,
+  <span class="str">"direction"</span>: <span class="str">"ltr"</span>,
+  <span class="str">"keywords"</span>: {
+    <span class="str">"KW_FUNCTION"</span>: [<span class="str">"funcție"</span>, <span class="str">"functie"</span>],
+    <span class="str">"KW_RETURN"</span>:   [<span class="str">"returnează"</span>, <span class="str">"returneaza"</span>],
+    <span class="str">"KW_IF"</span>:       [<span class="str">"dacă"</span>, <span class="str">"daca"</span>],
+    <span class="str">"KW_THEN"</span>:     [<span class="str">"atunci"</span>],
+    <span class="str">"KW_ELSE"</span>:     [<span class="str">"altfel"</span>]
+  }
+}</pre>
+      </div>
+      <div>
+        <h3 style="margin-top:0" data-i18n="pack_why_title">Why this matters</h3>
+        <ul data-i18n="pack_why_list">
+          <li><strong>Anyone can contribute a language</strong> — no compiler knowledge required, only native fluency.</li>
+          <li><strong>Diacritics and ASCII forms coexist</strong> — <code>funcție</code> and <code>functie</code> both map to <code>KW_FUNCTION</code>.</li>
+          <li><strong>40 universal keyword slots</strong> (CONV-063) — same semantics, different words.</li>
+          <li><strong>Packs are versioned by ISO 8601 date</strong> (CONV-032) — no SemVer ambiguity for natural-language changes.</li>
+          <li><strong>Federated registry</strong> (CONV-080) — anyone can host a pack registry; there is no mandatory "official" one.</li>
+        </ul>
+        <div class="note" style="margin-top:1rem">
+          <strong data-i18n="pack_invite">Invitation:</strong>
+          <span data-i18n="pack_invite_body">
+            If you speak a language not yet in <code>langpacks/</code>, you are one JSON file away from
+            making Lingua Omnibus accessible to your community.
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SPEC STATUS -->
+<section id="status">
+  <div class="wrap">
+    <div class="sec-label" data-i18n="sec_status_label">06 · Spec Status</div>
+    <h2 class="sec-title" data-i18n="sec_status_title">What's actually written.</h2>
+    <p data-i18n="sec_status_p">
+      We are honest about what exists. Three specs are complete, one is being written, the rest are planned.
+      Every rule is testable. Every test is referenced by a rule.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th data-i18n="th_doc">Document</th>
+          <th data-i18n="th_status">Status</th>
+          <th data-i18n="th_rules">Rules</th>
+          <th data-i18n="th_tests">Tests</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>SPEC-00</strong> · Conventions &amp; Terminology</td>
+          <td><span class="status-badge status-draft">✅ Draft</span></td>
+          <td>12</td>
+          <td>37</td>
+        </tr>
+        <tr>
+          <td><strong>SPEC-01</strong> · Lexical Structure</td>
+          <td><span class="status-badge status-draft">✅ Draft</span></td>
+          <td>40</td>
+          <td>36</td>
+        </tr>
+        <tr>
+          <td><strong>SPEC-02</strong> · Grammar &amp; Pack Derivation</td>
+          <td><span class="status-badge status-draft">✅ Draft</span></td>
+          <td>40</td>
+          <td>20+</td>
+        </tr>
+        <tr>
+          <td><strong>SPEC-03</strong> · Type System</td>
+          <td><span class="status-badge status-next">⏳ Next</span></td>
+          <td>—</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>SPEC-04…13</strong> · Memory, Effects, LIR, Backends, LinguaDB, Toolchain, Stdlib, Security, Compat, Governance</td>
+          <td><span class="status-badge status-planned">📋 Planned</span></td>
+          <td>—</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- REPO -->
+<section>
+  <div class="wrap">
+    <div class="sec-label" data-i18n="sec_repo_label">07 · Repository</div>
+    <h2 class="sec-title" data-i18n="sec_repo_title">One repo. One story. Fork any layer.</h2>
+    <div class="repo-tree"><span class="dir">lingua-omnibus/</span>
+├── <span class="dir">spec/</span>          <span class="cm">13 normative documents + appendix</span>
+├── <span class="dir">rfcs/</span>          <span class="cm">numbered proposals (RFC-0000 template)</span>
+├── <span class="dir">impl/</span>          <span class="cm">loc · lopm · lolsp · lofmt · lodoc · lotest · runtime</span>
+├── <span class="dir">langpacks/</span>     <span class="cm">en · ro · fr · de · es · ja · …</span>
+├── <span class="dir">stdlib/</span>        <span class="cm">core · io · db · quantum</span>
+├── <span class="dir">tests/</span>         <span class="cm">conformance · multilingual · differential · benchmarks</span>
+├── <span class="dir">examples/</span>      <span class="cm">hello-world · fibonacci · visitor-app · bell-circuit</span>
+├── <span class="dir">docs/</span>          <span class="cm">book · tutorials · guides · pitch</span>
+├── <span class="dir">governance/</span>    <span class="cm">CHARTER · CONTRIBUTING · MAINTAINERS · TRADEMARK</span>
+├── <span class="dir">ci/</span>            <span class="cm">reproducible-build · bootstrap-chain · conformance-gate</span>
+└── <span class="file">LICENSE</span>       <span class="cm">Apache 2.0</span></div>
+    <div class="success" style="margin-top:1.2rem">
+      <strong data-i18n="repo_fork">Fork-friendly by construction:</strong>
+      <span data-i18n="repo_fork_body">
+        Every layer can be replaced. A second implementation of <code>loc</code> can be certified 
+        without permission (CONV-040). You can fork Lingua Omnibus tomorrow and lose nothing.
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- RISKS -->
+<section id="risks">
+  <div class="wrap">
+    <div class="sec-label" data-i18n="sec_risks_label">08 · Risk Mitigation</div>
+    <h2 class="sec-title" data-i18n="sec_risks_title">Why anyone can trust this project.</h2>
+    <table class="risk-table">
+      <thead>
+        <tr>
+          <th data-i18n="th_risk">Risk</th>
+          <th data-i18n="th_mitigation">Mitigation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-i18n="risk_vendor">Vendor capture</td>
+          <td data-i18n="mit_vendor">Apache 2.0 + foundation governance + explicit fork rights (Principles 9, 10)</td>
+        </tr>
+        <tr>
+          <td data-i18n="risk_registry">Registry abuse</td>
+          <td data-i18n="mit_registry">Federated registries; no mandatory "official" one (CONV-080, Principle 5)</td>
+        </tr>
+        <tr>
+          <td data-i18n="risk_telemetry">Telemetry creep</td>
+          <td data-i18n="mit_telemetry">Zero telemetry by default; opt-in only and audited (Principle 7)</td>
+        </tr>
+        <tr>
+          <td data-i18n="risk_lockin">Format lock-in</td>
+          <td data-i18n="mit_lockin">All formats (.lo, LIR, .ldb, lopm manifest) documented publicly (Principle 8)</td>
+        </tr>
+        <tr>
+          <td data-i18n="risk_abandon">Project abandonment</td>
+          <td data-i18n="mit_abandon">LTS + <code>lo-migrate</code> + bootstrappable toolchain (Principles 4, 13)</td>
+        </tr>
+        <tr>
+          <td data-i18n="risk_hw">Hardware exclusion</td>
+          <td data-i18n="mit_hw">Runs on 32-bit, low-RAM hardware — not only AVX-512 workstations (Principle 11)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap">
+  <div class="wrap">
+    <div class="sec-label" data-i18n="sec_roadmap_label">09 · Roadmap</div>
+    <h2 class="sec-title" data-i18n="sec_roadmap_title">From spec to community.</h2>
+    <div class="timeline">
+      <div class="tl-item done">
+        <div class="tl-phase" data-i18n="phase1_label">M0 · ✅ Complete · 2026 Q4</div>
+        <div class="tl-title" data-i18n="phase1_title">Spec skeleton</div>
+        <div class="tl-desc" data-i18n="phase1_desc">SPEC-00, 01, 02 written. 88 rules. 93 conformance tests. Governance charter published.</div>
+      </div>
+      <div class="tl-item next">
+        <div class="tl-phase" data-i18n="phase2_label">M1 · ⏳ In progress · 2027 Q1</div>
+        <div class="tl-title" data-i18n="phase2_title">Hello, World — bilingv EN/RO</div>
+        <div class="tl-desc" data-i18n="phase2_desc"><code>loc build</code> works for EN and RO. Byte-identical LIR verified in CI. <code>lopm install</code> works offline. <code>lolsp</code> provides autocomplete in VSCode.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase" data-i18n="phase3_label">M2 · 📋 Planned · 2027 Q2</div>
+        <div class="tl-title" data-i18n="phase3_title">Real programs + LinguaDB</div>
+        <div class="tl-desc" data-i18n="phase3_desc">Variables, control flow, collections, functions. LinguaDB create/insert/select. 20 example programs in examples/.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase" data-i18n="phase4_label">M3 · 📋 Planned · 2027 Q3</div>
+        <div class="tl-title" data-i18n="phase4_title">Community ready · 6 packs</div>
+        <div class="tl-desc" data-i18n="phase4_desc">EN, RO, FR, DE, ES, JA packs complete. Federated registry. Book + tutorials published.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase" data-i18n="phase5_label">M4 · 📋 Planned · 2027 Q4</div>
+        <div class="tl-title" data-i18n="phase5_title">Quantum + ARM64 + 30 packs</div>
+        <div class="tl-desc" data-i18n="phase5_desc">ARM64 backend. Quantum block → OpenQASM 3.0. IBM Quantum integration. 30 language packs.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTRIBUTE -->
+<section id="contribute">
+  <div class="wrap">
+    <div class="sec-label" data-i18n="sec_contrib_label">10 · Contribute</div>
+    <h2 class="sec-title" data-i18n="sec_contrib_title">What's your path in?</h2>
+    <div class="three-col">
+      <div class="card">
+        <div class="card-icon">📝</div>
+        <h4 data-i18n="contrib_spec_title">Write specs</h4>
+        <p data-i18n="contrib_spec_body">Pick an open RFC (<code>rfcs/0001-language-pack-derivation.md</code> is a good start). Specs are normative and reviewed in public.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">💻</div>
+        <h4 data-i18n="contrib_code_title">Write code</h4>
+        <p data-i18n="contrib_code_body"><code>impl/loc/</code> needs a lexer that passes <code>conformance/lex/</code>. Each rule is a test; each test is a goal.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌍</div>
+        <h4 data-i18n="contrib_lang_title">Add a language</h4>
+        <p data-i18n="contrib_lang_body">One JSON file. 40 keyword slots. That's it. No compiler knowledge required.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📚</div>
+        <h4 data-i18n="contrib_teach_title">Teach</h4>
+        <p data-i18n="contrib_teach_body">Translate <code>docs/book/</code>. Tutorials are gratis in every language — always.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧪</div>
+        <h4 data-i18n="contrib_test_title">Test &amp; report</h4>
+        <p data-i18n="contrib_test_body">Run the conformance suite. Every failing test is a spec bug or an implementation bug — both are fixed in public.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎓</div>
+        <h4 data-i18n="contrib_learn_title">Just try it</h4>
+        <p data-i18n="contrib_learn_body">Read <code>docs/tutorials/getting-started.md</code>. It's honest: <code>[spec-preview]</code> markers show what works today vs. what ships with M1.</p>
+      </div>
+    </div>
+
+    <div class="cta-box">
+      <h3 data-i18n="cta_title">Let's build it together.</h3>
+      <p data-i18n="cta_body">Lingua Omnibus is Apache 2.0, foundation-governed, and free forever. No paid tier, no "enterprise edition", no telemetry, no vendor lock-in. Join us.</p>
+      <div class="cta-buttons">
+        <a class="cta-btn" href="#" data-i18n="cta_primary">Read the spec</a>
+        <a class="cta-btn ghost" href="#" data-i18n="cta_secondary">Try the tutorial</a>
+        <a class="cta-btn ghost" href="#" data-i18n="cta_tertiary">Open an RFC</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Lingua Omnibus</div>
+  <p style="max-width:560px;margin:0 auto 1rem;font-size:.86rem" data-i18n="footer_meta">
+    Spec-Driven Presentation v5.0 · spec-0.1 · 2026 · Apache 2.0 License
+  </p>
+  <p data-i18n="footer_author">
+    Created by <strong>Claudiu Groza (Vemeth)</strong> · Foundation-governed · Open for international collaboration
+  </p>
+  <p style="margin-top:.6rem;font-style:italic;color:#b0a89a;font-size:.82rem" data-i18n="footer_quote">
+    "Every human mind deserves to program in its own language."
+  </p>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   i18n · EN + RO full · FR/DE/ES/JA/RU/ZH partial (honest)
+   ═══════════════════════════════════════════════════════════ */
+const i18n = {
+  en: {
+    nav_problem:"Problem", nav_principles:"Principles", nav_architecture:"Architecture",
+    nav_proof:"Proof", nav_status:"Spec Status", nav_risks:"Risks",
+    nav_roadmap:"Roadmap", nav_contribute:"Contribute",
+    hero_eyebrow:"Spec-Driven Presentation",
+    hero_title_l1:"Program in", hero_title_l2:"any human language.",
+    hero_sub:"A <strong>spec-driven</strong>, <strong>community-governed</strong>, universally accessible programming language. Same program in Romanian, Japanese or Arabic → <strong>byte-identical machine code</strong>. Apache 2.0. Free forever. Created by <strong>Claudiu Groza (Vemeth)</strong>.",
+    tag_spec:"📐 88 normative rules", tag_tests:"✅ 93 conformance tests",
+    tag_gov:"🏛️ Foundation-governed", tag_free:"🔓 Apache 2.0 · free forever",
+    tag_offline:"📴 Offline-first", tag_nolock:"🔗 Zero vendor lock-in",
+    stat_principles:"Constitutional Principles", stat_specs:"Specs complete",
+    stat_rules:"Normative rules", stat_langs:"Natural languages",
+    sec_problem_label:"01 · The Problem", sec_problem_title:"700 million excluded by one barrier.",
+    problem_p1:"Every modern programming language is, in essence, a <strong>dialect of English</strong>. <code>if</code>, <code>else</code>, <code>function</code>, <code>return</code> — 40+ keywords, one language.",
+    problem_p2:"Non-English speakers must learn <strong>two languages</strong> to write one program. This is not a technical limit. It is a <strong>historical accident</strong> that has been accepted for 70 years because nobody rebuilt the foundation.",
+    problem_insight_label:"The insight:",
+    problem_insight:"<em>Semantics ≠ Syntax.</em> The meaning of <code>add(a, b)</code> is universal; the word <code>add</code> is not. Separate them, and any human language becomes a valid surface.",
+    problem_stat_title:"By the numbers",
+    problem_stat_body:"~700M potential programmers excluded by the English barrier.<br>~7,000 living human languages.<br>0 mainstream programming languages with native multilingual syntax.",
+    sec_principles_label:"02 · The 13 Constitutional Principles",
+    sec_principles_title:"Every technical decision must pass all 13.",
+    sec_principles_p:"These principles are <strong>regression tests</strong> for the vision. If a design choice violates any of them, it is rejected — even if it is faster to implement. They are the reason Lingua Omnibus can be trusted by anyone.",
+    sec_arch_label:"03 · Architecture", sec_arch_title:"Three layers. One semantics.",
+    sec_arch_p:"Languages touch only Layer 1. Layers 2 and 3 never see natural language — they see only the <em>unified AST</em> and the <em>LIR</em>. That is why adding a language never requires changing the compiler.",
+    arch_l1_label:"Layer 1 · Multilingual Frontend", arch_l1_title:"Per-pack parsers → unified AST",
+    arch_l1_desc:"Each pack is pure data (JSON + tests). Adding a language MUST NOT require changing the compiler (CONV-061).",
+    arch_l2_label:"Layer 2 · LIR (Universal Semantic Core)", arch_l2_title:"Lingua Intermediate Representation",
+    arch_l2_desc:"Language- and architecture-agnostic. Independent SemVer (CONV-031). Byte-identical output across packs (CONV-042).",
+    arch_l3_label:"Layer 3 · Multi-Target Backend", arch_l3_title:"Native code for every target",
+    sec_proof_label:"04 · The Unified AST Promise", sec_proof_title:"Same program. Three languages. One AST.",
+    sec_proof_p:"This is not marketing. It is <strong>GRAM-053</strong>, a normative rule from SPEC-02, verified on every commit by <code>conformance/gram/050/fib-en-ro.lo</code>. Two files that differ only in <code>#lingua:</code> MUST produce byte-identical canonical ASTs.",
+    proof_verified:"Verified on every commit:",
+    proof_verified_body:"<code>diff &lt;(loc dump-ast en.lo --canonical) &lt;(loc dump-ast ro.lo --canonical)</code> returns empty. Binaries compiled from each are byte-identical (<strong>CONV-042</strong>).",
+    sec_pack_label:"05 · Language Pack = Pure Data",
+    sec_pack_title:"Adding a language = adding a JSON file.",
+    sec_pack_p:"This is <strong>CONV-061</strong>: adding a new natural language MUST NOT require changing the compiler. If it does, that is a spec bug — filed as an RFC. The language pack is the contract.",
+    pack_ro_title:"Romanian pack (excerpt)", pack_why_title:"Why this matters",
+    pack_why_list:"<li><strong>Anyone can contribute a language</strong> — no compiler knowledge required, only native fluency.</li><li><strong>Diacritics and ASCII forms coexist</strong> — <code>funcție</code> and <code>functie</code> both map to <code>KW_FUNCTION</code>.</li><li><strong>40 universal keyword slots</strong> (CONV-063) — same semantics, different words.</li><li><strong>Packs are versioned by ISO 8601 date</strong> (CONV-032) — no SemVer ambiguity.</li><li><strong>Federated registry</strong> (CONV-080) — anyone can host a pack registry.</li>",
+    pack_invite:"Invitation:",
+    pack_invite_body:"If you speak a language not yet in <code>langpacks/</code>, you are one JSON file away from making Lingua Omnibus accessible to your community.",
+    sec_status_label:"06 · Spec Status", sec_status_title:"What's actually written.",
+    sec_status_p:"We are honest about what exists. Three specs are complete, one is being written, the rest are planned. Every rule is testable. Every test is referenced by a rule.",
+    th_doc:"Document", th_status:"Status", th_rules:"Rules", th_tests:"Tests",
+    sec_repo_label:"07 · Repository", sec_repo_title:"One repo. One story. Fork any layer.",
+    repo_fork:"Fork-friendly by construction:",
+    repo_fork_body:"Every layer can be replaced. A second implementation of <code>loc</code> can be certified without permission (CONV-040). You can fork Lingua Omnibus tomorrow and lose nothing.",
+    sec_risks_label:"08 · Risk Mitigation", sec_risks_title:"Why anyone can trust this project.",
+    th_risk:"Risk", th_mitigation:"Mitigation",
+    risk_vendor:"Vendor capture", mit_vendor:"Apache 2.0 + foundation governance + explicit fork rights (Principles 9, 10)",
+    risk_registry:"Registry abuse", mit_registry:"Federated registries; no mandatory 'official' one (CONV-080, Principle 5)",
+    risk_telemetry:"Telemetry creep", mit_telemetry:"Zero telemetry by default; opt-in only and audited (Principle 7)",
+    risk_lockin:"Format lock-in", mit_lockin:"All formats (.lo, LIR, .ldb, lopm manifest) documented publicly (Principle 8)",
+    risk_abandon:"Project abandonment", mit_abandon:"LTS + <code>lo-migrate</code> + bootstrappable toolchain (Principles 4, 13)",
+    risk_hw:"Hardware exclusion", mit_hw:"Runs on 32-bit, low-RAM hardware — not only AVX-512 workstations (Principle 11)",
+    sec_roadmap_label:"09 · Roadmap", sec_roadmap_title:"From spec to community.",
+    phase1_label:"M0 · ✅ Complete · 2026 Q4", phase1_title:"Spec skeleton",
+    phase1_desc:"SPEC-00, 01, 02 written. 88 rules. 93 conformance tests. Governance charter published.",
+    phase2_label:"M1 · ⏳ In progress · 2027 Q1", phase2_title:"Hello, World — bilingv EN/RO",
+    phase2_desc:"<code>loc build</code> works for EN and RO. Byte-identical LIR verified in CI. <code>lopm install</code> works offline. <code>lolsp</code> provides autocomplete in VSCode.",
+    phase3_label:"M2 · 📋 Planned · 2027 Q2", phase3_title:"Real programs + LinguaDB",
+    phase3_desc:"Variables, control flow, collections, functions. LinguaDB create/insert/select. 20 example programs in examples/.",
+    phase4_label:"M3 · 📋 Planned · 2027 Q3", phase4_title:"Community ready · 6 packs",
+    phase4_desc:"EN, RO, FR, DE, ES, JA packs complete. Federated registry. Book + tutorials published.",
+    phase5_label:"M4 · 📋 Planned · 2027 Q4", phase5_title:"Quantum + ARM64 + 30 packs",
+    phase5_desc:"ARM64 backend. Quantum block → OpenQASM 3.0. IBM Quantum integration. 30 language packs.",
+    sec_contrib_label:"10 · Contribute", sec_contrib_title:"What's your path in?",
+    contrib_spec_title:"Write specs", contrib_spec_body:"Pick an open RFC (<code>rfcs/0001-language-pack-derivation.md</code> is a good start). Specs are normative and reviewed in public.",
+    contrib_code_title:"Write code", contrib_code_body:"<code>impl/loc/</code> needs a lexer that passes <code>conformance/lex/</code>. Each rule is a test; each test is a goal.",
+    contrib_lang_title:"Add a language", contrib_lang_body:"One JSON file. 40 keyword slots. That's it. No compiler knowledge required.",
+    contrib_teach_title:"Teach", contrib_teach_body:"Translate <code>docs/book/</code>. Tutorials are gratis in every language — always.",
+    contrib_test_title:"Test &amp; report", contrib_test_body:"Run the conformance suite. Every failing test is a spec bug or an implementation bug — both are fixed in public.",
+    contrib_learn_title:"Just try it", contrib_learn_body:"Read <code>docs/tutorials/getting-started.md</code>. It's honest: <code>[spec-preview]</code> markers show what works today vs. what ships with M1.",
+    cta_title:"Let's build it together.",
+    cta_body:"Lingua Omnibus is Apache 2.0, foundation-governed, and free forever. No paid tier, no 'enterprise edition', no telemetry, no vendor lock-in. Join us.",
+    cta_primary:"Read the spec", cta_secondary:"Try the tutorial", cta_tertiary:"Open an RFC",
+    footer_meta:"Spec-Driven Presentation v5.0 · spec-0.1 · 2026 · Apache 2.0 License",
+    footer_author:"Created by <strong>Claudiu Groza (Vemeth)</strong> · Foundation-governed · Open for international collaboration",
+    footer_quote:'"Every human mind deserves to program in its own language."'
+  },
+  ro: {
+    nav_problem:"Problema", nav_principles:"Principii", nav_architecture:"Arhitectură",
+    nav_proof:"Dovadă", nav_status:"Status Spec", nav_risks:"Riscuri",
+    nav_roadmap:"Roadmap", nav_contribute:"Contribuie",
+    hero_eyebrow:"Prezentare Spec-Driven",
+    hero_title_l1:"Programează în", hero_title_l2:"orice limbă umană.",
+    hero_sub:"Un limbaj de programare <strong>spec-driven</strong>, <strong>guvernat de comunitate</strong>, universal accesibil. Același program în română, japoneză sau arabă → <strong>cod mașină byte-identic</strong>. Apache 2.0. Gratis pentru totdeauna. Creat de <strong>Claudiu Groza (Vemeth)</strong>.",
+    tag_spec:"📐 88 reguli normative", tag_tests:"✅ 93 teste de conformanță",
+    tag_gov:"🏛️ Guvernat de fundație", tag_free:"🔓 Apache 2.0 · gratis pentru totdeauna",
+    tag_offline:"📴 Offline-first", tag_nolock:"🔗 Zero vendor lock-in",
+    stat_principles:"Principii Constituționale", stat_specs:"Spec-uri complete",
+    stat_rules:"Reguli normative", stat_langs:"Limbi naturale",
+    sec_problem_label:"01 · Problema", sec_problem_title:"700 de milioane excluși de o singură barieră.",
+    problem_p1:"Fiecare limbaj de programare modern este, în esență, un <strong>dialect al englezei</strong>. <code>if</code>, <code>else</code>, <code>function</code>, <code>return</code> — 40+ cuvinte-cheie, o singură limbă.",
+    problem_p2:"Vorbitorii non-englezi trebuie să învețe <strong>două limbi</strong> ca să scrie un program. Nu e o limită tehnică. E un <strong>accident istoric</strong> acceptat de 70 de ani pentru că nimeni nu a reconstruit fundația.",
+    problem_insight_label:"Ideea centrală:",
+    problem_insight:"<em>Semantică ≠ Sintaxă.</em> Sensul lui <code>add(a, b)</code> e universal; cuvântul <code>add</code> nu e. Separă-le și orice limbă umană devine o suprafață validă.",
+    problem_stat_title:"În cifre",
+    problem_stat_body:"~700M programatori potențiali excluși de bariera englezei.<br>~7.000 de limbi umane vii.<br>0 limbaje de programare mainstream cu sintaxă multilingvă nativă.",
+    sec_principles_label:"02 · Cele 13 Principii Constituționale",
+    sec_principles_title:"Fiecare decizie tehnică trebuie să treacă toate 13.",
+    sec_principles_p:"Aceste principii sunt <strong>teste de regresie</strong> pentru viziune. Dacă o alegere de design încalcă vreunul, e respinsă — chiar dacă e mai rapid de implementat. Ele sunt motivul pentru care oricine poate avea încredere în Lingua Omnibus.",
+    sec_arch_label:"03 · Arhitectură", sec_arch_title:"Trei straturi. O semantică.",
+    sec_arch_p:"Limbile ating doar Stratul 1. Straturile 2 și 3 nu văd niciodată limbaj natural — văd doar <em>AST-ul unificat</em> și <em>LIR-ul</em>. De aceea adăugarea unei limbi nu necesită niciodată modificarea compilatorului.",
+    arch_l1_label:"Stratul 1 · Frontend Multilingv", arch_l1_title:"Parsere per pack → AST unificat",
+    arch_l1_desc:"Fiecare pack e date pure (JSON + teste). Adăugarea unei limbi NU TREBUIE să necesite modificarea compilatorului (CONV-061).",
+    arch_l2_label:"Stratul 2 · LIR (Nucleu Semantic Universal)", arch_l2_title:"Lingua Intermediate Representation",
+    arch_l2_desc:"Independent de limbă și arhitectură. SemVer propriu (CONV-031). Output byte-identic între pack-uri (CONV-042).",
+    arch_l3_label:"Stratul 3 · Backend Multi-Țintă", arch_l3_title:"Cod nativ pentru fiecare țintă",
+    sec_proof_label:"04 · Promisiunea AST-ului Unificat", sec_proof_title:"Același program. Trei limbi. Un AST.",
+    sec_proof_p:"Nu e marketing. E <strong>GRAM-053</strong>, o regulă normativă din SPEC-02, verificată la fiecare commit de <code>conformance/gram/050/fib-en-ro.lo</code>. Două fișiere care diferă doar prin <code>#lingua:</code> TREBUIE să producă AST-uri canonice byte-identice.",
+    proof_verified:"Verificat la fiecare commit:",
+    proof_verified_body:"<code>diff &lt;(loc dump-ast en.lo --canonical) &lt;(loc dump-ast ro.lo --canonical)</code> returnează gol. Binarele compilate din fiecare sunt byte-identice (<strong>CONV-042</strong>).",
+    sec_pack_label:"05 · Language Pack = Date Pure",
+    sec_pack_title:"Adăugarea unei limbi = adăugarea unui fișier JSON.",
+    sec_pack_p:"Acesta e <strong>CONV-061</strong>: adăugarea unei limbi naturale noi NU TREBUIE să necesite modificarea compilatorului. Dacă o face, e un bug de spec — depus ca RFC. Language pack-ul este contractul.",
+    pack_ro_title:"Pack-ul românesc (extras)", pack_why_title:"De ce contează",
+    pack_why_list:"<li><strong>Oricine poate contribui o limbă</strong> — nu necesită cunoștințe de compilator, doar fluență nativă.</li><li><strong>Diacriticele și formele ASCII coexistă</strong> — <code>funcție</code> și <code>functie</code> ambele mapează la <code>KW_FUNCTION</code>.</li><li><strong>40 de sloturi universale de cuvinte-cheie</strong> (CONV-063) — aceeași semantică, cuvinte diferite.</li><li><strong>Pack-urile sunt versionate cu dată ISO 8601</strong> (CONV-032) — fără ambiguitate SemVer.</li><li><strong>Registru federat</strong> (CONV-080) — oricine poate găzdui un registru de pack-uri.</li>",
+    pack_invite:"Invitație:",
+    pack_invite_body:"Dacă vorbești o limbă care nu e încă în <code>langpacks/</code>, ești la un fișier JSON distanță de a face Lingua Omnibus accesibil comunității tale.",
+    sec_status_label:"06 · Status Spec", sec_status_title:"Ce e scris efectiv.",
+    sec_status_p:"Suntem onești despre ce există. Trei spec-uri sunt complete, unul e în lucru, restul sunt planificate. Fiecare regulă e testabilă. Fiecare test e referit de o regulă.",
+    th_doc:"Document", th_status:"Status", th_rules:"Reguli", th_tests:"Teste",
+    sec_repo_label:"07 · Repository", sec_repo_title:"Un repo. O poveste. Fork orice strat.",
+    repo_fork:"Fork-friendly prin construcție:",
+    repo_fork_body:"Fiecare strat poate fi înlocuit. O a doua implementare a lui <code>loc</code> poate fi certificată fără permisiune (CONV-040). Poți face fork mâine și nu pierzi nimic.",
+    sec_risks_label:"08 · Atenuarea Riscurilor", sec_risks_title:"De ce oricine poate avea încredere în acest proiect.",
+    th_risk:"Risc", th_mitigation:"Atenuare",
+    risk_vendor:"Capturare de vendor", mit_vendor:"Apache 2.0 + guvernanță de fundație + drepturi explicite de fork (Principiile 9, 10)",
+    risk_registry:"Abuz de registru", mit_registry:"Registre federate; niciunul 'oficial' obligatoriu (CONV-080, Principiul 5)",
+    risk_telemetry:"Creep de telemetrie", mit_telemetry:"Zero telemetrie implicit; doar opt-in și auditat (Principiul 7)",
+    risk_lockin:"Lock-in de format", mit_lockin:"Toate formatele (.lo, LIR, .ldb, manifest lopm) documentate public (Principiul 8)",
+    risk_abandon:"Abandonarea proiectului", mit_abandon:"LTS + <code>lo-migrate</code> + toolchain bootstrappable (Principiile 4, 13)",
+    risk_hw:"Excludere hardware", mit_hw:"Rulează pe 32-bit, hardware cu RAM redus — nu doar stații AVX-512 (Principiul 11)",
+    sec_roadmap_label:"09 · Roadmap", sec_roadmap_title:"De la spec la comunitate.",
+    phase1_label:"M0 · ✅ Complet · 2026 Q4", phase1_title:"Schelet de spec",
+    phase1_desc:"SPEC-00, 01, 02 scrise. 88 reguli. 93 teste de conformanță. Charter de guvernanță publicat.",
+    phase2_label:"M1 · ⏳ În progres · 2027 Q1", phase2_title:"Hello, World — bilingv EN/RO",
+    phase2_desc:"<code>loc build</code> funcționează pentru EN și RO. LIR byte-identic verificat în CI. <code>lopm install</code> funcționează offline. <code>lolsp</code> oferă autocomplete în VSCode.",
+    phase3_label:"M2 · 📋 Planificat · 2027 Q2", phase3_title:"Programe reale + LinguaDB",
+    phase3_desc:"Variabile, control flow, colecții, funcții. LinguaDB create/insert/select. 20 programe exemplu în examples/.",
+    phase4_label:"M3 · 📋 Planificat · 2027 Q3", phase4_title:"Community ready · 6 pack-uri",
+    phase4_desc:"Pack-urile EN, RO, FR, DE, ES, JA complete. Registru federat. Book + tutorials publicate.",
+    phase5_label:"M4 · 📋 Planificat · 2027 Q4", phase5_title:"Cuantic + ARM64 + 30 pack-uri",
+    phase5_desc:"Backend ARM64. Quantum block → OpenQASM 3.0. Integrare IBM Quantum. 30 language pack-uri.",
+    sec_contrib_label:"10 · Contribuie", sec_contrib_title:"Care e calea ta?",
+    contrib_spec_title:"Scrie spec-uri", contrib_spec_body:"Alege un RFC deschis (<code>rfcs/0001-language-pack-derivation.md</code> e un început bun). Spec-urile sunt normative și revizuite public.",
+    contrib_code_title:"Scrie cod", contrib_code_body:"<code>impl/loc/</code> are nevoie de un lexer care trece <code>conformance/lex/</code>. Fiecare regulă e un test; fiecare test e o țintă.",
+    contrib_lang_title:"Adaugă o limbă", contrib_lang_body:"Un fișier JSON. 40 sloturi de cuvinte-cheie. Atât. Fără cunoștințe de compilator.",
+    contrib_teach_title:"Predă", contrib_teach_body:"Tradu <code>docs/book/</code>. Tutorialele sunt gratuite în fiecare limbă — mereu.",
+    contrib_test_title:"Testează &amp; raportează", contrib_test_body:"Rulează suita de conformanță. Fiecare test eșuat e fie un bug de spec, fie un bug de implementare — ambele se rezolvă public.",
+    contrib_learn_title:"Doar încearcă", contrib_learn_body:"Citește <code>docs/tutorials/getting-started.md</code>. E onest: marcajele <code>[spec-preview]</code> arată ce funcționează azi vs. ce vine cu M1.",
+    cta_title:"Să-l construim împreună.",
+    cta_body:"Lingua Omnibus e Apache 2.0, guvernat de fundație și gratis pentru totdeauna. Fără tier plătit, fără 'ediție enterprise', fără telemetrie, fără vendor lock-in. Alătură-te.",
+    cta_primary:"Citește spec-ul", cta_secondary:"Încearcă tutorialul", cta_tertiary:"Deschide un RFC",
+    footer_meta:"Prezentare Spec-Driven v5.0 · spec-0.1 · 2026 · Licență Apache 2.0",
+    footer_author:"Creat de <strong>Claudiu Groza (Vemeth)</strong> · Guvernat de fundație · Deschis pentru colaborare internațională",
+    footer_quote:'"Orice minte umană merită să programeze în propria limbă."'
+  }
+};
+
+/* Partial translations: only nav + section titles + hero + footer.
+   All other keys fall back to English. Honest banner shown. */
+const partial = {
+  fr:{_banner:"Traduction partielle — les packs FR/DE/ES/JA/RU/ZH suivront via le système de langpack décrit dans ce document. À spec-0.1, seuls EN et RO sont complets.",
+     nav_problem:"Problème",nav_principles:"Principes",nav_architecture:"Architecture",nav_proof:"Preuve",nav_status:"Statut",nav_risks:"Risques",nav_roadmap:"Feuille de route",nav_contribute:"Contribuer",
+     hero_eyebrow:"Présentation Spec-Driven",hero_title_l1:"Programmez en",hero_title_l2:"toute langue humaine.",
+     sec_problem_title:"700 millions exclus par une seule barrière.",
+     sec_principles_title:"Chaque décision technique doit passer les 13.",
+     sec_arch_title:"Trois couches. Une sémantique.",
+     sec_proof_title:"Même programme. Trois langues. Un AST.",
+     sec_status_title:"Ce qui est réellement écrit.",
+     sec_repo_title:"Un dépôt. Une histoire. Forkez chaque couche.",
+     sec_risks_title:"Pourquoi quiconque peut faire confiance à ce projet.",
+     sec_roadmap_title:"Du spec à la communauté.",
+     sec_contrib_title:"Quel est votre chemin ?",
+     footer_quote:'"Chaque esprit humain mérite de programmer dans sa propre langue."'},
+  de:{_banner:"Teilweise Übersetzung — DE/FR/ES/JA/RU/ZH folgen über das in diesem Dokument beschriebene Language-Pack-System. Bei spec-0.1 sind nur EN und RO vollständig.",
+     nav_problem:"Problem",nav_principles:"Prinzipien",nav_architecture:"Architektur",nav_proof:"Beweis",nav_status:"Status",nav_risks:"Risiken",nav_roadmap:"Roadmap",nav_contribute:"Mitmachen",
+     hero_eyebrow:"Spec-getriebene Präsentation",hero_title_l1:"Programmiere in",hero_title_l2:"jeder menschlichen Sprache.",
+     sec_problem_title:"700 Millionen durch eine einzige Barriere ausgeschlossen.",
+     sec_principles_title:"Jede technische Entscheidung muss alle 13 bestehen.",
+     sec_arch_title:"Drei Schichten. Eine Semantik.",
+     sec_proof_title:"Gleiches Programm. Drei Sprachen. Ein AST.",
+     sec_status_title:"Was tatsächlich geschrieben ist.",
+     sec_repo_title:"Ein Repo. Eine Geschichte. Forke jede Schicht.",
+     sec_risks_title:"Warum jeder diesem Projekt vertrauen kann.",
+     sec_roadmap_title:"Vom Spec zur Community.",
+     sec_contrib_title:"Was ist dein Weg?",
+     footer_quote:'"Jeder menschliche Geist verdient es, in seiner eigenen Sprache zu programmieren."'},
+  es:{_banner:"Traducción parcial — ES/FR/DE/JA/RU/ZH seguirán vía el sistema de language packs descrito en este documento. En spec-0.1 solo EN y RO están completos.",
+     nav_problem:"Problema",nav_principles:"Principios",nav_architecture:"Arquitectura",nav_proof:"Prueba",nav_status:"Estado",nav_risks:"Riesgos",nav_roadmap:"Hoja de ruta",nav_contribute:"Contribuir",
+     hero_eyebrow:"Presentación Spec-Driven",hero_title_l1:"Programa en",hero_title_l2:"cualquier lengua humana.",
+     sec_problem_title:"700 millones excluidos por una sola barrera.",
+     sec_principles_title:"Cada decisión técnica debe pasar las 13.",
+     sec_arch_title:"Tres capas. Una semántica.",
+     sec_proof_title:"Mismo programa. Tres lenguas. Un AST.",
+     sec_status_title:"Lo que está realmente escrito.",
+     sec_repo_title:"Un repo. Una historia. Forkea cada capa.",
+     sec_risks_title:"Por qué cualquiera puede confiar en este proyecto.",
+     sec_roadmap_title:"Del spec a la comunidad.",
+     sec_contrib_title:"¿Cuál es tu camino?",
+     footer_quote:'"Cada mente humana merece programar en su propia lengua."'},
+  ja:{_banner:"部分翻訳 — JA/FR/DE/ES/RU/ZH はこの文書で説明されている langpack システムを通じて追加されます。spec-0.1 では EN と RO のみが完全です。",
+     nav_problem:"問題",nav_principles:"原則",nav_architecture:"アーキテクチャ",nav_proof:"証明",nav_status:"状態",nav_risks:"リスク",nav_roadmap:"ロードマップ",nav_contribute:"貢献",
+     hero_eyebrow:"Spec-Driven プレゼンテーション",hero_title_l1:"あらゆる人間の言語で",hero_title_l2:"プログラムを。",
+     sec_problem_title:"1つの障壁で7億人が排除されている。",
+     sec_principles_title:"すべての技術的判断は13の原則を通過しなければならない。",
+     sec_arch_title:"3つの層。1つの意味論。",
+     sec_proof_title:"同じプログラム。3つの言語。1つのAST。",
+     sec_status_title:"実際に書かれていること。",
+     sec_repo_title:"1つのリポジトリ。1つの物語。どの層でもフォーク可能。",
+     sec_risks_title:"誰もがこのプロジェクトを信頼できる理由。",
+     sec_roadmap_title:"仕様からコミュニティへ。",
+     sec_contrib_title:"あなたの道は？",
+     footer_quote:'"すべての人間の心は、自分の言語でプログラムするに値する。"'},
+  ru:{_banner:"Частичный перевод — RU/FR/DE/ES/JA/ZH появятся через систему языковых пакетов, описанную в этом документе. На spec-0.1 полностью готовы только EN и RO.",
+     nav_problem:"Проблема",nav_principles:"Принципы",nav_architecture:"Архитектура",nav_proof:"Доказательство",nav_status:"Статус",nav_risks:"Риски",nav_roadmap:"Дорожная карта",nav_contribute:"Внести вклад",
+     hero_eyebrow:"Презентация Spec-Driven",hero_title_l1:"Программируйте на",hero_title_l2:"любом человеческом языке.",
+     sec_problem_title:"700 миллионов исключены одним барьером.",
+     sec_principles_title:"Каждое техническое решение должно пройти все 13.",
+     sec_arch_title:"Три уровня. Одна семантика.",
+     sec_proof_title:"Одна программа. Три языка. Один AST.",
+     sec_status_title:"Что реально написано.",
+     sec_repo_title:"Один репозиторий. Одна история. Форкайте любой слой.",
+     sec_risks_title:"Почему любой может доверять этому проекту.",
+     sec_roadmap_title:"От спецификации к сообществу.",
+     sec_contrib_title:"Какой у вас путь?",
+     footer_quote:'"Каждый человеческий разум заслуживает программировать на своём языке."'},
+  zh:{_banner:"部分翻译 — ZH/FR/DE/ES/JA/RU 将通过本文档中描述的 langpack 系统跟进。在 spec-0.1 中，只有 EN 和 RO 完整。",
+     nav_problem:"问题",nav_principles:"原则",nav_architecture:"架构",nav_proof:"证明",nav_status:"状态",nav_risks:"风险",nav_roadmap:"路线图",nav_contribute:"贡献",
+     hero_eyebrow:"规范驱动演示",hero_title_l1:"用任何人类语言",hero_title_l2:"编程。",
+     sec_problem_title:"7亿人被一道障碍排除在外。",
+     sec_principles_title:"每项技术决策都必须通过全部13项。",
+     sec_arch_title:"三层。一个语义。",
+     sec_proof_title:"同一个程序。三种语言。一个AST。",
+     sec_status_title:"实际写了什么。",
+     sec_repo_title:"一个仓库。一个故事。可 Fork 任何层。",
+     sec_risks_title:"为什么任何人都可以信任这个项目。",
+     sec_roadmap_title:"从规范到社区。",
+     sec_contrib_title:"你的路径是什么？",
+     footer_quote:'"每个心灵都值得用自己的语言编程。"'}
+};
+
+/* ── Principle data (universal English; extended translations in spec/00) ── */
+const principles = [
+  {n:"1", title:"Zero vendor lock-in",       body:"Compile and run LO entirely offline, with no author-owned cloud service."},
+  {n:"2", title:"Spec-driven",               body:"A second, independent implementation can be certified without permission (CONV-040)."},
+  {n:"3", title:"Reproducible builds",       body:"Any loc binary can be rebuilt bit-identically from source."},
+  {n:"4", title:"Bootstrappable toolchain",  body:"The compiler builds from a minimal chain (TCC → LO-0 → LO-1)."},
+  {n:"5", title:"Federated packages",        body:"The lopm registry can be self-hosted; there is no mandatory official one."},
+  {n:"6", title:"Offline-first",             body:"lopm install works with a local vendor/ directory, no network."},
+  {n:"7", title:"Zero telemetry",            body:"No binary sends data without explicit, audited opt-in."},
+  {n:"8", title:"Open formats",              body:"LIR, .lo, .ldb and lopm manifests are all documented publicly."},
+  {n:"9", title:"Foundation governance",     body:"No BDFL; public RFC process, elected maintainers, explicit fork rights."},
+  {n:"10",title:"Apache 2.0 license",        body:"Commercial use allowed; no one can close the ecosystem."},
+  {n:"11",title:"Accessible hardware",       body:"Runs on 32-bit, 512 MB RAM — not only AVX-512 workstations."},
+  {n:"12",title:"Free learning",             body:"All tutorials, the book, the courses — gratis, no paywall."},
+  {n:"13",title:"LTS &amp; migration",           body:"Every major version ships with lo-migrate and 5-year support."}
+];
+
+/* ── Marquee content (spec rule IDs) ── */
+const marqueeItems = [
+  "CONV-001 · keywords allcaps", "LEX-064 · decimal both . and ,",
+  "GRAM-053 · AST identity", "CONV-042 · byte-identical LIR",
+  "CONV-061 · pack = data", "LEX-042 · CJK longest-match",
+  "GRAM-035 · then required", "CONV-080 · federated registry",
+  "LEX-090 · #lingua directive", "GRAM-054 · canonical AST JSON",
+  "CONV-040 · conforming impl", "LEX-079 · bidi escapes in LIR"
+];
+
+/* ── Apply language ── */
+function setLang(code, btn){
+  // Which dictionary to use
+  const dict = i18n[code] || i18n.en;
+  const extra = partial[code] || {};
+
+  // Banner for partial langs
+  const banner = document.getElementById('partial-banner');
+  if (extra._banner){
+    document.getElementById('partial-msg').textContent = extra._banner;
+    banner.classList.add('show');
+  } else {
+    banner.classList.remove('show');
+  }
+
+  // Swap data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const val = (dict[key] !== undefined) ? dict[key]
+              : (extra[key] !== undefined) ? extra[key]
+              : i18n.en[key];
+    if (val !== undefined) el.innerHTML = val;
+  });
+
+  // Active button
+  document.querySelectorAll('.ls-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  // RTL adjustments for Arabic/Hebrew when we add them later
+  document.documentElement.lang = code;
+}
+
+/* ── Render principles ── */
+function renderPrinciples(){
+  const grid = document.getElementById('principlesGrid');
+  grid.innerHTML = principles.map(p => `
+    <div class="principle">
+      <div class="principle-num">${p.n}</div>
+      <div class="principle-body">
+        <strong>${p.title}</strong>
+        <p>${p.body}</p>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ── Render marquee ── */
+function renderMarquee(){
+  const track = document.getElementById('marqueeTrack');
+  const items = marqueeItems.map(i => {
+    const [id, desc] = i.split(' · ');
+    return `<span class="marquee-item"><span class="id">${id}</span><span class="marquee-sep">·</span>${desc}</span>`;
+  }).join('');
+  track.innerHTML = items + items;
+}
+
+/* ── Init ── */
+document.addEventListener('DOMContentLoaded', () => {
+  renderPrinciples();
+  renderMarquee();
+  setLang('en', document.querySelector('.ls-btn.active'));
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+#lingua: RO
+funcție main() returnează Unit:
+    variabilă p = 0
+    print(p)
+    return ()

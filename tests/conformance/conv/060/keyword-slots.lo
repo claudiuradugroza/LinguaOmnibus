@@ -1,0 +1,8 @@
+# conformance/conv/060/keyword-slots.lo
+# covers: CONV-063
+#lingua: EN
+
+# Every language pack MUST include at least the 40 universal KW_X slots.
+
+function main() returns Unit:
+    return Unit

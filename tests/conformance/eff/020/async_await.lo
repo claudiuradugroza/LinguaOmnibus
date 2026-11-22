@@ -1,0 +1,6 @@
+# conformance/eff/020/async_await.lo
+# covers: EFF-020, EFF-021, EFF-022, EFF-023
+#lingua: EN
+
+function fetch() returns Unit with [IO]:
+    return Unit             # EFF-022: async carries KW_IO

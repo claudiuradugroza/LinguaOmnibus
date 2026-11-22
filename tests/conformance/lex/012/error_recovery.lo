@@ -1,0 +1,9 @@
+# conformance/lex/012/error_recovery.lo
+# covers: LEX-013
+#lingua: EN
+
+# On a lexing error, emit the error and attempt recovery by advancing
+# to the next whitespace or punctuation boundary.
+
+function main() returns Unit:
+    return Unit

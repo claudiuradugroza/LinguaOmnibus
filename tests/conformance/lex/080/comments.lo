@@ -1,0 +1,13 @@
+# conformance/lex/080/comments.lo
+# covers: LEX-080, LEX-081, LEX-082, LEX-083, LEX-084, LEX-085
+#lingua: EN
+
+# Line comment // ; block comment /* … */ with nesting (depth >= 256).
+# Unterminated block comment rejected with L0500_unterminated_comment.
+# Comments removed from token stream. Doc-comments /// and /** captured as metadata.
+# Bidi controls in doc-comments preserved in metadata; stripped from HTML/Markdown output.
+
+/// Computes the sum.
+function add(a: int32, b: int32) returns int32:
+    /* nested /* comment */ still valid */
+    return a + b

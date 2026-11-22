@@ -1,0 +1,9 @@
+# conformance/gram/034/patterns.lo
+# covers: GRAM-034
+#lingua: EN
+
+function test(x: int32) returns int32:
+    if x == 1 then:
+        return 1
+    else:
+        return 0

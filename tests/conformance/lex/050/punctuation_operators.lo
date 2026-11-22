@@ -1,0 +1,11 @@
+# conformance/lex/050/punctuation_operators.lo
+# covers: LEX-050, LEX-051, LEX-052, LEX-053, LEX-054
+#lingua: EN
+
+# Punctuation tokens: ( ) { } [ ] , ; : . — verbatim in every pack, NOT remappable.
+# Operator tokens: + - * / % = == != < > <= >= && || ! & | ^ ~ << >> ? -> => @ :: ?.
+# # reserved for directives. $ reserved (reject outside strings with L0300_reserved_dollar).
+# ` introduces raw string or multiline raw string.
+
+var x = 1 + 2 * 3 <= 4 && 5 || !6
+var raw = `hello`

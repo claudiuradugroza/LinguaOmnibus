@@ -1,0 +1,11 @@
+# conformance/lir/030/identity.lo
+# covers: LIR-030, LIR-031, LIR-032
+#lingua: EN
+
+# Two conforming implementations MUST produce byte-identical LIR
+# for the same program (CONV-042).
+# Optional passes: dead code elimination, constant folding, inlining.
+# LIR version header MUST match lir_version in CONV-034 declaration.
+
+function main() returns Unit:
+    return Unit

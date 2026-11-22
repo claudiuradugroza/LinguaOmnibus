@@ -1,0 +1,6 @@
+#lingua: EN
+function main() returns Unit:
+    var nums: [int32] = [1, 2, 3, 4, 5]
+    var first = nums[0]
+    print(first)
+    return ()

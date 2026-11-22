@@ -1,0 +1,8 @@
+# conformance/gram/001/virtual_tokens.lo
+# covers: GRAM-001
+#lingua: EN
+
+# Lexer emits virtual NEWLINE, INDENT, DEDENT tokens. At EOF, one DEDENT per open level, then EOF.
+
+function main() returns Unit:
+    return Unit

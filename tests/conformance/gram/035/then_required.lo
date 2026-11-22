@@ -1,0 +1,7 @@
+# conformance/gram/035/then_required.lo
+# covers: GRAM-035
+#lingua: EN
+
+function test() returns Unit:
+    if true then:
+        return ()

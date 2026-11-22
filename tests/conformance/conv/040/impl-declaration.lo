@@ -1,0 +1,8 @@
+# conformance/conv/040/impl-declaration.lo
+# covers: CONV-034, CONV-040
+#lingua: EN
+
+# Implementation MUST declare spec_compatibility, bundled_langpacks, lir_version, conformance map.
+
+function main() returns Unit:
+    return Unit

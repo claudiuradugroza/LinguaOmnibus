@@ -1,0 +1,21 @@
+# conformance/eff/001/effects.lo
+# covers: EFF-001, EFF-002, EFF-003, EFF-004, EFF-005, EFF-006, EFF-007, EFF-008
+#lingua: EN
+
+function pure() returns Unit:
+    return Unit             # EFF-003: pure function — no effects clause
+
+function io_fn() returns Unit with [IO]:
+    return Unit             # EFF-004: KW_IO effect
+
+function db_fn() returns Unit with [DATABASE]:
+    return Unit             # EFF-005: KW_DATABASE effect
+
+function net_fn() returns Unit with [NETWORK]:
+    return Unit             # EFF-006: KW_NETWORK effect
+
+function fs_fn() returns Unit with [FILESYSTEM]:
+    return Unit             # EFF-007: KW_FILESYSTEM effect
+
+function quantum_fn() returns Unit with [QUANTUM]:
+    return Unit             # EFF-008: KW_QUANTUM effect

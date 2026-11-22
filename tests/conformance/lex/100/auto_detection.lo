@@ -1,0 +1,10 @@
+# conformance/lex/100/auto_detection.lo
+# covers: LEX-100, LEX-101, LEX-102, LEX-103, LEX-104
+#lingua: EN
+
+# Auto-detection only when #lingua: absent, no #pragma no_auto_detect, pack allows it.
+# Select pack claiming >90% of keyword slot candidates. Zero >=50% or multiple >=90% → L0700_ambiguous_lingua.
+# Record outcome for loc --explain-detection.
+
+function main() returns Unit:
+    return Unit

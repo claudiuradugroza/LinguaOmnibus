@@ -1,0 +1,9 @@
+# conformance/type/020/generics.lo
+# covers: TYPE-018, TYPE-019, TYPE-020, TYPE-021
+#lingua: EN
+
+function identity(x: int32) returns int32:
+    return x
+
+var a = identity(42)
+var b = identity(100)

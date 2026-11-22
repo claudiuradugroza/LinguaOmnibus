@@ -1,0 +1,9 @@
+# conformance/eff/010/subtyping.lo
+# covers: EFF-010, EFF-011
+#lingua: EN
+
+function pure_fn() returns Unit:
+    return Unit             # pure — assignable to any effect type
+
+function io_fn() returns Unit with [IO]:
+    return Unit             # KW_IO — NOT assignable to pure type (EFF-011)

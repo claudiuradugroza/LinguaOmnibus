@@ -1,0 +1,10 @@
+﻿{
+  "word_order": "svo",
+  "word_segmentation": "space",
+  "requires_explicit_lingua_directive": false,
+  "script": "Latin",
+  "bidi": "ltr",
+  "preferred_decimal_sep": ",",
+  "indent_unit": 4,
+  "multiphrasal_keywords": false
+}

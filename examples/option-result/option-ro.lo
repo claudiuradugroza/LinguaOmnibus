@@ -1,0 +1,5 @@
+#lingua: RO
+funcție main() returnează Unit:
+    variabilă op = 42
+    print(op)
+    return ()

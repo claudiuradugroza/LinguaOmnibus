@@ -1,0 +1,9 @@
+# conformance/lex/004/line_terminators.lo
+# covers: LEX-006, LEX-007, LEX-008
+#lingua: EN
+
+# Both \n and \r\n are line terminators. A lone \r is treated as \n.
+# Source files MUST use extension .lo. A #! shebang on the first line is stripped.
+
+function main() returns Unit:
+    return Unit

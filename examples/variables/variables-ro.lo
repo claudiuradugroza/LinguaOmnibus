@@ -1,0 +1,11 @@
+#lingua: RO
+funcție main() returnează Unit:
+    variabilă x: int32 = 42
+    variabilă y: f64 = 3.14
+    variabilă s: string = "hello"
+    variabilă b: bool = adevăr
+    print(x)
+    print(y)
+    print(s)
+    print(b)
+    return ()

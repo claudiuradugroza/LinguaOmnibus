@@ -1,0 +1,5 @@
+#lingua: EN
+function main() returns Unit:
+    var v = 0
+    print(v)
+    return ()

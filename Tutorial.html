@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lingua Omnibus — Getting Started Tutorial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#141820; --paper:#f5f4f1; --card:#fafaf8;
+  --accent:#2c5282; --accent-soft:#4a7fb5; --accent2:#2d6a4f; --accent3:#8b3a1e;
+  --gold:#c89030;
+  --border:#e2ddd6; --border-dark:#c8c2b8;
+  --muted:#7a7165; --muted-light:#a89f94;
+  --code-bg:#eef1f7; --shadow:rgba(20,24,32,0.08); --shadow-lg:rgba(20,24,32,0.14);
+  --sidebar-w:280px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.72;overflow-x:hidden}
+
+/* ── Progress bar (top) ── */
+#progress{position:fixed;top:0;left:0;height:3px;background:var(--accent);width:0%;z-index:200;transition:width .1s}
+
+/* ── Lang bar ── */
+.lang-switcher-bar{background:var(--ink);padding:.4rem 2rem;display:flex;align-items:center;gap:.35rem;justify-content:flex-end;flex-wrap:wrap;position:relative;z-index:101}
+.lang-switcher-label{font-family:'IBM Plex Mono',monospace;font-size:.62rem;color:#6b7a90;text-transform:uppercase;letter-spacing:.12em;margin-right:.5rem}
+.ls-btn{background:none;border:1px solid #2e3a50;color:#8a9ab8;font-family:'IBM Plex Mono',monospace;font-size:.66rem;padding:.2rem .55rem;border-radius:4px;cursor:pointer;transition:all .15s}
+.ls-btn:hover{border-color:#4a6a99;color:#a8bcd8}
+.ls-btn.active{background:#2c3f60;border-color:#4a6a99;color:#c8d8f0}
+.ls-btn.partial{opacity:.65}
+
+/* ── Partial banner ── */
+#partial-banner{display:none;background:#fef9ee;border-bottom:1px solid #e8d4a0;padding:.55rem 2rem;text-align:center;font-size:.83rem;color:#6a5220}
+#partial-banner.show{display:block}
+#partial-banner strong{color:#8a3a10}
+
+/* ── Top nav ── */
+nav.top{position:sticky;top:0;z-index:100;background:rgba(245,244,241,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:.65rem 2rem;display:flex;align-items:center;gap:1.5rem}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--accent);text-decoration:none;font-weight:700;white-space:nowrap}
+.nav-crumbs{font-family:'IBM Plex Mono',monospace;font-size:.74rem;color:var(--muted-light);white-space:nowrap}
+.nav-crumbs .sep{margin:0 .3rem;color:var(--border-dark)}
+.nav-right{margin-left:auto;display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+.badge-v{background:var(--accent);color:white;font-size:.66rem;font-family:'IBM Plex Mono',monospace;padding:.2rem .6rem;border-radius:4px;font-weight:500}
+.badge-spec{background:#edf8f2;color:var(--accent2);border:1px solid var(--accent2);font-size:.66rem;font-family:'IBM Plex Mono',monospace;padding:.18rem .55rem;border-radius:4px;font-weight:500}
+#menu-toggle{display:none;background:none;border:1px solid var(--border);border-radius:5px;padding:.3rem .7rem;font-family:'IBM Plex Mono',monospace;font-size:.8rem;cursor:pointer;color:var(--ink)}
+
+/* ── Layout ── */
+.layout{display:grid;grid-template-columns:var(--sidebar-w) 1fr;max-width:1400px;margin:0 auto;gap:0}
+.sidebar{position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;border-right:1px solid var(--border);background:var(--card);padding:1.5rem 1.2rem 3rem}
+.sidebar h4{font-family:'IBM Plex Mono',monospace;font-size:.64rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted-light);margin-bottom:.6rem;padding-left:.7rem}
+.toc{list-style:none;padding:0;margin-bottom:1.5rem}
+.toc li{margin:0}
+.toc a{display:block;padding:.35rem .7rem;font-size:.82rem;color:var(--muted);text-decoration:none;border-left:2px solid transparent;transition:all .15s;border-radius:0 4px 4px 0}
+.toc a:hover{color:var(--accent);background:#eef4fc}
+.toc a.active{color:var(--accent);background:#eef4fc;border-left-color:var(--accent);font-weight:500}
+.toc .num{font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:var(--muted-light);margin-right:.5rem}
+.toc a.active .num{color:var(--accent-soft)}
+
+.main{padding:3rem 3rem 5rem;min-width:0}
+.main .content{max-width:820px}
+
+/* ── Typography ── */
+.chapter{padding:2rem 0;border-bottom:1px solid var(--border);scroll-margin-top:70px}
+.chapter:last-child{border-bottom:none}
+.ch-num{font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--accent-soft);text-transform:uppercase;letter-spacing:.14em;margin-bottom:.5rem}
+h1.ch-title{font-family:'Playfair Display',serif;font-size:clamp(1.7rem,3.5vw,2.4rem);line-height:1.15;letter-spacing:-.01em;color:var(--ink);margin-bottom:.5rem}
+h2{font-family:'Playfair Display',serif;font-size:1.4rem;line-height:1.2;color:var(--ink);margin:2rem 0 .7rem}
+h3{font-size:1.05rem;font-weight:600;color:var(--ink);margin:1.6rem 0 .5rem}
+p{margin-bottom:1rem;color:#3a3228}
+ul,ol{padding-left:1.4rem;margin-bottom:1rem}
+li{margin-bottom:.35rem;color:#3a3228}
+strong{color:var(--ink)}
+
+code.inline{font-family:'IBM Plex Mono',monospace;background:var(--code-bg);border:1px solid #d4d0c8;border-radius:4px;padding:.08rem .38rem;font-size:.85em;color:var(--accent3)}
+
+/* ── Code blocks ── */
+.code-wrap{margin:1.2rem 0;position:relative;border-radius:10px;overflow:hidden;border:1px solid #1e2d45;background:#131a28}
+.code-head{background:#0a1220;padding:.5rem 1rem;font-family:'IBM Plex Mono',monospace;font-size:.68rem;color:#4a6888;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #1a2a3a;flex-wrap:wrap;gap:.5rem}
+.code-head .lang{text-transform:uppercase;letter-spacing:.1em;color:#6a88b0}
+.code-head .path{color:#5a7088}
+.copy-btn{background:none;border:1px solid #2e4a6a;color:#6a88b0;font-family:'IBM Plex Mono',monospace;font-size:.64rem;padding:.15rem .55rem;border-radius:4px;cursor:pointer;transition:all .15s}
+.copy-btn:hover{border-color:#4a6a99;color:#a8bcd8}
+.copy-btn.copied{border-color:#4aaa70;color:#70d890}
+pre{font-family:'IBM Plex Mono',monospace;font-size:.8rem;line-height:1.68;padding:1.2rem 1.4rem;margin:0;overflow-x:auto;color:#d8e4f0}
+pre.light{background:var(--code-bg);color:var(--ink);border:1px solid var(--border);padding:1rem 1.2rem;font-size:.78rem;border-radius:10px}
+.kw{color:#7ab8f5}.fn{color:#c4a0f0}.str{color:#98c8a8}.num{color:#e8c87a}.cm{color:#5a7088;font-style:italic}.typ{color:#f0a878}.op{color:#80ccee}.id{color:#e0d8c0}
+
+/* ── Output blocks ── */
+.output{background:#05090f;border:1px solid #1c2d45;border-radius:10px;margin:1rem 0;overflow:hidden}
+.output-head{background:#091018;padding:.45rem .9rem;font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:#2a5068;text-transform:uppercase;letter-spacing:.1em;border-bottom:1px solid #1c2d45}
+.output pre{background:none;color:#88b898;font-size:.78rem;padding:.9rem 1.2rem}
+
+/* ── Callouts ── */
+.callout{border-radius:0 10px 10px 0;padding:.95rem 1.3rem;margin:1.2rem 0;font-size:.92rem}
+.callout p{margin:0}
+.callout p + p{margin-top:.5rem}
+.callout.note{background:#eef4fc;border-left:3px solid var(--accent)}
+.callout.warn{background:#fef9ee;border-left:3px solid var(--gold)}
+.callout.success{background:#edf8f2;border-left:3px solid var(--accent2)}
+.callout .label{font-weight:600;display:block;margin-bottom:.25rem;font-size:.85rem}
+.callout.note .label{color:var(--accent)}
+.callout.warn .label{color:#8a5a10}
+.callout.success .label{color:var(--accent2)}
+
+/* ── Rule badge ── */
+.rule-badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:.68rem;padding:.1rem .45rem;border-radius:4px;background:#f0ede8;border:1px solid var(--border-dark);color:var(--accent3);font-weight:500;margin:0 .1rem;white-space:nowrap}
+.preview-badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:.64rem;padding:.08rem .45rem;border-radius:3px;background:#fef3e0;border:1px solid #e8c890;color:#8a5a10;font-weight:600;letter-spacing:.03em;margin-left:.4rem;text-transform:uppercase}
+
+/* ── Steps ── */
+.steps{counter-reset:step;list-style:none;padding:0;margin:1.2rem 0}
+.steps li{counter-increment:step;position:relative;padding-left:2.4rem;margin-bottom:.9rem;color:#3a3228}
+.steps li::before{content:counter(step);position:absolute;left:0;top:.05rem;width:1.7rem;height:1.7rem;border-radius:50%;background:var(--accent);color:white;font-family:'IBM Plex Mono',monospace;font-size:.78rem;font-weight:600;display:flex;align-items:center;justify-content:center}
+
+/* ── Nav bottom (prev/next) ── */
+.chapter-nav{display:flex;justify-content:space-between;gap:1rem;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+.chapter-nav a{display:flex;flex-direction:column;padding:.7rem 1rem;background:var(--card);border:1px solid var(--border);border-radius:8px;text-decoration:none;color:var(--ink);font-size:.85rem;transition:all .15s;flex:1;max-width:48%}
+.chapter-nav a:hover{border-color:var(--accent-soft);box-shadow:0 3px 10px -3px var(--shadow)}
+.chapter-nav a.next{text-align:right;margin-left:auto}
+.chapter-nav .label{font-family:'IBM Plex Mono',monospace;font-size:.62rem;color:var(--muted-light);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.2rem}
+.chapter-nav .title{font-weight:600;color:var(--accent)}
+.chapter-nav a.next .label{text-align:right}
+
+/* ── Table ── */
+table{width:100%;border-collapse:collapse;margin:1.2rem 0;font-size:.86rem;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+th{background:var(--ink);color:#d8e0ec;font-weight:600;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;padding:9px 13px;text-align:left}
+td{padding:9px 13px;border-bottom:1px solid var(--border);background:var(--card)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#f0ede8}
+td code{font-size:.85em}
+
+/* ── Footer ── */
+footer{border-top:1px solid var(--border);padding:2.5rem 3rem;text-align:center;color:var(--muted-light);font-size:.83rem;background:var(--card)}
+footer .logo{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--ink);margin-bottom:.4rem}
+footer strong{color:var(--ink)}
+
+/* ── Responsive ── */
+@media (max-width:1000px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{position:fixed;top:0;left:0;width:85vw;max-width:340px;height:100vh;z-index:150;transform:translateX(-100%);transition:transform .25s ease;box-shadow:2px 0 12px var(--shadow-lg);padding-top:2rem}
+  .sidebar.open{transform:translateX(0)}
+  #menu-toggle{display:inline-block}
+  .main{padding:2rem 1.5rem 4rem}
+  .nav-crumbs{display:none}
+  footer{padding:2rem 1.5rem}
+}
+@media (max-width:600px){
+  .nav-right .badge-spec{display:none}
+  .chapter-nav{flex-direction:column}
+  .chapter-nav a{max-width:100%}
+  h1.ch-title{font-size:1.6rem}
+  h2{font-size:1.2rem}
+}
+[data-i18n]{transition:opacity .15s}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<!-- LANG BAR -->
+<div class="lang-switcher-bar">
+  <span class="lang-switcher-label">tutorial language ·</span>
+  <button class="ls-btn active" onclick="setLang('en',this)">🇬🇧 EN</button>
+  <button class="ls-btn" onclick="setLang('ro',this)">🇷🇴 RO</button>
+  <button class="ls-btn partial" onclick="setLang('fr',this)">🇫🇷 FR</button>
+  <button class="ls-btn partial" onclick="setLang('de',this)">🇩🇪 DE</button>
+  <button class="ls-btn partial" onclick="setLang('es',this)">🇪🇸 ES</button>
+  <button class="ls-btn partial" onclick="setLang('ja',this)">🇯🇵 JA</button>
+</div>
+
+<div id="partial-banner">
+  <strong data-i18n="banner_title">Partial translation.</strong>
+  <span data-i18n="banner_msg">Full tutorial translation for this language is pending. It will arrive via the language pack system — at spec-0.1 only EN and RO packs are complete. Code examples remain multilingual throughout.</span>
+</div>
+
+<!-- TOP NAV -->
+<nav class="top">
+  <button id="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+  <a class="nav-logo" href="#">L.O.</a>
+  <span class="nav-crumbs"><span data-i18n="nav_tutorial">Tutorial</span><span class="sep">/</span><span data-i18n="nav_chapter">Chapter</span> <span id="nav-current">1</span> <span data-i18n="nav_of">of</span> 16</span>
+  <div class="nav-right">
+    <span class="badge-spec">spec-0.1</span>
+    <span class="badge-v">v1.0</span>
+  </div>
+</nav>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <h4 data-i18n="toc_label">Contents</h4>
+    <ul class="toc" id="toc"></ul>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="content" id="content">
+
+      <!-- ═══════════════════════════════════════════ CHAPTER 1 -->
+      <article class="chapter" id="ch-1">
+        <div class="ch-num"><span data-i18n="ch_label">Chapter</span> 01</div>
+        <h1 class="ch-title" data-i18n="ch1_title">Welcome to Lingua Omnibus</h1>
+
+        <p data-i18n="ch1_p1">By the end of this tutorial, you will have <strong>written three working programs in two natural languages</strong>, seen that they produce <strong>byte-identical compiled output</strong>, queried an embedded database, written and run a test, and understood how to add a new natural language as a data file.</p>
+
+        <p data-i18n="ch1_p2">You do <strong>not</strong> need to know English to program in Lingua Omnibus. Every example is given in English and Romanian, with additional languages where they help.</p>
+
+        <div class="callout note">
+          <span class="label" data-i18n="ch1_callout_label">Before we start</span>
+          <p data-i18n="ch1_callout">Lingua Omnibus is at <code class="inline">spec-0.1</code>. Code here is written against the normative specification (SPEC-00, 01, 02) and compiles with the reference implementation that is under construction. Where the tooling is not yet available, sections are marked <span class="preview-badge">spec-preview</span>. Everything shown <strong>will</strong> work exactly as written once M1 ships.</p>
+        </div>
+
+        <h2 data-i18n="ch1_what_title">What you will build</h2>
+        <ul>
+          <li data-i18n="ch1_li1">A Hello, World program in <strong>two languages</strong> that produces the same binary</li>
+          <li data-i18n="ch1_li2">A factorial function, in <strong>three languages</strong></li>
+          <li data-i18n="ch1_li3">A small database application using <strong>LinguaDB</strong></li>
+          <li data-i18n="ch1_li4">A unit test in <strong>two languages</strong></li>
+        </ul>
+      </article>
+
+      <!-- ═══════════════════════════════════════════ CHAPTER 2 -->
+      <article class="chapter" id="ch-2">
+        <div class="ch-num"><span data-i18n="ch_label">Chapter</span> 02</div>
+        <h1 class="ch-title" data-i18n="ch2_title">Setup</h1>
+
+        <h2 data-i18n="ch2_install">Install the toolchain <span class="preview-badge">spec-preview</span></h2>
+        <p data-i18n="ch2_install_desc">The reference implementation lives at <code class="inline">impl/loc/</code>. Once M1 ships, install with:</p>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="cm"># macOS / Linux</span>
+curl -fsSL https://lingua-omnibus.org/install.sh | sh
+
+<span class="cm"># Or via package manager (future)</span>
+brew install lingua-omnibus
+apt install lingua-omnibus</pre>
+        </div>
+
+        <h2 data-i18n="ch2_verify">Verify</h2>
+        <p data-i18n="ch2_verify_desc">The version output includes a machine-readable conformance declaration per <span class="rule-badge">CONV-034</span>:</p>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>loc --version --json</pre>
+        </div>
+
+        <div class="output">
+          <div class="output-head">▶ output</div>
+          <pre>{
+  "implementation": "loc",
+  "implementation_version": "0.9.0",
+  "spec_compatibility": "0.1",
+  "bundled_langpacks": { "en": "2026-01-01", "ro": "2026-01-01", "ja": "2026-01-01" },
+  "lir_version": "0.3.0",
+  "conformance": { "conv": "pass", "lex": "pass", "gram": "pass" }
+}</pre>
+        </div>
+
+        <h2 data-i18n="ch2_init">Your first project</h2>
+
+        <ol class="steps">
+          <li data-i18n="ch2_step1">Run <code class="inline">loc init hello-lo && cd hello-lo</code></li>
+          <li data-i18n="ch2_step2">This creates <code class="inline">loc.toml</code> and <code class="inline">src/main.lo</code></li>
+          <li data-i18n="ch2_step3">Open <code class="inline">src/main.lo</code> in your editor</li>
+        </ol>
+      </article>
+
+      <!-- ═══════════════════════════════════════════ CHAPTER 3 -->
+      <article class="chapter" id="ch-3">
+        <div class="ch-num"><span data-i18n="ch_label">Chapter</span> 03</div>
+        <h1 class="ch-title" data-i18n="ch3_title">Hello, World</h1>
+
+        <h2 data-i18n="ch3_en">The English version</h2>
+        <p data-i18n="ch3_en_desc">Create <code class="inline">src/main.lo</code>:</p>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇬🇧 EN</span><span class="path">src/main.lo</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="cm">#lingua: EN</span>
+
+<span class="kw">function</span> <span class="fn">main</span>() <span class="kw">returns</span> <span class="typ">Unit</span>:
+    <span class="fn">print</span>(<span class="str">"Hello, world!"</span>)</pre>
+        </div>
+
+        <p data-i18n="ch3_run">Run it:</p>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>loc run src/main.lo</pre>
+        </div>
+
+        <div class="output">
+          <div class="output-head">▶ output</div>
+          <pre>Hello, world!</pre>
+        </div>
+
+        <h2 data-i18n="ch3_ro">The Romanian version</h2>
+        <p data-i18n="ch3_ro_desc">Change <code class="inline">#lingua: EN</code> to <code class="inline">#lingua: RO</code> and rewrite:</p>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇷🇴 RO</span><span class="path">src/main.lo</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="cm">#lingua: RO</span>
+
+<span class="kw">funcție</span> <span class="fn">principal</span>() <span class="kw">returnează</span> <span class="typ">Unit</span>:
+    <span class="fn">afișează</span>(<span class="str">"Salut, lume!"</span>)</pre>
+        </div>
+
+        <div class="output">
+          <div class="output-head">▶ output</div>
+          <pre>Salut, lume!</pre>
+        </div>
+
+        <h2 data-i18n="ch3_proof">The proof: same AST, same binary</h2>
+        <p data-i18n="ch3_proof_desc">Per <span class="rule-badge">GRAM-053</span> and <span class="rule-badge">CONV-042</span>, the two files produce byte-identical canonical ASTs and byte-identical binaries:</p>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>loc dump-ast src/main.lo --canonical &gt; ast-en.json
+<span class="cm"># ... after switching to RO ...</span>
+loc dump-ast src/main-ro.lo --canonical &gt; ast-ro.json
+<span class="fn">diff</span> ast-en.json ast-ro.json
+<span class="cm"># (no output)</span>
+
+loc build src/main.lo    --target=x86_64 -o hello-en
+loc build src/main-ro.lo --target=x86_64 -o hello-ro
+<span class="fn">cmp</span> hello-en hello-ro
+<span class="cm"># (no output)</span></pre>
+        </div>
+
+        <div class="callout success">
+          <span class="label" data-i18n="ch3_success_label">Verified promise</span>
+          <p data-i18n="ch3_success">No output from <code class="inline">diff</code> and no output from <code class="inline">cmp</code>. That is the promise of Lingua Omnibus, verified end-to-end.</p>
+        </div>
+      </article>
+
+      <!-- ═══════════════════════════════════════════ CHAPTER 4 -->
+      <article class="chapter" id="ch-4">
+        <div class="ch-num"><span data-i18n="ch_label">Chapter</span> 04</div>
+        <h1 class="ch-title" data-i18n="ch4_title">Your language, your code</h1>
+
+        <h2 data-i18n="ch4_directive">The #lingua: directive</h2>
+        <p data-i18n="ch4_directive_desc">Every file starts with <code class="inline">#lingua: XX</code> where <code class="inline">XX</code> is an ISO 639-1 code, per <span class="rule-badge">LEX-090</span>.</p>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">LO</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="cm">#lingua: FR</span>
+<span class="cm">#lingua: DE</span>
+<span class="cm">#lingua: ES</span>
+<span class="cm">#lingua: JA</span>
+<span class="cm">#lingua: RO</span></pre>
+        </div>
+
+        <p data-i18n="ch4_directive_auto">If the directive is missing, the compiler tries to auto-detect (<span class="rule-badge">LEX-100</span>). If detection is ambiguous, it fails and asks for an explicit directive (<span class="rule-badge">LEX-103</span>).</p>
+
+        <h2 data-i18n="ch4_same">One program, six languages</h2>
+        <p data-i18n="ch4_same_desc">A complete program that computes the sum of numbers 1 through N:</p>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇬🇧 EN</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="cm">#lingua: EN</span>
+<span class="kw">function</span> <span class="fn">sum_to</span>(n: <span class="typ">Integer</span>) <span class="kw">returns</span> <span class="typ">Integer</span>:
+    <span class="kw">var</span> total = <span class="num">0</span>
+    <span class="kw">var</span> i = <span class="num">1</span>
+    <span class="kw">while</span> i <span class="op">&lt;=</span> n:
+        total = total <span class="op">+</span> i
+        i = i <span class="op">+</span> <span class="num">1</span>
+    <span class="kw">return</span> total
+
+<span class="kw">function</span> <span class="fn">main</span>() <span class="kw">returns</span> <span class="typ">Unit</span>:
+    <span class="fn">print</span>(<span class="fn">sum_to</span>(<span class="num">10</span>))</pre>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇷🇴 RO</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="cm">#lingua: RO</span>
+<span class="kw">funcție</span> <span class="fn">suma_până_la</span>(n: <span class="typ">Întreg</span>) <span class="kw">returnează</span> <span class="typ">Întreg</span>:
+    <span class="kw">variabilă</span> total = <span class="num">0</span>
+    <span class="kw">variabilă</span> i = <span class="num">1</span>
+    <span class="kw">cât timp</span> i <span class="op">&lt;=</span> n:
+        total = total <span class="op">+</span> i
+        i = i <span class="op">+</span> <span class="num">1</span>
+    <span class="kw">returnează</span> total
+
+<span class="kw">funcție</span> <span class="fn">principal</span>() <span class="kw">returnează</span> <span class="typ">Unit</span>:
+    <span class="fn">afișează</span>(<span class="fn">suma_până_la</span>(<span class="num">10</span>))</pre>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇯🇵 JA</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="cm">#lingua: JA</span>
+<span class="kw">関数</span> <span class="fn">合計まで</span>(n: <span class="typ">整数</span>) <span class="kw">返す</span> <span class="typ">整数</span>:
+    <span class="kw">変数</span> 合計 = <span class="num">0</span>
+    <span class="kw">変数</span> i = <span class="num">1</span>
+    i <span class="op">&lt;=</span> n <span class="kw">の間</span>:
+        合計 = 合計 <span class="op">+</span> i
+        i = i <span class="op">+</span> <span class="num">1</span>
+    <span class="kw">返す</span> 合計
+
+<span class="kw">関数</span> <span class="fn">メイン</span>() <span class="kw">返す</span> <span class="typ">Unit</span>:
+    <span class="fn">表示</span>(<span class="fn">合計まで</span>(<span class="num">10</span>))</pre>
+        </div>
+
+        <p data-i18n="ch4_same_result">All three produce <code class="inline">55</code> and compile to byte-identical binaries.</p>
+      </article>
+
+      <!-- ═══════════════════════════════════════════ CHAPTER 5 -->
+      <article class="chapter" id="ch-5">
+        <div class="ch-num"><span data-i18n="ch_label">Chapter</span> 05</div>
+        <h1 class="ch-title" data-i18n="ch5_title">Variables and types</h1>
+
+        <h2 data-i18n="ch5_var">var and const</h2>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇬🇧 EN</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="cm">#lingua: EN</span>
+
+<span class="kw">var</span> count = <span class="num">0</span>              <span class="cm">// mutable</span>
+<span class="kw">const</span> MAX = <span class="num">100</span>            <span class="cm">// immutable</span>
+<span class="kw">var</span> name: <span class="typ">String</span> = <span class="str">"Ana"</span>   <span class="cm">// explicit type</span></pre>
+        </div>
+
+        <h2 data-i18n="ch5_primitives">Primitive types</h2>
+        <table>
+          <thead><tr><th data-i18n="th_type">Type</th><th data-i18n="th_desc">Description</th></tr></thead>
+          <tbody>
+            <tr><td><code class="inline">Integer</code></td><td data-i18n="td_int">signed 64-bit by default <em>(exact widths finalized in SPEC-03)</em></td></tr>
+            <tr><td><code class="inline">Float</code></td><td data-i18n="td_float">64-bit IEEE 754</td></tr>
+            <tr><td><code class="inline">Bool</code></td><td data-i18n="td_bool"><code class="inline">true</code> / <code class="inline">false</code></td></tr>
+            <tr><td><code class="inline">String</code></td><td data-i18n="td_string">UTF-8, immutable</td></tr>
+            <tr><td><code class="inline">Char</code></td><td data-i18n="td_char">one Unicode scalar</td></tr>
+            <tr><td><code class="inline">Byte</code></td><td data-i18n="td_byte">one byte (0–255)</td></tr>
+            <tr><td><code class="inline">Unit</code></td><td data-i18n="td_unit">the "no meaningful value" type</td></tr>
+          </tbody>
+        </table>
+
+        <h2 data-i18n="ch5_inferred">Inferred types</h2>
+        <p data-i18n="ch5_inferred_desc">Type annotations are optional when the literal determines the type:</p>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇬🇧 EN</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="kw">var</span> x = <span class="num">42</span>              <span class="cm">// x: Integer</span>
+<span class="kw">var</span> y = <span class="num">3.14</span>            <span class="cm">// y: Float</span>
+<span class="kw">var</span> s = <span class="str">"hello"</span>         <span class="cm">// s: String</span>
+<span class="kw">var</span> b = <span class="kw">true</span>            <span class="cm">// b: Bool</span></pre>
+        </div>
+
+        <h2 data-i18n="ch5_errors">Type errors</h2>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇬🇧 EN</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="kw">var</span> x: <span class="typ">Integer</span> = <span class="str">"hello"</span>   <span class="cm">// error</span></pre>
+        </div>
+
+        <div class="output">
+          <div class="output-head">▶ error (in your language, per CONV-074)</div>
+          <pre>error[E0300]: type mismatch
+ --&gt; main.lo:2:18
+  |
+2 | var x: Integer = "hello"
+  |                  ^^^^^^^ expected Integer, found String</pre>
+        </div>
+
+        <p data-i18n="ch5_errors_desc">Error messages are produced in <strong>your</strong> language by the active language pack, per <span class="rule-badge">CONV-074</span>.</p>
+      </article>
+
+      <!-- ═══════════════════════════════════════════ CHAPTER 6 -->
+      <article class="chapter" id="ch-6">
+        <div class="ch-num"><span data-i18n="ch_label">Chapter</span> 06</div>
+        <h1 class="ch-title" data-i18n="ch6_title">Functions</h1>
+
+        <h2 data-i18n="ch6_def">Defining functions</h2>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇬🇧 EN</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="kw">function</span> <span class="fn">add</span>(a: <span class="typ">Integer</span>, b: <span class="typ">Integer</span>) <span class="kw">returns</span> <span class="typ">Integer</span>:
+    <span class="kw">return</span> a <span class="op">+</span> b</pre>
+        </div>
+
+        <p data-i18n="ch6_default">If the return type is omitted, it defaults to <code class="inline">Unit</code> per <span class="rule-badge">GRAM-037</span>.</p>
+
+        <h2 data-i18n="ch6_rec">Recursion</h2>
+        <p data-i18n="ch6_rec_desc">A factorial function in <strong>three languages</strong>, producing the same machine code:</p>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇬🇧 EN</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="kw">function</span> <span class="fn">factorial</span>(n: <span class="typ">Integer</span>) <span class="kw">returns</span> <span class="typ">Integer</span>:
+    <span class="kw">if</span> n <span class="op">&lt;=</span> <span class="num">1</span> <span class="kw">then</span>:
+        <span class="kw">return</span> <span class="num">1</span>
+    <span class="kw">else</span>:
+        <span class="kw">return</span> n <span class="op">*</span> <span class="fn">factorial</span>(n <span class="op">-</span> <span class="num">1</span>)</pre>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇷🇴 RO</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="kw">funcție</span> <span class="fn">factorial</span>(n: <span class="typ">Întreg</span>) <span class="kw">returnează</span> <span class="typ">Întreg</span>:
+    <span class="kw">dacă</span> n <span class="op">&lt;=</span> <span class="num">1</span> <span class="kw">atunci</span>:
+        <span class="kw">returnează</span> <span class="num">1</span>
+    <span class="kw">altfel</span>:
+        <span class="kw">returnează</span> n <span class="op">*</span> <span class="fn">factorial</span>(n <span class="op">-</span> <span class="num">1</span>)</pre>
+        </div>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇯🇵 JA</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="kw">関数</span> <span class="fn">階乗</span>(n: <span class="typ">整数</span>) <span class="kw">返す</span> <span class="typ">整数</span>:
+    <span class="kw">もし</span> n <span class="op">&lt;=</span> <span class="num">1</span> <span class="kw">ならば</span>:
+        <span class="kw">返す</span> <span class="num">1</span>
+    <span class="kw">そうでなければ</span>:
+        <span class="kw">返す</span> n <span class="op">*</span> <span class="fn">階乗</span>(n <span class="op">-</span> <span class="num">1</span>)</pre>
+        </div>
+
+        <p data-i18n="ch6_same"><code class="inline">factorial(5)</code> returns <code class="inline">120</code> in all three. The binaries are byte-identical.</p>
+      </article>
+
+      <!-- ═══════════════════════════════════════════ CHAPTER 7 -->
+      <article class="chapter" id="ch-7">
+        <div class="ch-num"><span data-i18n="ch_label">Chapter</span> 07</div>
+        <h1 class="ch-title" data-i18n="ch7_title">Control flow</h1>
+
+        <h2 data-i18n="ch7_if">if / else</h2>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇬🇧 EN</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="kw">if</span> age <span class="op">&gt;=</span> <span class="num">18</span> <span class="kw">then</span>:
+    <span class="fn">print</span>(<span class="str">"adult"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="str">"minor"</span>)</pre>
+        </div>
+
+        <div class="callout warn">
+          <span class="label" data-i18n="ch7_then_label">The then keyword is required</span>
+          <p data-i18n="ch7_then"><span class="rule-badge">GRAM-035</span> requires <code class="inline">then</code> after the condition. It documents where the condition ends and the body begins — which helps RTL and CJK packs. Writing <code class="inline">if x:</code> without <code class="inline">then</code> is a compile error.</p>
+        </div>
+
+        <h2 data-i18n="ch7_while">while</h2>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇬🇧 EN</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="kw">var</span> i = <span class="num">0</span>
+<span class="kw">while</span> i <span class="op">&lt;</span> <span class="num">10</span>:
+    <span class="fn">print</span>(i)
+    i = i <span class="op">+</span> <span class="num">1</span></pre>
+        </div>
+
+        <h2 data-i18n="ch7_for">for</h2>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇬🇧 EN</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="kw">for</span> item <span class="kw">in</span> [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>]:
+    <span class="fn">print</span>(item)</pre>
+        </div>
+
+        <h2 data-i18n="ch7_match">match</h2>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇬🇧 EN</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="kw">match</span> value:
+    <span class="num">0</span>:
+        <span class="fn">print</span>(<span class="str">"zero"</span>)
+    <span class="num">1</span>:
+        <span class="fn">print</span>(<span class="str">"one"</span>)
+    <span class="id">_</span>:
+        <span class="fn">print</span>(<span class="str">"many"</span>)</pre>
+        </div>
+      </article>
+
+      <!-- ═══════════════════════════════════════════ CHAPTER 8 -->
+      <article class="chapter" id="ch-8">
+        <div class="ch-num"><span data-i18n="ch_label">Chapter</span> 08</div>
+        <h1 class="ch-title" data-i18n="ch8_title">Collections</h1>
+
+        <h2 data-i18n="ch8_arrays">Arrays</h2>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇬🇧 EN</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="kw">var</span> numbers = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>]
+<span class="kw">var</span> first = numbers[<span class="num">0</span>]                <span class="cm">// 1</span>
+<span class="kw">var</span> count = <span class="fn">len</span>(numbers)              <span class="cm">// 5</span>
+
+<span class="kw">for</span> n <span class="kw">in</span> numbers:
+    <span class="fn">print</span>(n)</pre>
+        </div>
+
+        <h2 data-i18n="ch8_tuples">Tuples</h2>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇬🇧 EN</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="kw">var</span> pair = (<span class="str">"Ana"</span>, <span class="num">25</span>)
+<span class="kw">var</span> name = pair.<span class="num">0</span>
+<span class="kw">var</span> age = pair.<span class="num">1</span></pre>
+        </div>
+
+        <h2 data-i18n="ch8_maps">Maps</h2>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇬🇧 EN</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="kw">var</span> ages = <span class="typ">Map</span>&lt;<span class="typ">String</span>, <span class="typ">Integer</span>&gt;{
+    <span class="str">"Ana"</span>: <span class="num">25</span>,
+    <span class="str">"Ion"</span>: <span class="num">30</span>
+}
+<span class="kw">var</span> ana_age = ages[<span class="str">"Ana"</span>]             <span class="cm">// 25</span></pre>
+        </div>
+
+        <h2 data-i18n="ch8_option">Option — no null surprises</h2>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇬🇧 EN</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="kw">var</span> maybe: <span class="typ">Option</span>&lt;<span class="typ">Integer</span>&gt; = <span class="fn">Some</span>(<span class="num">42</span>)
+<span class="kw">var</span> nothing: <span class="typ">Option</span>&lt;<span class="typ">Integer</span>&gt; = <span class="fn">None</span>()
+
+<span class="kw">match</span> maybe:
+    <span class="fn">Some</span>(v):
+        <span class="fn">print</span>(<span class="str">"got "</span>, v)
+    <span class="fn">None</span>:
+        <span class="fn">print</span>(<span class="str">"nothing"</span>)</pre>
+        </div>
+
+        <p data-i18n="ch8_option_desc">There is no bare <code class="inline">null</code>. The type system forces you to handle <code class="inline">None</code> explicitly.</p>
+      </article>
+
+      <!-- ═══════════════════════════════════════════ CHAPTER 9 -->
+      <article class="chapter" id="ch-9">
+        <div class="ch-num"><span data-i18n="ch_label">Chapter</span> 09</div>
+        <h1 class="ch-title" data-i18n="ch9_title">Errors without exceptions</h1>
+
+        <h2 data-i18n="ch9_result">The Result type</h2>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇬🇧 EN</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="kw">function</span> <span class="fn">divide</span>(a: <span class="typ">Integer</span>, b: <span class="typ">Integer</span>) <span class="kw">returns</span> <span class="typ">Result</span>&lt;<span class="typ">Integer</span>, <span class="typ">String</span>&gt;:
+    <span class="kw">if</span> b <span class="op">==</span> <span class="num">0</span> <span class="kw">then</span>:
+        <span class="kw">return</span> <span class="fn">Err</span>(<span class="str">"division by zero"</span>)
+    <span class="kw">else</span>:
+        <span class="kw">return</span> <span class="fn">Ok</span>(a <span class="op">/</span> b)</pre>
+        </div>
+
+        <h2 data-i18n="ch9_try">The ? operator (statement-tail only)</h2>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇬🇧 EN</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="kw">function</span> <span class="fn">safe_divide</span>(a: <span class="typ">Integer</span>, b: <span class="typ">Integer</span>) <span class="kw">returns</span> <span class="typ">Result</span>&lt;<span class="typ">Integer</span>, <span class="typ">String</span>&gt;:
+    <span class="kw">var</span> q = <span class="fn">divide</span>(a, b)<span class="op">?</span>
+    <span class="kw">return</span> <span class="fn">Ok</span>(q)</pre>
+        </div>
+
+        <p data-i18n="ch9_try_desc"><code class="inline">?</code> propagates the error early. Per <span class="rule-badge">GRAM-024</span>, it only works as the last sub-expression of a <code class="inline">return</code> statement — the compiler rejects misplaced uses.</p>
+
+        <h2 data-i18n="ch9_handle">Handling errors</h2>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇬🇧 EN</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="kw">match</span> <span class="fn">divide</span>(<span class="num">10</span>, <span class="num">0</span>):
+    <span class="fn">Ok</span>(v):
+        <span class="fn">print</span>(<span class="str">"result: "</span>, v)
+    <span class="fn">Err</span>(e):
+        <span class="fn">print</span>(<span class="str">"error: "</span>, e)</pre>
+        </div>
+
+        <div class="callout note">
+          <span class="label" data-i18n="ch9_noex_label">No try/catch. No unchecked exceptions.</span>
+          <p data-i18n="ch9_noex">Every error is a type. The compiler guarantees you handle it.</p>
+        </div>
+      </article>
+
+      <!-- ═══════════════════════════════════════════ CHAPTER 10 -->
+      <article class="chapter" id="ch-10">
+        <div class="ch-num"><span data-i18n="ch_label">Chapter</span> 10</div>
+        <h1 class="ch-title" data-i18n="ch10_title">Effects — I/O done explicitly <span class="preview-badge">spec-preview</span></h1>
+
+        <p data-i18n="ch10_desc">A preview of SPEC-05. The syntax is stable; the details are under RFC.</p>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇬🇧 EN</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="kw">function</span> <span class="fn">read_config</span>(path: <span class="typ">String</span>) <span class="kw">returns</span> <span class="typ">Result</span>&lt;<span class="typ">String</span>, <span class="typ">Error</span>&gt;
+    <span class="kw">with</span> [<span class="typ">IO</span>, <span class="typ">Filesystem</span>]:
+    <span class="kw">var</span> content = <span class="fn">read_file</span>(path)<span class="op">?</span>
+    <span class="kw">return</span> <span class="fn">Ok</span>(content)</pre>
+        </div>
+
+        <p data-i18n="ch10_explain">The <code class="inline">with [IO, Filesystem]</code> clause declares <strong>at compile time</strong> that this function will touch the file system. A function without <code class="inline">Filesystem</code> effect <strong>cannot</strong> call <code class="inline">read_file</code>.</p>
+
+        <p data-i18n="ch10_consequence">This means: <strong>you can see, from the signature, exactly what side effects a function has.</strong> No hidden global state.</p>
+
+        <p data-i18n="ch10_list">Available effects:</p>
+        <ul>
+          <li><code class="inline">IO</code></li>
+          <li><code class="inline">Database</code></li>
+          <li><code class="inline">Network</code></li>
+          <li><code class="inline">Filesystem</code></li>
+          <li><code class="inline">Quantum</code></li>
+        </ul>
+      </article>
+
+      <!-- ═══════════════════════════════════════════ CHAPTER 11 -->
+      <article class="chapter" id="ch-11">
+        <div class="ch-num"><span data-i18n="ch_label">Chapter</span> 11</div>
+        <h1 class="ch-title" data-i18n="ch11_title">Your first LinguaDB <span class="preview-badge">spec-preview</span></h1>
+
+        <h2 data-i18n="ch11_schema">Define a schema</h2>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇬🇧 EN</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="kw">create</span> <span class="kw">table</span> <span class="typ">Visitors</span> <span class="kw">if_not_exists</span> (
+    id      <span class="typ">Integer</span> <span class="kw">primary_key auto_increment</span>,
+    name    <span class="typ">String</span>(<span class="num">100</span>) <span class="kw">not_null</span>,
+    email   <span class="typ">String</span>(<span class="num">255</span>) <span class="kw">not_null unique</span>,
+    age     <span class="typ">Integer</span>,
+    created <span class="typ">Time</span> <span class="kw">default</span> <span class="fn">NOW</span>()
+)</pre>
+        </div>
+
+        <div class="callout success">
+          <span class="label" data-i18n="ch11_ct_label">Verified at compile time</span>
+          <p data-i18n="ch11_ct">The schema is checked at compile time. If you later try to <code class="inline">insert</code> into a column that doesn't exist, the compiler refuses — not the runtime.</p>
+        </div>
+
+        <h2 data-i18n="ch11_insert">Insert a row</h2>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇬🇧 EN</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="kw">insert</span> <span class="kw">into</span> <span class="typ">Visitors</span> (name, email, age)
+    <span class="kw">values</span> (<span class="str">"Ana Ionescu"</span>, <span class="str">"ana@example.com"</span>, <span class="num">25</span>)</pre>
+        </div>
+
+        <h2 data-i18n="ch11_query">Query</h2>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇬🇧 EN</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="kw">var</span> adults =
+    <span class="kw">select</span> name, email
+    <span class="kw">from</span> <span class="typ">Visitors</span>
+    <span class="kw">where</span> age <span class="op">&gt;=</span> <span class="num">18</span>
+    <span class="kw">order by</span> name <span class="kw">ascending</span>
+
+<span class="kw">for</span> v <span class="kw">in</span> adults:
+    <span class="fn">print</span>(v.name, <span class="str">" &lt;"</span>, v.email, <span class="str">"&gt;"</span>)</pre>
+        </div>
+
+        <p data-i18n="ch11_typed"><code class="inline">select</code> returns typed rows. <code class="inline">v.name</code> is a <code class="inline">String</code>; <code class="inline">v.email</code> is a <code class="inline">String</code>. <strong>No ORM, no reflection, no runtime type errors.</strong></p>
+      </article>
+
+      <!-- ═══════════════════════════════════════════ CHAPTER 12 -->
+      <article class="chapter" id="ch-12">
+        <div class="ch-num"><span data-i18n="ch_label">Chapter</span> 12</div>
+        <h1 class="ch-title" data-i18n="ch12_title">A taste of quantum <span class="preview-badge">spec-preview</span></h1>
+
+        <h2 data-i18n="ch12_bell">A Bell pair</h2>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇬🇧 EN</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="kw">function</span> <span class="fn">bell</span>() <span class="kw">returns</span> <span class="typ">Result</span>&lt;<span class="typ">Tuple</span>&lt;<span class="typ">Bool</span>, <span class="typ">Bool</span>&gt;, <span class="typ">QuantumError</span>&gt;
+    <span class="kw">with</span> [<span class="typ">Quantum</span>]:
+    <span class="kw">quantum</span>:
+        <span class="kw">qubit</span> q0, q1
+        <span class="fn">hadamard</span>(q0)
+        <span class="fn">cnot</span>(q0, q1)
+        <span class="kw">var</span> r0 = <span class="fn">measure</span>(q0)
+        <span class="kw">var</span> r1 = <span class="fn">measure</span>(q1)
+    <span class="kw">return</span> <span class="fn">Ok</span>((r0, r1))</pre>
+        </div>
+
+        <p data-i18n="ch12_results">Possible results: <code class="inline">(true, true)</code> or <code class="inline">(false, false)</code>. Never <code class="inline">(true, false)</code> — entanglement guarantees it.</p>
+
+        <h2 data-i18n="ch12_noclone">The compiler enforces the no-cloning theorem</h2>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇬🇧 EN</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="kw">qubit</span> q
+<span class="kw">var</span> a = q              <span class="cm">// error: cannot copy a qubit</span>
+<span class="kw">var</span> b = q              <span class="cm">// error: cannot copy a qubit</span></pre>
+        </div>
+
+        <div class="output">
+          <div class="output-head">▶ error</div>
+          <pre>error[E0900]: qubit is linear, cannot be duplicated
+ --&gt; main.lo:3:9
+  |
+3 | var a = q
+  |         ^ moved here; a qubit can only be used once</pre>
+        </div>
+
+        <div class="callout note">
+          <span class="label" data-i18n="ch12_linear_label">Linear types as a theorem</span>
+          <p data-i18n="ch12_linear">The type <code class="inline">Qubit</code> is <strong>linear</strong> — it can only be consumed once. This is not a runtime check. It is a <strong>compile-time theorem</strong>.</p>
+        </div>
+      </article>
+
+      <!-- ═══════════════════════════════════════════ CHAPTER 13 -->
+      <article class="chapter" id="ch-13">
+        <div class="ch-num"><span data-i18n="ch_label">Chapter</span> 13</div>
+        <h1 class="ch-title" data-i18n="ch13_title">Building and running</h1>
+
+        <h2 data-i18n="ch13_cli">The loc command</h2>
+
+        <table>
+          <thead><tr><th data-i18n="th_cmd">Command</th><th data-i18n="th_purpose">Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><code class="inline">loc init</code></td><td data-i18n="td_init">create a new project</td></tr>
+            <tr><td><code class="inline">loc build</code></td><td data-i18n="td_build">compile to a native binary</td></tr>
+            <tr><td><code class="inline">loc run</code></td><td data-i18n="td_run">compile and run</td></tr>
+            <tr><td><code class="inline">loc check</code></td><td data-i18n="td_check">type-check without building</td></tr>
+            <tr><td><code class="inline">loc fmt</code></td><td data-i18n="td_fmt">format with lofmt</td></tr>
+            <tr><td><code class="inline">loc test</code></td><td data-i18n="td_test">run tests with lotest</td></tr>
+            <tr><td><code class="inline">loc doc</code></td><td data-i18n="td_doc">generate docs with lodoc</td></tr>
+            <tr><td><code class="inline">loc langpacks list</code></td><td data-i18n="td_langpacks">list available packs</td></tr>
+            <tr><td><code class="inline">loc dump-ast --canonical</code></td><td data-i18n="td_dump">canonical AST dump (GRAM-054)</td></tr>
+            <tr><td><code class="inline">loc explain-detection</code></td><td data-i18n="td_explain">show auto-detection result (LEX-104)</td></tr>
+          </tbody>
+        </table>
+
+        <h2 data-i18n="ch13_cross">Cross-compilation</h2>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>loc build src/main.lo --target=arm64
+loc build src/main.lo --target=riscv64
+loc build src/main.lo --target=wasm32
+loc build src/main.lo --target=qpu:ibm</pre>
+        </div>
+
+        <h2 data-i18n="ch13_repro">Reproducible builds</h2>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>loc build --reproducible src/main.lo -o hello
+<span class="fn">sha256sum</span> hello
+
+<span class="cm"># On a different machine, same source:</span>
+loc build --reproducible src/main.lo -o hello2
+<span class="fn">sha256sum</span> hello2                <span class="cm"># identical hash</span></pre>
+        </div>
+
+        <p data-i18n="ch13_repro_desc">Reproducibility is <span class="rule-badge">Principle 3</span> from the constitution.</p>
+      </article>
+
+      <!-- ═══════════════════════════════════════════ CHAPTER 14 -->
+      <article class="chapter" id="ch-14">
+        <div class="ch-num"><span data-i18n="ch_label">Chapter</span> 14</div>
+        <h1 class="ch-title" data-i18n="ch14_title">The package manager (lopm)</h1>
+
+        <h2 data-i18n="ch14_add">Add a dependency</h2>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>lopm add math-advanced</pre>
+        </div>
+
+        <p data-i18n="ch14_add_desc">This edits <code class="inline">loc.toml</code>:</p>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">toml</span><span class="path">loc.toml</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>[dependencies]
+"math-advanced" = "^1.2.0"</pre>
+        </div>
+
+        <h2 data-i18n="ch14_fed">Federated registries</h2>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">toml</span><span class="path">loc.toml</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>[registries]
+default = "https://my-company.example/lopm"
+mirror  = "file:///srv/lopm-mirror"
+
+[registries.policy]
+fallback = ["default", "mirror"]
+offline  = false</pre>
+        </div>
+
+        <div class="callout note">
+          <span class="label" data-i18n="ch14_noreg_label">No official registry</span>
+          <p data-i18n="ch14_noreg">There is no mandatory "official" registry per <span class="rule-badge">CONV-080</span>. Federated by design.</p>
+        </div>
+
+        <h2 data-i18n="ch14_offline">Offline mode</h2>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>lopm vendor                   <span class="cm"># copies all deps into vendor/</span>
+lopm install --vendor         <span class="cm"># installs with no network</span></pre>
+        </div>
+
+        <p data-i18n="ch14_offline_desc">This is <span class="rule-badge">Principle 6</span> in action: your build never breaks because a registry is down.</p>
+      </article>
+
+      <!-- ═══════════════════════════════════════════ CHAPTER 15 -->
+      <article class="chapter" id="ch-15">
+        <div class="ch-num"><span data-i18n="ch_label">Chapter</span> 15</div>
+        <h1 class="ch-title" data-i18n="ch15_title">Testing (lotest)</h1>
+
+        <h2 data-i18n="ch15_testfile">A test file</h2>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇬🇧 EN</span><span class="path">tests/add_test.lo</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="cm">#lingua: EN</span>
+
+<span class="kw">function</span> <span class="fn">test_add_positive</span>():
+    <span class="fn">assert_eq</span>(<span class="fn">add</span>(<span class="num">2</span>, <span class="num">3</span>), <span class="num">5</span>)
+
+<span class="kw">function</span> <span class="fn">test_add_negative</span>():
+    <span class="fn">assert_eq</span>(<span class="fn">add</span>(<span class="op">-</span><span class="num">2</span>, <span class="op">-</span><span class="num">3</span>), <span class="op">-</span><span class="num">5</span>)
+
+<span class="kw">function</span> <span class="fn">test_add_zero</span>():
+    <span class="fn">assert_eq</span>(<span class="fn">add</span>(<span class="num">0</span>, <span class="num">0</span>), <span class="num">0</span>)</pre>
+        </div>
+
+        <h2 data-i18n="ch15_run">Run tests</h2>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">bash</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre>loc test</pre>
+        </div>
+
+        <div class="output">
+          <div class="output-head">▶ output</div>
+          <pre>running 3 tests
+test test_add_positive ... ok
+test test_add_negative ... ok
+test test_add_zero    ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored</pre>
+        </div>
+
+        <h2 data-i18n="ch15_ro">Test in your language</h2>
+
+        <div class="code-wrap">
+          <div class="code-head"><span class="lang">🇷🇴 RO</span><span class="path">tests/add_test.lo</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+          <pre><span class="cm">#lingua: RO</span>
+
+<span class="kw">funcție</span> <span class="fn">test_adunare_pozitive</span>():
+    <span class="fn">verifică_egal</span>(<span class="fn">add</span>(<span class="num">2</span>, <span class="num">3</span>), <span class="num">5</span>)</pre>
+        </div>
+
+        <p data-i18n="ch15_ro_desc">The test name and body are in <strong>your</strong> language, but the test <strong>runs the same</strong>.</p>
+      </article>
+
+      <!-- ═══════════════════════════════════════════ CHAPTER 16 -->
+      <article class="chapter" id="ch-16">
+        <div class="ch-num"><span data-i18n="ch_label">Chapter</span> 16</div>
+        <h1 class="ch-title" data-i18n="ch16_title">What's next</h1>
+
+        <h2 data-i18n="ch16_summary">You now know how to</h2>
+        <ul>
+          <li data-i18n="ch16_li1">✅ Write programs in <strong>two (or more) natural languages</strong></li>
+          <li data-i18n="ch16_li2">✅ Verify they produce <strong>byte-identical binaries</strong></li>
+          <li data-i18n="ch16_li3">✅ Define functions, control flow, collections</li>
+          <li data-i18n="ch16_li4">✅ Handle errors without exceptions</li>
+          <li data-i18n="ch16_li5">✅ Use <strong>LinguaDB</strong> from inside the language</li>
+          <li data-i18n="ch16_li6">✅ Run tests</li>
+          <li data-i18n="ch16_li7">✅ Manage packages with <code class="inline">lopm</code></li>
+        </ul>
+
+        <h2 data-i18n="ch16_where">Where to go from here</h2>
+        <table>
+          <thead><tr><th data-i18n="th_goal">Goal</th><th data-i18n="th_where">Where</th></tr></thead>
+          <tbody>
+            <tr><td data-i18n="goal_grammar">Learn the full grammar</td><td><code class="inline">spec/02-grammar.md</code></td></tr>
+            <tr><td data-i18n="goal_types">Understand the type system</td><td><code class="inline">spec/03-types.md</code> (coming)</td></tr>
+            <tr><td data-i18n="goal_pack">Write a language pack</td><td><code class="inline">spec/appendix/langpack-schema.json</code></td></tr>
+            <tr><td data-i18n="goal_contrib">Contribute a compiler fix</td><td><code class="inline">impl/loc/</code> + <code class="inline">ci/conformance-gate.sh</code></td></tr>
+            <tr><td data-i18n="goal_book">Read the book</td><td><code class="inline">docs/book/</code> (free)</td></tr>
+            <tr><td data-i18n="goal_discuss">Discuss with the community</td><td>github.com/lingua-omnibus/discussions</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout success" style="margin-top:2rem">
+          <span class="label" data-i18n="ch16_final_label">The most important thing</span>
+          <p data-i18n="ch16_final"><strong>You can do all of this in your own language.</strong> Every line of this tutorial is a promise: your native language is not a second-class way to program. It is <em>first-class</em>.</p>
+          <p style="margin-top:.8rem;font-style:italic;color:var(--accent)" data-i18n="ch16_quote">"Every human mind deserves to program in its own language."</p>
+        </div>
+
+        <p style="text-align:center;margin-top:2rem;color:var(--muted)" data-i18n="ch16_welcome">Welcome aboard. 🚀</p>
+      </article>
+
+      <!-- CHAPTER NAV (bottom) -->
+      <div class="chapter-nav">
+        <a href="#" class="prev" id="nav-prev">
+          <span class="label">← <span data-i18n="nav_prev">Previous</span></span>
+          <span class="title" id="nav-prev-title">—</span>
+        </a>
+        <a href="#" class="next" id="nav-next">
+          <span class="label"><span data-i18n="nav_next">Next</span> →</span>
+          <span class="title" id="nav-next-title">—</span>
+        </a>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo">Lingua Omnibus</div>
+  <p style="max-width:560px;margin:0 auto .9rem;font-size:.85rem" data-i18n="footer_meta">Getting Started Tutorial v1.0 · matches spec-0.1 · 2026 · Apache 2.0 License</p>
+  <p data-i18n="footer_author">Created by <strong>Claudiu Groza (Vemeth)</strong> · Foundation-governed · Open for international collaboration</p>
+  <p style="margin-top:.5rem;font-style:italic;color:#b0a89a;font-size:.8rem" data-i18n="footer_quote">"Every human mind deserves to program in its own language."</p>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   i18n · EN full · RO full · FR/DE/ES/JA partial (honest)
+   ═══════════════════════════════════════════════════════════ */
+const i18n = {
+  en:{
+    banner_title:"Partial translation.",
+    banner_msg:"Full tutorial translation for this language is pending. It will arrive via the language pack system — at spec-0.1 only EN and RO packs are complete. Code examples remain multilingual throughout.",
+    nav_tutorial:"Tutorial",nav_chapter:"Chapter",nav_of:"of",toc_label:"Contents",ch_label:"Chapter",nav_prev:"Previous",nav_next:"Next",
+    ch1_title:"Welcome to Lingua Omnibus",
+    ch1_p1:"By the end of this tutorial, you will have <strong>written three working programs in two natural languages</strong>, seen that they produce <strong>byte-identical compiled output</strong>, queried an embedded database, written and run a test, and understood how to add a new natural language as a data file.",
+    ch1_p2:"You do <strong>not</strong> need to know English to program in Lingua Omnibus. Every example is given in English and Romanian, with additional languages where they help.",
+    ch1_callout_label:"Before we start",
+    ch1_callout:"Lingua Omnibus is at <code class=\"inline\">spec-0.1</code>. Code here is written against the normative specification (SPEC-00, 01, 02) and compiles with the reference implementation that is under construction. Where the tooling is not yet available, sections are marked <span class=\"preview-badge\">spec-preview</span>. Everything shown <strong>will</strong> work exactly as written once M1 ships.",
+    ch1_what_title:"What you will build",
+    ch1_li1:"A Hello, World program in <strong>two languages</strong> that produces the same binary",
+    ch1_li2:"A factorial function, in <strong>three languages</strong>",
+    ch1_li3:"A small database application using <strong>LinguaDB</strong>",
+    ch1_li4:"A unit test in <strong>two languages</strong>",
+    ch2_title:"Setup",
+    ch2_install:"Install the toolchain",ch2_install_desc:"The reference implementation lives at <code class=\"inline\">impl/loc/</code>. Once M1 ships, install with:",
+    ch2_verify:"Verify",ch2_verify_desc:"The version output includes a machine-readable conformance declaration per",
+    ch2_init:"Your first project",
+    ch2_step1:"Run <code class=\"inline\">loc init hello-lo &amp;&amp; cd hello-lo</code>",
+    ch2_step2:"This creates <code class=\"inline\">loc.toml</code> and <code class=\"inline\">src/main.lo</code>",
+    ch2_step3:"Open <code class=\"inline\">src/main.lo</code> in your editor",
+    ch3_title:"Hello, World",
+    ch3_en:"The English version",ch3_en_desc:"Create <code class=\"inline\">src/main.lo</code>:",
+    ch3_run:"Run it:",ch3_ro:"The Romanian version",
+    ch3_ro_desc:"Change <code class=\"inline\">#lingua: EN</code> to <code class=\"inline\">#lingua: RO</code> and rewrite:",
+    ch3_proof:"The proof: same AST, same binary",
+    ch3_proof_desc:"Per",
+    ch3_success_label:"Verified promise",
+    ch3_success:"No output from <code class=\"inline\">diff</code> and no output from <code class=\"inline\">cmp</code>. That is the promise of Lingua Omnibus, verified end-to-end.",
+    ch4_title:"Your language, your code",
+    ch4_directive:"The #lingua: directive",
+    ch4_directive_desc:"Every file starts with <code class=\"inline\">#lingua: XX</code> where <code class=\"inline\">XX</code> is an ISO 639-1 code, per",
+    ch4_directive_auto:"If the directive is missing, the compiler tries to auto-detect",
+    ch4_same:"One program, six languages",
+    ch4_same_desc:"A complete program that computes the sum of numbers 1 through N:",
+    ch4_same_result:"All three produce <code class=\"inline\">55</code> and compile to byte-identical binaries.",
+    ch5_title:"Variables and types",
+    ch5_var:"var and const",ch5_primitives:"Primitive types",
+    th_type:"Type",th_desc:"Description",
+    td_int:"signed 64-bit by default <em>(exact widths finalized in SPEC-03)</em>",
+    td_float:"64-bit IEEE 754",td_bool:"<code class=\"inline\">true</code> / <code class=\"inline\">false</code>",
+    td_string:"UTF-8, immutable",td_char:"one Unicode scalar",td_byte:"one byte (0–255)",
+    td_unit:"the \"no meaningful value\" type",
+    ch5_inferred:"Inferred types",ch5_inferred_desc:"Type annotations are optional when the literal determines the type:",
+    ch5_errors:"Type errors",ch5_errors_desc:"Error messages are produced in <strong>your</strong> language by the active language pack, per",
+    ch6_title:"Functions",ch6_def:"Defining functions",ch6_default:"If the return type is omitted, it defaults to",
+    ch6_rec:"Recursion",ch6_rec_desc:"A factorial function in <strong>three languages</strong>, producing the same machine code:",
+    ch6_same:"returns <code class=\"inline\">120</code> in all three. The binaries are byte-identical.",
+    ch7_title:"Control flow",ch7_if:"if / else",
+    ch7_then_label:"The then keyword is required",
+    ch7_then:"requires <code class=\"inline\">then</code> after the condition. It documents where the condition ends and the body begins — which helps RTL and CJK packs. Writing <code class=\"inline\">if x:</code> without <code class=\"inline\">then</code> is a compile error.",
+    ch7_while:"while",ch7_for:"for",ch7_match:"match",
+    ch8_title:"Collections",ch8_arrays:"Arrays",ch8_tuples:"Tuples",ch8_maps:"Maps",
+    ch8_option:"Option — no null surprises",
+    ch8_option_desc:"There is no bare <code class=\"inline\">null</code>. The type system forces you to handle <code class=\"inline\">None</code> explicitly.",
+    ch9_title:"Errors without exceptions",ch9_result:"The Result type",ch9_try:"The ? operator (statement-tail only)",
+    ch9_try_desc:"propagates the error early. Per",
+    ch9_try_desc2:", it only works as the last sub-expression of a <code class=\"inline\">return</code> statement — the compiler rejects misplaced uses.",
+    ch9_handle:"Handling errors",
+    ch9_noex_label:"No try/catch. No unchecked exceptions.",
+    ch9_noex:"Every error is a type. The compiler guarantees you handle it.",
+    ch10_title:"Effects — I/O done explicitly",
+    ch10_desc:"A preview of SPEC-05. The syntax is stable; the details are under RFC.",
+    ch10_explain:"The <code class=\"inline\">with [IO, Filesystem]</code> clause declares <strong>at compile time</strong> that this function will touch the file system. A function without <code class=\"inline\">Filesystem</code> effect <strong>cannot</strong> call <code class=\"inline\">read_file</code>.",
+    ch10_consequence:"This means: <strong>you can see, from the signature, exactly what side effects a function has.</strong> No hidden global state.",
+    ch10_list:"Available effects:",
+    ch11_title:"Your first LinguaDB",ch11_schema:"Define a schema",
+    ch11_ct_label:"Verified at compile time",
+    ch11_ct:"The schema is checked at compile time. If you later try to <code class=\"inline\">insert</code> into a column that doesn't exist, the compiler refuses — not the runtime.",
+    ch11_insert:"Insert a row",ch11_query:"Query",
+    ch11_typed:"returns typed rows. <code class=\"inline\">v.name</code> is a <code class=\"inline\">String</code>; <code class=\"inline\">v.email</code> is a <code class=\"inline\">String</code>. <strong>No ORM, no reflection, no runtime type errors.</strong>",
+    ch12_title:"A taste of quantum",ch12_bell:"A Bell pair",
+    ch12_results:"Possible results: <code class=\"inline\">(true, true)</code> or <code class=\"inline\">(false, false)</code>. Never <code class=\"inline\">(true, false)</code> — entanglement guarantees it.",
+    ch12_noclone:"The compiler enforces the no-cloning theorem",
+    ch12_linear_label:"Linear types as a theorem",
+    ch12_linear:"The type <code class=\"inline\">Qubit</code> is <strong>linear</strong> — it can only be consumed once. This is not a runtime check. It is a <strong>compile-time theorem</strong>.",
+    ch13_title:"Building and running",
+    ch13_cli:"The loc command",
+    th_cmd:"Command",th_purpose:"Purpose",
+    td_init:"create a new project",td_build:"compile to a native binary",td_run:"compile and run",
+    td_check:"type-check without building",td_fmt:"format with lofmt",td_test:"run tests with lotest",
+    td_doc:"generate docs with lodoc",td_langpacks:"list available packs",
+    td_dump:"canonical AST dump (GRAM-054)",td_explain:"show auto-detection result (LEX-104)",
+    ch13_cross:"Cross-compilation",ch13_repro:"Reproducible builds",
+    ch13_repro_desc:"Reproducibility is",
+    ch14_title:"The package manager (lopm)",ch14_add:"Add a dependency",ch14_add_desc:"This edits <code class=\"inline\">loc.toml</code>:",
+    ch14_fed:"Federated registries",
+    ch14_noreg_label:"No official registry",
+    ch14_noreg:"There is no mandatory \"official\" registry per",
+    ch14_offline:"Offline mode",ch14_offline_desc:"This is",
+    ch14_offline_desc2:"in action: your build never breaks because a registry is down.",
+    ch15_title:"Testing (lotest)",ch15_testfile:"A test file",ch15_run:"Run tests",
+    ch15_ro:"Test in your language",ch15_ro_desc:"The test name and body are in <strong>your</strong> language, but the test <strong>runs the same</strong>.",
+    ch16_title:"What's next",ch16_summary:"You now know how to",
+    ch16_li1:"Write programs in <strong>two (or more) natural languages</strong>",
+    ch16_li2:"Verify they produce <strong>byte-identical binaries</strong>",
+    ch16_li3:"Define functions, control flow, collections",
+    ch16_li4:"Handle errors without exceptions",
+    ch16_li5:"Use <strong>LinguaDB</strong> from inside the language",
+    ch16_li6:"Run tests",ch16_li7:"Manage packages with <code class=\"inline\">lopm</code>",
+    ch16_where:"Where to go from here",th_goal:"Goal",th_where:"Where",
+    goal_grammar:"Learn the full grammar",goal_types:"Understand the type system",
+    goal_pack:"Write a language pack",goal_contrib:"Contribute a compiler fix",
+    goal_book:"Read the book",goal_discuss:"Discuss with the community",
+    ch16_final_label:"The most important thing",
+    ch16_final:"<strong>You can do all of this in your own language.</strong> Every line of this tutorial is a promise: your native language is not a second-class way to program. It is <em>first-class</em>.",
+    ch16_quote:'"Every human mind deserves to program in its own language."',
+    ch16_welcome:"Welcome aboard. 🚀",
+    footer_meta:"Getting Started Tutorial v1.0 · matches spec-0.1 · 2026 · Apache 2.0 License",
+    footer_author:"Created by <strong>Claudiu Groza (Vemeth)</strong> · Foundation-governed · Open for international collaboration",
+    footer_quote:'"Every human mind deserves to program in its own language."'
+  },
+  ro:{
+    banner_title:"Traducere parțială.",
+    banner_msg:"Traducerea completă a tutorialului pentru această limbă e în lucru. Va veni prin sistemul de language pack-uri — la spec-0.1 doar EN și RO sunt complete. Exemplele de cod rămân multilingve.",
+    nav_tutorial:"Tutorial",nav_chapter:"Capitolul",nav_of:"din",toc_label:"Cuprins",ch_label:"Capitolul",nav_prev:"Anteriorul",nav_next:"Următorul",
+    ch1_title:"Bun venit la Lingua Omnibus",
+    ch1_p1:"La finalul acestui tutorial, vei fi <strong>scris trei programe funcționale în două limbi naturale</strong>, vei fi văzut că produc <strong>output compilat byte-identic</strong>, vei fi interogat o bază de date integrată, vei fi scris și rulat un test și vei fi înțeles cum să adaugi o limbă naturală nouă ca fișier de date.",
+    ch1_p2:"<strong>Nu</strong> trebuie să știi engleză pentru a programa în Lingua Omnibus. Fiecare exemplu e dat în engleză și română, cu limbi suplimentare acolo unde ajută.",
+    ch1_callout_label:"Înainte să începem",
+    ch1_callout:"Lingua Omnibus e la <code class=\"inline\">spec-0.1</code>. Codul de aici e scris conform specificației normative (SPEC-00, 01, 02) și compilează cu implementarea de referință care e în construcție. Unde tooling-ul nu e încă disponibil, secțiunile sunt marcate <span class=\"preview-badge\">spec-preview</span>. Tot ce e arătat <strong>va</strong> funcționa exact ca scris odată ce M1 e gata.",
+    ch1_what_title:"Ce vei construi",
+    ch1_li1:"Un program Hello, World în <strong>două limbi</strong> care produce același binar",
+    ch1_li2:"O funcție factorial, în <strong>trei limbi</strong>",
+    ch1_li3:"O mică aplicație de baze de date folosind <strong>LinguaDB</strong>",
+    ch1_li4:"Un test unitar în <strong>două limbi</strong>",
+    ch2_title:"Setup",ch2_install:"Instalează toolchain-ul",
+    ch2_install_desc:"Implementarea de referință e în <code class=\"inline\">impl/loc/</code>. Odată ce M1 e gata, instalează cu:",
+    ch2_verify:"Verifică",
+    ch2_verify_desc:"Output-ul versiunii include o declarație de conformanță machine-readable conform",
+    ch2_init:"Primul tău proiect",
+    ch2_step1:"Rulează <code class=\"inline\">loc init hello-lo &amp;&amp; cd hello-lo</code>",
+    ch2_step2:"Aceasta creează <code class=\"inline\">loc.toml</code> și <code class=\"inline\">src/main.lo</code>",
+    ch2_step3:"Deschide <code class=\"inline\">src/main.lo</code> în editorul tău",
+    ch3_title:"Hello, World",
+    ch3_en:"Versiunea engleză",ch3_en_desc:"Creează <code class=\"inline\">src/main.lo</code>:",
+    ch3_run:"Rulează-l:",ch3_ro:"Versiunea română",
+    ch3_ro_desc:"Schimbă <code class=\"inline\">#lingua: EN</code> în <code class=\"inline\">#lingua: RO</code> și rescrie:",
+    ch3_proof:"Dovada: același AST, același binar",ch3_proof_desc:"Conform",
+    ch3_success_label:"Promisiune verificată",
+    ch3_success:"Niciun output din <code class=\"inline\">diff</code> și niciun output din <code class=\"inline\">cmp</code>. Aceasta e promisiunea Lingua Omnibus, verificată end-to-end.",
+    ch4_title:"Limba ta, codul tău",ch4_directive:"Directiva #lingua:",
+    ch4_directive_desc:"Fiecare fișier începe cu <code class=\"inline\">#lingua: XX</code> unde <code class=\"inline\">XX</code> e un cod ISO 639-1, conform",
+    ch4_directive_auto:"Dacă directiva lipsește, compilatorul încearcă auto-detectarea",
+    ch4_same:"Un program, șase limbi",
+    ch4_same_desc:"Un program complet care calculează suma numerelor de la 1 la N:",
+    ch4_same_result:"Toate trei produc <code class=\"inline\">55</code> și compilează la binare byte-identice.",
+    ch5_title:"Variabile și tipuri",ch5_var:"var și const",ch5_primitives:"Tipuri primitive",
+    th_type:"Tip",th_desc:"Descriere",
+    td_int:"signed 64-bit implicit <em>(lățimi exacte finalizate în SPEC-03)</em>",
+    td_float:"64-bit IEEE 754",td_bool:"<code class=\"inline\">true</code> / <code class=\"inline\">false</code>",
+    td_string:"UTF-8, imutabil",td_char:"un scalar Unicode",td_byte:"un octet (0–255)",
+    td_unit:"tipul \"fără valoare semnificativă\"",
+    ch5_inferred:"Tipuri inferate",ch5_inferred_desc:"Adnotările de tip sunt opționale când literalul determină tipul:",
+    ch5_errors:"Erori de tip",
+    ch5_errors_desc:"Mesajele de eroare sunt produse în limba <strong>ta</strong> de language pack-ul activ, conform",
+    ch6_title:"Funcții",ch6_def:"Definirea funcțiilor",
+    ch6_default:"Dacă tipul returnat e omis, e implicit",
+    ch6_rec:"Recursie",ch6_rec_desc:"O funcție factorial în <strong>trei limbi</strong>, producând același cod mașină:",
+    ch6_same:"returnează <code class=\"inline\">120</code> în toate trei. Binarele sunt byte-identice.",
+    ch7_title:"Control flow",ch7_if:"if / else",
+    ch7_then_label:"Cuvântul then e obligatoriu",
+    ch7_then:"cere <code class=\"inline\">then</code> după condiție. Documentează unde se termină condiția și începe corpul — ajută pack-urile RTL și CJK. Scrierea <code class=\"inline\">if x:</code> fără <code class=\"inline\">then</code> e eroare de compilare.",
+    ch7_while:"while",ch7_for:"for",ch7_match:"match",
+    ch8_title:"Colecții",ch8_arrays:"Array-uri",ch8_tuples:"Tuple-uri",ch8_maps:"Map-uri",
+    ch8_option:"Option — fără surprize null",
+    ch8_option_desc:"Nu există <code class=\"inline\">null</code> gol. Sistemul de tipuri te obligă să tratezi <code class=\"inline\">None</code> explicit.",
+    ch9_title:"Erori fără excepții",ch9_result:"Tipul Result",ch9_try:"Operatorul ? (doar la final de statement)",
+    ch9_try_desc:"propagă eroarea devreme. Conform",
+    ch9_try_desc2:", funcționează doar ca ultima sub-expresie a unui <code class=\"inline\">return</code> — compilatorul respinge utilizările greșite.",
+    ch9_handle:"Tratarea erorilor",
+    ch9_noex_label:"Fără try/catch. Fără excepții necontrolate.",
+    ch9_noex:"Fiecare eroare e un tip. Compilatorul garantează că o tratezi.",
+    ch10_title:"Efecte — I/O explicit",
+    ch10_desc:"O previzualizare a SPEC-05. Sintaxa e stabilă; detaliile sunt în RFC.",
+    ch10_explain:"Clauza <code class=\"inline\">with [IO, Filesystem]</code> declară <strong>la compilare</strong> că această funcție va atinge sistemul de fișiere. O funcție fără efectul <code class=\"inline\">Filesystem</code> <strong>nu poate</strong> apela <code class=\"inline\">read_file</code>.",
+    ch10_consequence:"Asta înseamnă: <strong>poți vedea, din semnătură, exact ce efecte secundare are o funcție.</strong> Fără stare globală ascunsă.",
+    ch10_list:"Efecte disponibile:",
+    ch11_title:"Primul tău LinguaDB",ch11_schema:"Definește o schemă",
+    ch11_ct_label:"Verificat la compilare",
+    ch11_ct:"Schema e verificată la compilare. Dacă încerci mai târziu să faci <code class=\"inline\">insert</code> într-o coloană care nu există, compilatorul refuză — nu runtime-ul.",
+    ch11_insert:"Inserează un rând",ch11_query:"Interoghează",
+    ch11_typed:"returnează rânduri tipizate. <code class=\"inline\">v.name</code> e <code class=\"inline\">String</code>; <code class=\"inline\">v.email</code> e <code class=\"inline\">String</code>. <strong>Fără ORM, fără reflection, fără erori de tip la runtime.</strong>",
+    ch12_title:"O gustare din cuantic",ch12_bell:"O pereche Bell",
+    ch12_results:"Rezultate posibile: <code class=\"inline\">(true, true)</code> sau <code class=\"inline\">(false, false)</code>. Niciodată <code class=\"inline\">(true, false)</code> — entanglement-ul garantează.",
+    ch12_noclone:"Compilatorul impune teorema non-clonării",
+    ch12_linear_label:"Tipuri liniare ca teoremă",
+    ch12_linear:"Tipul <code class=\"inline\">Qubit</code> e <strong>liniar</strong> — poate fi consumat o singură dată. Nu e un check la runtime. E o <strong>teoremă la compilare</strong>.",
+    ch13_title:"Build și rulare",ch13_cli:"Comanda loc",
+    th_cmd:"Comandă",th_purpose:"Scop",
+    td_init:"creează un proiect nou",td_build:"compilează la binar nativ",td_run:"compilează și rulează",
+    td_check:"type-check fără build",td_fmt:"formatează cu lofmt",td_test:"rulează teste cu lotest",
+    td_doc:"generează docs cu lodoc",td_langpacks:"listează pack-urile disponibile",
+    td_dump:"dump AST canonic (GRAM-054)",td_explain:"arată rezultatul auto-detecției (LEX-104)",
+    ch13_cross:"Cross-compilare",ch13_repro:"Build-uri reproductibile",
+    ch13_repro_desc:"Reproductibilitatea e",
+    ch14_title:"Managerul de pachete (lopm)",ch14_add:"Adaugă o dependență",
+    ch14_add_desc:"Aceasta editează <code class=\"inline\">loc.toml</code>:",
+    ch14_fed:"Registre federate",
+    ch14_noreg_label:"Niciun registru oficial",
+    ch14_noreg:"Nu există un registru \"oficial\" obligatoriu conform",
+    ch14_offline:"Modul offline",ch14_offline_desc:"Acesta e",
+    ch14_offline_desc2:"în acțiune: build-ul tău nu se strică niciodată pentru că un registru e jos.",
+    ch15_title:"Testare (lotest)",ch15_testfile:"Un fișier de test",ch15_run:"Rulează testele",
+    ch15_ro:"Testează în limba ta",
+    ch15_ro_desc:"Numele testului și corpul sunt în limba <strong>ta</strong>, dar testul <strong>rulează la fel</strong>.",
+    ch16_title:"Ce urmează",ch16_summary:"Acum știi să",
+    ch16_li1:"Scrii programe în <strong>două (sau mai multe) limbi naturale</strong>",
+    ch16_li2:"Verifici că produc <strong>binare byte-identice</strong>",
+    ch16_li3:"Definești funcții, control flow, colecții",
+    ch16_li4:"Tratezi erori fără excepții",
+    ch16_li5:"Folosești <strong>LinguaDB</strong> din interiorul limbajului",
+    ch16_li6:"Rulezi teste",ch16_li7:"Gestionezi pachete cu <code class=\"inline\">lopm</code>",
+    ch16_where:"Unde să mergi de aici",th_goal:"Obiectiv",th_where:"Unde",
+    goal_grammar:"Învață gramatica completă",goal_types:"Înțelege sistemul de tipuri",
+    goal_pack:"Scrie un language pack",goal_contrib:"Contribuie o corecție la compilator",
+    goal_book:"Citește cartea",goal_discuss:"Discută cu comunitatea",
+    ch16_final_label:"Cel mai important lucru",
+    ch16_final:"<strong>Poți face toate acestea în propria limbă.</strong> Fiecare rând din acest tutorial e o promisiune: limba ta nativă nu e o cale de programare de clasa a doua. E <em>de prima clasă</em>.",
+    ch16_quote:'"Orice minte umană merită să programeze în propria limbă."',
+    ch16_welcome:"Bine ai venit la bord. 🚀",
+    footer_meta:"Tutorial Getting Started v1.0 · conform spec-0.1 · 2026 · Licență Apache 2.0",
+    footer_author:"Creat de <strong>Claudiu Groza (Vemeth)</strong> · Guvernat de fundație · Deschis pentru colaborare internațională",
+    footer_quote:'"Orice minte umană merită să programeze în propria limbă."'
+  }
+};
+
+/* Partial: nav + chapter titles only */
+const partial = {
+  fr:{_b:"Traduction partielle — la traduction complète suivra via le système de language packs. À spec-0.1, seuls EN et RO sont complets.",
+     nav_tutorial:"Tutoriel",nav_chapter:"Chapitre",nav_of:"sur",toc_label:"Sommaire",ch_label:"Chapitre",nav_prev:"Précédent",nav_next:"Suivant",
+     ch1_title:"Bienvenue dans Lingua Omnibus",ch2_title:"Installation",ch3_title:"Hello, World",
+     ch4_title:"Votre langue, votre code",ch5_title:"Variables et types",ch6_title:"Fonctions",
+     ch7_title:"Flux de contrôle",ch8_title:"Collections",ch9_title:"Erreurs sans exceptions",
+     ch10_title:"Effets — I/O explicite",ch11_title:"Votre premier LinguaDB",
+     ch12_title:"Un avant-goût du quantique",ch13_title:"Compiler et exécuter",
+     ch14_title:"Le gestionnaire de paquets (lopm)",ch15_title:"Tester (lotest)",ch16_title:"Et ensuite"},
+  de:{_b:"Teilweise Übersetzung — vollständige Übersetzung folgt über das Language-Pack-System. Bei spec-0.1 sind nur EN und RO vollständig.",
+     nav_tutorial:"Tutorial",nav_chapter:"Kapitel",nav_of:"von",toc_label:"Inhalt",ch_label:"Kapitel",nav_prev:"Zurück",nav_next:"Weiter",
+     ch1_title:"Willkommen bei Lingua Omnibus",ch2_title:"Einrichtung",ch3_title:"Hallo, Welt",
+     ch4_title:"Deine Sprache, dein Code",ch5_title:"Variablen und Typen",ch6_title:"Funktionen",
+     ch7_title:"Kontrollfluss",ch8_title:"Kollektionen",ch9_title:"Fehler ohne Ausnahmen",
+     ch10_title:"Effekte — I/O explizit",ch11_title:"Deine erste LinguaDB",
+     ch12_title:"Ein Vorgeschmack auf Quanten",ch13_title:"Bauen und Ausführen",
+     ch14_title:"Der Paketmanager (lopm)",ch15_title:"Testen (lotest)",ch16_title:"Was kommt als Nächstes"},
+  es:{_b:"Traducción parcial — la traducción completa llegará vía el sistema de language packs. En spec-0.1 solo EN y RO están completos.",
+     nav_tutorial:"Tutorial",nav_chapter:"Capítulo",nav_of:"de",toc_label:"Contenido",ch_label:"Capítulo",nav_prev:"Anterior",nav_next:"Siguiente",
+     ch1_title:"Bienvenido a Lingua Omnibus",ch2_title:"Configuración",ch3_title:"Hola, Mundo",
+     ch4_title:"Tu lengua, tu código",ch5_title:"Variables y tipos",ch6_title:"Funciones",
+     ch7_title:"Control de flujo",ch8_title:"Colecciones",ch9_title:"Errores sin excepciones",
+     ch10_title:"Efectos — I/O explícito",ch11_title:"Tu primer LinguaDB",
+     ch12_title:"Una probada de cuántica",ch13_title:"Compilar y ejecutar",
+     ch14_title:"El gestor de paquetes (lopm)",ch15_title:"Probar (lotest)",ch16_title:"Qué viene después"},
+  ja:{_b:"部分翻訳 — 完全な翻訳は langpack システム経由で追加されます。spec-0.1 では EN と RO のみが完全です。",
+     nav_tutorial:"チュートリアル",nav_chapter:"章",nav_of:"/",toc_label:"目次",ch_label:"章",nav_prev:"前へ",nav_next:"次へ",
+     ch1_title:"Lingua Omnibus へようこそ",ch2_title:"セットアップ",ch3_title:"Hello, World",
+     ch4_title:"あなたの言語、あなたのコード",ch5_title:"変数と型",ch6_title:"関数",
+     ch7_title:"制御フロー",ch8_title:"コレクション",ch9_title:"例外なしのエラー処理",
+     ch10_title:"エフェクト — 明示的 I/O",ch11_title:"初めての LinguaDB",
+     ch12_title:"量子の味見",ch13_title:"ビルドと実行",
+     ch14_title:"パッケージマネージャ (lopm)",ch15_title:"テスト (lotest)",ch16_title:"次に進むには"}
+};
+
+/* ── Chapter data for TOC and prev/next ── */
+const chapters = [
+  {id:"ch-1",key:"ch1_title",num:"01"},
+  {id:"ch-2",key:"ch2_title",num:"02"},
+  {id:"ch-3",key:"ch3_title",num:"03"},
+  {id:"ch-4",key:"ch4_title",num:"04"},
+  {id:"ch-5",key:"ch5_title",num:"05"},
+  {id:"ch-6",key:"ch6_title",num:"06"},
+  {id:"ch-7",key:"ch7_title",num:"07"},
+  {id:"ch-8",key:"ch8_title",num:"08"},
+  {id:"ch-9",key:"ch9_title",num:"09"},
+  {id:"ch-10",key:"ch10_title",num:"10"},
+  {id:"ch-11",key:"ch11_title",num:"11"},
+  {id:"ch-12",key:"ch12_title",num:"12"},
+  {id:"ch-13",key:"ch13_title",num:"13"},
+  {id:"ch-14",key:"ch14_title",num:"14"},
+  {id:"ch-15",key:"ch15_title",num:"15"},
+  {id:"ch-16",key:"ch16_title",num:"16"}
+];
+
+function getText(lang, key){
+  if (i18n[lang] && i18n[lang][key] !== undefined) return i18n[lang][key];
+  if (partial[lang] && partial[lang][key] !== undefined) return partial[lang][key];
+  return i18n.en[key];
+}
+
+/* ── Build TOC ── */
+function buildToc(lang){
+  const toc = document.getElementById('toc');
+  toc.innerHTML = chapters.map(ch => {
+    const title = getText(lang, ch.key);
+    return `<li><a href="#${ch.id}" data-ch="${ch.id}"><span class="num">${ch.num}</span>${title}</a></li>`;
+  }).join('');
+}
+
+/* ── Set language ── */
+function setLang(code, btn){
+  const isPartial = !i18n[code];
+  const dict = isPartial ? (partial[code] || {}) : i18n[code];
+
+  // Banner
+  const banner = document.getElementById('partial-banner');
+  if (isPartial && dict._b){
+    document.getElementById('partial-banner').querySelector('[data-i18n="banner_msg"]').textContent = dict._b;
+    banner.classList.add('show');
+  } else {
+    banner.classList.remove('show');
+  }
+
+  // Swap data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const val = getText(code, key);
+    if (val !== undefined) el.innerHTML = val;
+  });
+
+  // Active btn
+  document.querySelectorAll('.ls-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  document.documentElement.lang = code;
+  buildToc(code);
+  updatePrevNext();
+}
+
+/* ── Prev/Next ── */
+let currentChapter = 0;
+function updatePrevNext(){
+  const prev = chapters[currentChapter - 1];
+  const next = chapters[currentChapter + 1];
+  const lang = document.documentElement.lang;
+
+  const prevEl = document.getElementById('nav-prev');
+  const nextEl = document.getElementById('nav-next');
+
+  if (prev){
+    prevEl.style.visibility = 'visible';
+    document.getElementById('nav-prev-title').textContent = getText(lang, prev.key);
+    prevEl.href = '#' + prev.id;
+  } else {
+    prevEl.style.visibility = 'hidden';
+  }
+  if (next){
+    nextEl.style.visibility = 'visible';
+    document.getElementById('nav-next-title').textContent = getText(lang, next.key);
+    nextEl.href = '#' + next.id;
+  } else {
+    nextEl.style.visibility = 'hidden';
+  }
+}
+
+/* ── Progress bar ── */
+function updateProgress(){
+  const h = document.documentElement;
+  const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+  document.getElementById('progress').style.width = scrolled + '%';
+}
+
+/* ── Intersection observer for active TOC + nav current ── */
+function setupObserver(){
+  const sections = document.querySelectorAll('.chapter');
+  const tocLinks = document.querySelectorAll('.toc a');
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting){
+        const id = entry.target.id;
+        const idx = parseInt(id.split('-')[1]) - 1;
+        currentChapter = idx;
+
+        tocLinks.forEach(a => a.classList.toggle('active', a.dataset.ch === id));
+        document.getElementById('nav-current').textContent = idx + 1;
+        updatePrevNext();
+      }
+    });
+  }, {rootMargin:"-30% 0px -60% 0px"});
+
+  sections.forEach(s => observer.observe(s));
+}
+
+/* ── Copy code ── */
+function copyCode(btn){
+  const pre = btn.closest('.code-wrap').querySelector('pre');
+  const text = pre.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'copied ✓';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1500);
+  });
+}
+
+/* ── Init ── */
+document.addEventListener('DOMContentLoaded', () => {
+  buildToc('en');
+  updatePrevNext();
+  setupObserver();
+  window.addEventListener('scroll', updateProgress);
+  updateProgress();
+
+  // Close sidebar on mobile after clicking a TOC link
+  document.querySelectorAll('.toc a').forEach(a => {
+    a.addEventListener('click', () => {
+      if (window.innerWidth <= 1000) document.querySelector('.sidebar').classList.remove('open');
+    });
+  });
+
+  // Activate EN by default
+  setLang('en', document.querySelector('.ls-btn.active'));
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "word_order": "svo",
+  "word_segmentation": "none",
+  "requires_explicit_lingua_directive": false,
+  "script": "CJK",
+  "bidi": "ltr",
+  "preferred_decimal_sep": ".",
+  "indent_unit": 2,
+  "multiphrasal_keywords": false
+}

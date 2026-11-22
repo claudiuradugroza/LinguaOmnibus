@@ -1,0 +1,13 @@
+# conformance/type/060/effects.lo
+# covers: TYPE-037, TYPE-038, TYPE-039
+#lingua: EN
+
+function read_file() returns string with [IO]:
+    return "data"
+
+function pure_caller() returns Unit:
+    return ()
+
+function io_caller() returns Unit with [IO]:
+    var s = read_file()
+    return ()

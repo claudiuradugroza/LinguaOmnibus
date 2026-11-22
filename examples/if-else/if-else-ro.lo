@@ -1,0 +1,11 @@
+#lingua: RO
+funcție main() returnează Unit:
+    variabilă scor: int32 = 85
+    dacă scor >= 90 atunci:
+        print("A")
+    altfel:
+        dacă scor >= 80 atunci:
+            print("B")
+        altfel:
+            print("C")
+    return ()

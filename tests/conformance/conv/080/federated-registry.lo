@@ -1,0 +1,9 @@
+# conformance/conv/080/federated-registry.lo
+# covers: CONV-080
+#lingua: EN
+
+# lopm MUST support local (vendor/ or file://) and remote (HTTP/S) registry modes.
+# No mandatory "official" registry. Arbitrary registries configurable via lopm.toml.
+
+function main() returns Unit:
+    return Unit

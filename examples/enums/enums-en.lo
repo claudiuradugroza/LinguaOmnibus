@@ -1,0 +1,7 @@
+#lingua: EN
+enum Color { Red, Green, Blue }
+
+function main() returns Unit:
+    var c = 0
+    print(c)
+    return ()

@@ -1,0 +1,9 @@
+# conformance/conv/011/rule-id-renumber.lo
+# covers: CONV-011
+#lingua: EN
+
+# Rule identifiers MUST NOT be renumbered after Status: Stable.
+# Corrections MUST use a new identifier and deprecate the old one.
+
+function main() returns Unit:
+    return Unit

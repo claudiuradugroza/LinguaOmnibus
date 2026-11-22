@@ -1,0 +1,15 @@
+# conformance/gram/030/declarations.lo
+# covers: GRAM-030
+#lingua: EN
+
+import std.io
+
+function main() returns Unit:
+    return Unit
+
+struct Point { x: int32, y: int32 }
+
+enum Color { Red, Green, Blue }
+
+const MAX: int32 = 100
+var count: int32 = 0

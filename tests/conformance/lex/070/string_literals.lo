@@ -1,0 +1,16 @@
+# conformance/lex/070/string_literals.lo
+# covers: LEX-070, LEX-071, LEX-072, LEX-073, LEX-074, LEX-075, LEX-076, LEX-077, LEX-078, LEX-079
+#lingua: EN
+
+# String literals delimited by " "; escapes: \n \t \r \\ \" \' \0 \xNN \u{H…H}.
+# Char literal: exactly one Unicode scalar value. Byte literal: b'…' exactly one ASCII or \xNN.
+# RawString: ` … ` no escapes. Multiline: """…""" and ```…```.
+# Adjacent string literals concatenated. U+2028/U+2029 preserved in strings, re-encoded in LIR.
+# Bidi controls inside strings preserved as data, re-encoded as \u{XXXX} in LIR.
+
+var s = "hello\nworld"
+var c = 'A'
+var b = b'X'
+var raw = `backtick here`
+var multi = """line1
+line2"""

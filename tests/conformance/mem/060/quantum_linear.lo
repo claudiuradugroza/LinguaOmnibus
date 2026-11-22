@@ -1,0 +1,9 @@
+# conformance/mem/060/quantum_linear.lo
+# covers: MEM-060, MEM-061, MEM-062, MEM-063
+#lingua: EN
+
+function test_quantum() returns Unit:
+    quantum:
+        var q = alloc_qubit()    # MEM-060: Qubit is linear — no Copy
+        var r = measure(q)       # MEM-063: measure consumes q — q unusable after
+        # q is moved — MEM-062: qubit aliasing rejected

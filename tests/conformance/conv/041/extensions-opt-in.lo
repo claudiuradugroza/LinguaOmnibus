@@ -1,0 +1,9 @@
+# conformance/conv/041/extensions-opt-in.lo
+# covers: CONV-041
+#lingua: EN
+
+# Extensions are opt-in via an explicit flag or pragma (e.g. #pragma extension vendor_x).
+# Extensions MUST NOT change the meaning of a program that compiles without them.
+
+function main() returns Unit:
+    return Unit

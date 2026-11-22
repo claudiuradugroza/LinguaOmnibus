@@ -1,0 +1,11 @@
+# conformance/gram/060/pack_derivation.lo
+# covers: GRAM-070, GRAM-071, GRAM-072, GRAM-073
+#lingua: EN
+
+# grammar.json validated against schema at pack load; violations → G0002_bad_grammar_json.
+# Unknown keys rejected (additionalProperties: false).
+# Prefix-conflict check: no keyword phrase is proper prefix of another → G0003.
+# multiphrasal_keywords: false → all phrases exactly one word → G0004.
+
+function main() returns Unit:
+    return Unit

@@ -1,0 +1,9 @@
+# conformance/lir/010/text_format.lo
+# covers: LIR-010, LIR-011, LIR-012, LIR-013, LIR-014, LIR-015, LIR-016
+#lingua: EN
+
+# LIR text format: UTF-8 without BOM, module declaration, function declaration,
+# three-address code instructions, basic block labels, SSA values.
+
+function main() returns Unit:
+    return Unit

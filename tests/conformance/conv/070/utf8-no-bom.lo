@@ -1,0 +1,8 @@
+# conformance/conv/070/utf8-no-bom.lo
+# covers: CONV-070
+#lingua: EN
+
+# All source files MUST be UTF-8 encoded without BOM.
+
+function main() returns Unit:
+    return Unit

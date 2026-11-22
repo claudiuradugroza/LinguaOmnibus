@@ -1,0 +1,359 @@
+SPEC-00: Conventions & Terminology
+
+Version: 0.1 (Draft)
+Status: Draft — open for RFC review
+Supersedes: none
+Dependencies: none
+Applies to: every other SPEC-NN document, every conforming implementation of loc, lopm, lolsp, lofmt, lodoc, lotest, runtime, and every language pack under langpacks/
+1. Motivation
+
+A specification that is used by more than one implementation, in more than one natural language, by more than one team, in more than one country, must first agree on how it is read. This document defines:
+
+    The keywords that carry normative weight (MUST, SHOULD, MAY).
+
+    The identifiers used to tag rules so conformance tests can reference them.
+
+    The versioning schemes used for the language, for language packs, for the LIR, and for this specification set.
+
+    The definition of a conforming implementation, so that the Lingua Omnibus Foundation can certify independent compilers.
+
+    The terminology — a normative glossary whose terms are the only legal ones used in the rest of the specification set — translated into every initial language pack.
+
+Every rule in this document is testable. Any statement that cannot be expressed as a test is intentionally excluded and moved to non-normative notes at the end of each section.
+
+This document is the contract that makes Principle 2 (spec-driven, not implementation-driven) enforceable.
+2. Normative specification
+2.1 Requirement keywords
+
+CONV-001. The keywords MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD, SHOULD NOT, RECOMMENDED, NOT RECOMMENDED, MAY, and OPTIONAL in this specification set MUST be interpreted as described in BCP 14 (RFC 2119 + RFC 8174) when, and only when, they appear in all capitals.
+
+CONV-002. Implementations MUST treat all-lowercase uses of these words (e.g. "must", "should") as ordinary English prose, carrying no normative weight.
+
+CONV-003. Documentation produced by an implementation (error messages, lolsp diagnostics, lodoc output) SHOULD preserve the all-caps convention when quoting a normative rule by its ID.
+2.2 Rule identifiers
+
+CONV-010. Every normative requirement MUST carry a stable identifier of the form:
+{PREFIX}-{NNN}
+
+where PREFIX is an uppercase ASCII token identifying the document (see table 2.3), and NNN is a zero-padded three-digit integer, assigned sequentially, never reused, never reordered.
+
+CONV-011. Rule identifiers MUST NOT be renumbered after the specification document reaches Status: Stable. Corrections MUST use a new identifier and deprecate the old one (see CONV-040).
+
+CONV-012. Every rule identifier MUST be referenced by at least one conformance test. The test path is normative and MUST be:
+conformance/{PREFIX-lowercase}/{NNN}/{slug}.lo
+
+Example: CONV-001 → conformance/conv/001/keywords-allcaps.lo.
+
+CONV-013. A conformance test MAY exercise multiple rule identifiers; the mapping from test file → covered rule identifiers is declared in a header comment inside the test file:
+# covers: CONV-001, CONV-002
+
+2.3 Document prefixes
+
+CONV-020. The following prefixes are reserved and normative:
+Prefix	Document
+CONV	SPEC-00 (this document)
+LEX	SPEC-01 Lexical Structure
+GRAM	SPEC-02 Grammar
+TYPE	SPEC-03 Type System
+MEM	SPEC-04 Memory Model
+EFF	SPEC-05 Effects & Concurrency
+LIR	SPEC-06 Intermediate Representation
+BACK	SPEC-07 Backends
+LDB	SPEC-08 LinguaDB
+TOOL	SPEC-09 Toolchain
+STD	SPEC-10 Standard Library
+SEC	SPEC-11 Security
+COMP	SPEC-12 Compatibility & Versioning
+GOV	SPEC-13 Governance
+
+CONV-021. Prefixes RFC, X-, and any token of the form [A-Z]+-[0-9]+ not listed in 2.3 are reserved for future normative documents and MUST NOT be used by language packs, third-party tools, or examples.
+2.4 Versioning
+
+CONV-030. The Lingua Omnibus language version MUST follow Semantic Versioning 2.0.0 (MAJOR.MINOR.PATCH). A MAJOR bump indicates a breaking change to the grammar, type system, memory model, effects, or LIR format. A MINOR bump adds features without breaking existing conforming programs. A PATCH bump corrects documentation or bug-fix-only clarifications.
+
+CONV-031. The LIR format MUST have its own version, independent of the language version, also SemVer 2.0.0, communicated in the LIR file header (see SPEC-06). This permits a language version 1.4.0 to emit LIR 1.2.0.
+
+CONV-032. Language packs MUST be versioned by an ISO 8601 date of the form YYYY-MM-DD, not by SemVer, because natural-language keyword changes are not semantically comparable. The current pack version MUST be recorded in every language pack's keywords.json under the field "version".
+
+CONV-033. This specification set (SPEC-00 … SPEC-13) MUST be versioned as a whole with a two-part version spec-{MAJOR}.{MINOR}, where MAJOR increments only when a rule identifier is removed or its meaning is broken, and MINOR increments on any additive or clarifying change. The current version is spec-0.1.
+
+CONV-034. A conforming implementation MUST declare, in a machine-readable form, which spec-{MAJOR}.{MINOR} it implements, which language pack versions it bundles, and which LIR version it emits. The declaration format is:
+{
+  "implementation": "loc",
+  "implementation_version": "1.4.0",
+  "spec_compatibility": "0.1",
+  "bundled_langpacks": { "en": "2026-01-01", "ro": "2026-01-01" },
+  "lir_version": "1.2.0",
+  "conformance": {
+    "conv": "pass",
+    "lex":  "pass",
+    "gram": "pass",
+    "type": "pass"
+  }
+}
+
+The file MUST be retrievable via loc --version --json and MUST be preserved by lopm publish.
+2.5 Conforming implementation
+
+CONV-040. An implementation is a conforming implementation of spec-{MAJOR}.{MINOR} if and only if it:
+
+    MUST pass 100% of conformance tests for every rule identifier whose prefix it declares as "pass" in its compatibility declaration (CONV-034).
+
+    MUST declare every prefix as pass, partial, or unsupported. There is no default.
+
+    MUST NOT declare pass for a prefix if any test in conformance/{prefix}/ fails.
+
+    SHOULD pass 100% of CONV, LEX, GRAM, TYPE, LIR at minimum to be considered a useful implementation.
+
+    MAY omit prefixes entirely (e.g. a compiler without quantum support declares quantum: unsupported), but MUST NOT silently accept syntax it cannot honour.
+
+CONV-041. A conforming implementation MUST NOT add behaviour that contradicts a MUST in any pass prefix. It MAY add extensions outside the specification, provided that:
+
+    Extensions are opt-in via an explicit flag or pragma (e.g. #pragma extension vendor_x).
+
+    Extensions are documented in the implementation's own changelog with the prefix X-{vendor}.
+
+    Extensions MUST NOT change the meaning of a program that compiles without them.
+
+CONV-042. Programs that do not require an extension MUST compile identically on any two conforming implementations declaring the same spec_compatibility and the same lir_version. "Identically" here means: the generated LIR after optimization passes documented as optional in SPEC-06 MUST be byte-identical.
+2.6 Deprecation
+
+CONV-050. A rule identifier is deprecated when a new rule supersedes it. Deprecation MUST be recorded in the "Change log" of the owning document with a table row: | deprecated | {OLD_ID} | superseded by {NEW_ID} |.
+
+CONV-051. A deprecated rule identifier MUST remain normative for at least one spec-MAJOR cycle. During deprecation, implementations MUST emit a warning (not an error) when triggering the deprecated behaviour, unless the program opts out via #pragma allow deprecated {OLD_ID}.
+
+CONV-052. A deprecated rule identifier MUST be removed only in a spec-MAJOR bump, and the removal MUST be documented in a MIGRATION-{MAJOR}.md file at the repository root, following the LTS promise in Principle 13.
+2.7 Language pack contract
+
+CONV-060. A language pack is the only mechanism by which a natural language becomes usable in Lingua Omnibus. Language packs MUST be pure data — a directory containing at minimum:
+
+    keywords.json (schema: spec/appendix/langpack-schema.json)
+
+    types.json
+
+    grammar-notes.md (non-normative prose describing SOV/SVO, RTL, CJK, etc.)
+
+    tests/ (at least one test per keyword)
+
+    version field inside keywords.json, matching CONV-032
+
+CONV-061. Adding a new language pack MUST NOT require changes to loc or any other tool. If a language cannot be expressed by the current pack schema, the correct response is a new RFC proposing an extension to appendix/langpack-schema.json, not a compiler patch. This rule is the operational meaning of Principle 13.
+
+CONV-062. A language pack MUST NOT introduce a keyword that aliases a keyword from another pack in a way that makes auto-detection ambiguous, unless the pack explicitly declares "requires_explicit_lingua_directive": true in its keywords.json.
+
+CONV-063. Every language pack MUST include at least the following 40 keyword slots (values are pack-specific; the slots are universal):
+
+KW_FUNCTION, KW_RETURN, KW_VAR, KW_CONST, KW_IF, KW_ELSE, KW_WHILE, KW_FOR, KW_IN, KW_BREAK, KW_CONTINUE, KW_MATCH, KW_STRUCT, KW_ENUM, KW_INTERFACE, KW_IMPL, KW_IMPORT, KW_EXPORT, KW_TRUE, KW_FALSE, KW_NULL, KW_AND, KW_OR, KW_NOT, KW_QUANTUM, KW_QUBIT, KW_MEASURE, KW_EFFECT, KW_WITH, KW_TRY, KW_CATCH, KW_RESULT, KW_OPTION, KW_ASYNC, KW_AWAIT, KW_SPAWN, KW_DB, KW_SELECT, KW_INSERT, KW_UPDATE.
+
+CONV-064. A language pack MAY add additional keyword slots, but their identifiers MUST match the pattern KW_X_{NAME} and MUST be declared in grammar-notes.md with a link to the RFC that introduced them.
+2.8 Unicode baseline
+
+CONV-070. All source files, LIR text files, language pack files, and tool output MUST be UTF-8 encoded (RFC 3629), without a BOM.
+
+CONV-071. All text MUST be normalized to Unicode NFC before tokenization. Source files that are not NFC MUST be accepted; the normalization is performed by the frontend, not required of the author.
+
+CONV-072. Implementations MUST support the full Unicode 15.0+ code point range for identifiers and strings, subject to the rules in SPEC-01 §Identifiers.
+
+CONV-073. Implementations MUST accept both \n (LF) and \r\n (CRLF) as line terminators and MUST normalize to LF in LIR output and in lofmt output unless the target file was CRLF and the user passed --preserve-eol.
+3. Tables
+3.1 Reserved prefixes (normative) — see CONV-020
+3.2 Version schemes (normative) — see CONV-030 … CONV-034
+Artefact	Scheme	Example	Frozen when
+Language	SemVer 2.0.0	1.4.0	released
+LIR format	SemVer 2.0.0	1.2.0	released
+Language pack	ISO 8601 date	2026-01-01	released
+Spec set	spec-{MAJOR}.{MINOR}	spec-0.1	published
+Conformance suite	follows spec set	spec-0.1	published
+3.3 Glossary (normative)
+
+The following terms are used with the meanings below throughout the specification set. Translations are normative for the meaning; the translation term itself is a language-pack KW_X slot where marked.
+
+Term	Definition	RO	FR	DE	ES	JA
+program	A .lo source file or a set of them linked into a build unit.	program	programme	Programm	programa	プログラム
+language pack	A JSON+test directory enabling one natural language (CONV-060).	pachet lingvistic	pack linguistique	Sprachpaket	paquete lingüístico	言語パック
+LIR	Lingua Intermediate Representation — the universal semantic form (SPEC-06).	LIR	LIR	LIR	LIR	LIR
+unified AST	The tree produced by every language pack's parser, structurally identical across languages.	AST unificat	AST unifié	vereinheitlichter AST	AST unificado	統一AST
+conforming implementation	Defined in CONV-040.	implementare conformă	implémentation conforme	konforme Implementierung	implementación conforme	適合実装
+conformance test	A .lo file under conformance/ exercising one or more rule identifiers.	test de conformanță	test de conformité	Konformitätstest	prueba de conformidad	適合性テスト
+language directive	The #lingua: XX comment declaring source language.	directivă de limbă	directive de langue	Sprachdirektive	directiva de idioma	言語ディレクティブ
+keyword slot	An abstract token identifier such as KW_IF mapped by a language pack.	slot de cuvânt-cheie	emplacement de mot-clé	Schlüsselwort-Slot	ranura de palabra clave	キーワードスロット
+language pack version	ISO date of a pack release (CONV-032).	versiune de pachet	version de pack	Pack-Version	versión de paquete	パックバージョン
+extension	Implementation-specific behaviour outside the spec, gated by CONV-041.	extensie	extension	Erweiterung	extensión	拡張
+capability	A declared permission required by effects (SPEC-05, SPEC-11).	capabilitate	capacité	Fähigkeit	capacidad	権限
+qubit	A linear quantum resource (SPEC-03, SPEC-06).	qubit	qubit	Qubit	cúbit	量子ビット
+effect	A declared side-effect class in a function signature (SPEC-05).	efect	effet	Effekt	efecto	エフェクト
+lifetime	A lexical region governing a value's validity (SPEC-04).	durată de viață	durée de vie	Lebensdauer	tiempo de vida	ライフタイム
+ownership	The single-owner rule for non-Copy values (SPEC-04).	proprietate	propriété	Eigentum	propiedad	所有権
+borrow	A scoped non-owning reference (SPEC-04).	împrumut	emprunt	Ausleihe	préstamo	借用
+trait/interface	A named set of method signatures.	interfață	interface	Schnittstelle	interfaz	インターフェース
+generic	A parameter over types or lifetimes (SPEC-03).	generic	générique	generisch	genérico	ジェネリック
+module	A named compilation unit inside a package (SPEC-09).	modul	module	Modul	módulo	モジュール
+package	A distributable unit tracked by lopm (SPEC-09).	pachet	paquet	Paket	paquete	パッケージ
+registry	A federated index of packages (Principle 5, CONV-080).	registru	registre	Registrierung	registro	レジストリ
+reproducible build	Bit-identical rebuild from the same source and toolchain (Principle 3).	build reproductibil	build reproductible	reproduzierbarer Build	build reproducible	再現可能ビルド
+bootstrap chain	The minimal path from a bootstrap compiler to a self-hosted loc (Principle 4).	lanț de bootstrap	chaîne d'amorçage	Bootstrap-Kette	cadena de arranque	ブートストラップ連鎖
+offline-first	Tooling must function with no network (Principle 6).	offline-first	hors-ligne d'abord	Offline-First	offline-first	オフラインファースト
+telemetry	Any data sent by a tool to a remote endpoint. Default: forbidden.	telemetrie	télémétrie	Telemetrie	telemetría	テレメトリ
+self-hosted registry	A lopm registry run by anyone (CONV-080).	registru self-hosted	registre auto-hébergé	selbstgehostete Registrierung	registro autoalojado	セルフホストレジストリ
+
+CONV-074. The English terms in column 1 are the normative terms used in every SPEC-XX. Translations in columns 3–7 are normative for human-facing messages produced by loc, lolsp, lofmt, lodoc, lotest when the user's #lingua: directive matches the corresponding pack.
+
+CONV-075. A language pack MAY add its own translation of any term in the glossary by including it in keywords.json under "glossary". Adding a glossary term MUST NOT change any normative meaning.
+3.4 Reserved words in the specification
+
+CONV-076. The following lowercase words are reserved in this specification set for technical meaning and MUST be italicised on first use in every SPEC-XX: language pack, keyword slot, conformance test, rule identifier, unified AST, conforming implementation.
+4. Examples
+4.1 Example — the same program in EN and RO, byte-identical LIR
+
+English (examples/hello/hello-en.lo):
+
+#lingua: EN
+function main() returns Unit:
+    print("Hello, world!")
+	
+Romanian (examples/hello/hello-ro.lo):
+lir 1.2.0
+module hello {
+  fn main : () -> unit {
+  entry:
+    %msg = const.str "Hello, world!"
+    call @std.io.print(%msg)
+    ret unit
+  }
+}
+Conformance: Both files MUST produce byte-identical LIR. The test is conformance/conv/030/hello-bilingual.lo (which reads both source files and asserts diff is empty).
+
+This example is the operational definition of Principle 2 (spec-driven): the compiler has no English-specific or Romanian-specific branch in the LIR generator; the difference is entirely inside the two language packs.
+4.2 Example — version declaration
+
+{
+  "implementation": "loc",
+  "implementation_version": "0.9.0",
+  "spec_compatibility": "0.1",
+  "bundled_langpacks": { "en": "2026-01-01", "ro": "2026-01-01", "fr": "2026-01-01" },
+  "lir_version": "0.3.0",
+  "conformance": {
+    "conv": "pass",
+    "lex": "pass",
+    "gram": "pass",
+    "type": "pass",
+    "mem": "partial",
+    "eff": "unsupported",
+    "lir": "pass"
+  }
+}
+
+loc --version --json on this build MUST output exactly this document, sorted by key for byte-identical output across runs.
+
+4.3 Example — conformance test header:
+
+# conformance/conv/001/keywords-allcaps.lo
+# covers: CONV-001, CONV-002
+#lingua: EN
+
+# MUST parse: the all-caps keyword IF is normative.
+# MUST fail: the lowercase "if" is prose, not a keyword.
+
+function main() returns Unit:
+    IF true THEN:
+        pass
+		
+
+The test harness asserts that loc check returns exit code 0 for the all-caps form and exit code 1 for the lowercase form. The lowercase form is exercised in a sibling file keywords-lowercase-fails.lo.
+
+5. Conformance tests
+
+Every rule identifier in this document MUST be referenced by at least one test file under conformance/conv/. Minimum required set at spec-0.1:
+Rule	Test path
+CONV-001, CONV-002	conformance/conv/001/keywords-allcaps.lo
+CONV-010, CONV-011	conformance/conv/010/rule-ids.lo
+CONV-012, CONV-013	conformance/conv/012/test-path-mapping.lo
+CONV-020, CONV-021	conformance/conv/020/reserved-prefixes.lo
+CONV-030 … CONV-034	conformance/conv/030/version-declaration.lo
+CONV-040 … CONV-042	conformance/conv/040/conforming-impl.lo
+CONV-050 … CONV-052	conformance/conv/050/deprecation.lo
+CONV-060 … CONV-064	conformance/conv/060/langpack-contract.lo
+CONV-070 … CONV-073	conformance/conv/070/unicode-baseline.lo
+CONV-074, CONV-075	conformance/conv/074/glossary.lo
+CONV-076	conformance/conv/076/reserved-words.lo
+CONV-080	conformance/conv/080/federated-registry.lo
+
+6. Interactions with other sections
+
+    SPEC-01 (LEX): consumes CONV-070 … CONV-073 for encoding and normalization; consumes CONV-060 … CONV-064 for keyword mapping.
+
+    SPEC-02 (GRAM): each grammar rule MUST be tagged with a GRAM-NNN identifier; the mapping to the language-pack keyword slot is declared in grammar-notes.md.
+
+    SPEC-06 (LIR): MUST honour CONV-031 (independent version) and CONV-034 (declared LIR version). LIR byte-identical output is required by CONV-042.
+
+    SPEC-09 (TOOL): loc, lopm, lolsp, lofmt, lodoc, lotest MUST expose the compatibility declaration of CONV-034 in their machine-readable version output.
+
+    SPEC-12 (COMPAT): extends CONV-030 … CONV-034 with the migration-tool rules for spec-MAJOR bumps.
+
+    SPEC-13 (GOVERNANCE): governs how new CONV-NNN identifiers are proposed and approved.
+
+7. Open questions
+
+Q1. Bootstrap chain and spec-0.1. Principle 4 requires bootstrappability, but spec-0.1 does not yet define the maximum length of the chain. Proposal: RFC-0002 to define "TCC → LO-0 → LO-1" as a maximum of three stages, with a formal proof obligation in docs/bootstrapping.md. Deferred to SPEC-12.
+
+Q2. Vendor extension lifecycle. CONV-041 allows extensions but does not define how they sunset. Proposal: any extension older than two spec-MINOR cycles without an accepted RFC MUST be dropped from the reference implementation. Deferred to SPEC-13.
+
+Q3. Federated registry discovery. CONV-080 (see below) declares federation but does not define the discovery mechanism. Proposal: a registry.toml file in every package root, plus DNS _lopm._tcp lookup as an optional hint. Deferred to SPEC-09.
+
+Q4. Language pack deprecation. CONV-032 dates packs but does not deprecate old dates. Proposal: a pack more than 24 months old on a spec-STABLE release is deprecated; implementations MAY still accept it with a warning. Deferred to SPEC-12.
+
+Q5. Spec text translation. This specification is normative in English only. Translations exist in docs/spec-translations/ but are informative. Should the foundation eventually certify normative translations, and if so, in which languages first? Open for community vote after spec-1.0.
+8. Change log
+Version	Date	Summary
+0.1	2026-11-20	Initial draft. Defines keywords, rule identifiers, version schemes, conforming implementation, deprecation, language pack contract, Unicode baseline, glossary in six languages, and federated registry rule CONV-080.
+9. Appendix A — CONV-080: Federated registry
+
+CONV-080. The lopm package manager MUST support at least two modes of operation:
+
+    Local mode — a vendor/ directory or a file:// path acting as a registry. This mode MUST be enabled with zero configuration; lopm install --vendor MUST work with no network.
+
+    Remote mode — any HTTP(S) endpoint serving the standard registry layout (defined in SPEC-09). There is no mandatory "official" registry. The Lingua Omnibus Foundation MAY operate a reference registry for convenience, but it MUST NOT be the only registry, and it MUST NOT be required for lopm to function.
+
+A conforming implementation of lopm MUST allow the user to configure arbitrary registries via lopm.toml:
+
+[registries]
+default = "https://my-company.example/lopm"
+mirror  = "file:///srv/lopm-mirror"
+
+[registries.policy]
+fallback = ["default", "mirror"]
+offline  = false
+
+This rule operationalizes Principles 1 (zero vendor lock-in) and 5 (federated packages).
+
+10. Appendix B — Normative references
+
+    RFC 2119 — Key words for use in RFCs to Indicate Requirement Levels
+
+    RFC 8174 — Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words
+
+    RFC 3629 — UTF-8, a transformation format of ISO 10646
+
+    Semantic Versioning 2.0.0 — https://semver.org
+
+    ISO 8601 — Date and time format
+
+    Unicode 15.0+ — https://unicode.org/versions/
+
+End of SPEC-00 (spec-0.1).
+
+Notă despre ce urmează
+
+Am generat SPEC-00 integral. Dacă îl accepți ca punct de plecare, următorul pas în workflow este:
+SECTION_NUMBER: 01
+SECTION_TITLE:  Lexical Structure
+DEPENDENCIES:   spec/00-conventions.md
+CONSTRAINTS:    define Unicode identifier rules incl. Turkish dotless-i,
+                CJK ideographic identifiers, RTL bidi for identifiers;
+                define string escaping that works in RTL and CJK;
+                define numeric literals with per-langpack decimal separator;
+                define comment syntax (line and block) that respects bidi;
+                define language directive #lingua: XX precisely;
+                all rules carry LEX-NNN identifiers; at least one
+                conformance test per rule.
+				

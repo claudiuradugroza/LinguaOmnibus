@@ -1,0 +1,6 @@
+# conformance/type/050/option_result.lo
+# covers: TYPE-034, TYPE-035, TYPE-036
+#lingua: EN
+
+function test() returns Unit:
+    return ()

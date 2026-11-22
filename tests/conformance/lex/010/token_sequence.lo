@@ -1,0 +1,8 @@
+# conformance/lex/010/token_sequence.lo
+# covers: LEX-010, LEX-011
+#lingua: EN
+
+# A source file MUST be tokenizable as a sequence of tokens ending with exactly one EOF token.
+
+function main() returns Unit:
+    return Unit

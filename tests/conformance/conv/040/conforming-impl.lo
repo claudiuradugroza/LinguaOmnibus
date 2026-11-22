@@ -1,0 +1,10 @@
+# conformance/conv/040/conforming-impl.lo
+# covers: CONV-040, CONV-041, CONV-042
+#lingua: EN
+
+# A conforming implementation MUST pass 100% of tests for declared "pass" prefixes.
+# MUST declare every prefix as pass, partial, or unsupported.
+# Programs without extensions MUST compile identically (byte-identical LIR).
+
+function main() returns Unit:
+    return Unit

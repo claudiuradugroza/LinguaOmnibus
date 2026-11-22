@@ -1,0 +1,6 @@
+# conformance/gram/001/keyword_phrases.lo
+# covers: GRAM-003
+#lingua: EN
+
+function test() returns Unit:
+    return Unit

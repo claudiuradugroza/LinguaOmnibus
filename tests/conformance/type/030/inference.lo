@@ -1,0 +1,12 @@
+# conformance/type/030/inference.lo
+# covers: TYPE-022, TYPE-023, TYPE-024, TYPE-025, TYPE-026
+#lingua: EN
+
+var x = 42          # TYPE-023: infer int32 from initializer
+var y = 3.14        # TYPE-025: infer f64
+var z = x + y       # TYPE-025: implicit conversion if lossless
+
+function returns_unit() returns Unit:
+    return Unit     # TYPE-024: return type Unit matches body
+
+var neg: int32 = -5 # TYPE-026: negate signed int32

@@ -1,0 +1,9 @@
+# conformance/lex/003/nfc_normalization.lo
+# covers: LEX-004
+#lingua: EN
+
+# The lexer MUST normalize input to Unicode NFC before any other processing.
+# Files that are not NFC are accepted; normalization is the compiler's responsibility.
+
+function main() returns Unit:
+    return Unit

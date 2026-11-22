@@ -1,0 +1,12 @@
+# conformance/conv/030/version-declaration.lo
+# covers: CONV-030, CONV-031, CONV-032, CONV-033, CONV-034
+#lingua: EN
+
+# Language version: SemVer 2.0.0.
+# LIR format: independent SemVer.
+# Language packs: ISO 8601 date.
+# Spec set: spec-{MAJOR}.{MINOR}.
+# Implementation MUST declare compatibility via loc --version --json.
+
+function main() returns Unit:
+    return Unit

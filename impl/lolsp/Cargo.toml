@@ -1,0 +1,11 @@
+[package]
+name = "lolsp"
+version = "0.1.0"
+edition = "2021"
+description = "Lingua Omnibus language server"
+
+[[bin]]
+name = "lolsp"
+path = "src/main.rs"
+
+[dependencies]

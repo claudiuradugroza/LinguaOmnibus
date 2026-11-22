@@ -1,0 +1,8 @@
+# conformance/conv/076/reserved-words.lo
+# covers: CONV-076
+#lingua: EN
+
+# Reserved lowercase words MUST be italicised on first use: language pack, keyword slot, conformance test, rule identifier, unified AST, conforming implementation.
+
+function main() returns Unit:
+    return Unit

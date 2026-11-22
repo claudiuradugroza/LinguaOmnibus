@@ -1,0 +1,8 @@
+# conformance/conv/080/local-mode.lo
+# covers: CONV-080
+#lingua: EN
+
+# lopm install --vendor MUST work with no network (local mode, zero configuration).
+
+function main() returns Unit:
+    return Unit

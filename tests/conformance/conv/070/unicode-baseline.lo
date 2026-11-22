@@ -1,0 +1,11 @@
+# conformance/conv/070/unicode-baseline.lo
+# covers: CONV-070, CONV-071, CONV-072, CONV-073
+#lingua: EN
+
+# All files MUST be UTF-8 without BOM.
+# Text MUST be normalized to NFC before tokenization.
+# Full Unicode 15.0+ code point range for identifiers.
+# LF and CRLF accepted; normalized to LF in LIR output.
+
+function main() returns Unit:
+    return Unit

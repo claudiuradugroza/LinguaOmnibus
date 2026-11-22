@@ -1,0 +1,14 @@
+# conformance/mem/040/drop.lo
+# covers: MEM-040, MEM-041, MEM-042, MEM-043, MEM-044
+#lingua: EN
+
+function test_drop() returns Unit:
+    {
+        var first = String("first")
+        var second = String("second")
+        # MEM-041: drop order — second dropped first, then first
+    }  # both dropped here — MEM-040: exactly once each
+
+# MEM-042: double drop rejected at compile time
+# MEM-043: panic unwinding drops all live owners
+# MEM-044: #![no_drop] suppresses automatic drop (programmer responsible)

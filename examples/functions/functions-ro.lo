@@ -1,0 +1,8 @@
+#lingua: RO
+funcție adună(a: int32, b: int32) returnează int32:
+    returnează a + b
+
+funcție main() returnează Unit:
+    variabilă rez = adună(5, 3)
+    print(rez)
+    return ()

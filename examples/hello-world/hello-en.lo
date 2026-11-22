@@ -1,0 +1,4 @@
+#lingua: EN
+function main() returns Unit:
+    print("Hello, world!")
+    return ()

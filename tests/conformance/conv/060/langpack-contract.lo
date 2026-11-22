@@ -1,0 +1,10 @@
+# conformance/conv/060/langpack-contract.lo
+# covers: CONV-060, CONV-061, CONV-062, CONV-063, CONV-064
+#lingua: EN
+
+# A language pack is pure data: keywords.json, types.json, grammar-notes.md, tests/, version field.
+# Adding a language MUST NOT require compiler changes.
+# 40 keyword slots are universal (KW_FUNCTION ... KW_UPDATE).
+
+function main() returns Unit:
+    return Unit

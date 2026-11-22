@@ -1,0 +1,13 @@
+# conformance/gram/010/indentation.lo
+# covers: GRAM-010, GRAM-011, GRAM-012, GRAM-013, GRAM-014, GRAM-015
+#lingua: EN
+
+# Indentation is leading U+0020 SPACE only. Other whitespace at line start rejected (L0510).
+# Blank/comment lines invisible to indentation tracker.
+# First logical line base indentation MUST be zero (L0511).
+# Indentation mismatch rejected (L0512). DEDENT per level at EOF.
+# Tabs inside lines/comments/strings are fine.
+
+function main() returns Unit:
+    if true then:
+        return Unit

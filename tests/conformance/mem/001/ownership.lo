@@ -1,0 +1,16 @@
+# conformance/mem/001/ownership.lo
+# covers: MEM-001, MEM-002, MEM-003, MEM-004, MEM-005, MEM-006
+#lingua: EN
+
+var s1 = String("hello")
+var s2 = s1          # MEM-003: move transfers ownership; s1 now uninitialized
+# print(s1)          # MEM-004: rejected — M0101_use_after_move
+
+var x = 42           # MEM-002: int32 is Copy — implicit copy OK
+var y = x            # x still valid after copy
+
+struct Point { x: int32, y: int32 }
+
+var p1 = Point { x: 1, y: 2 }
+var p2 = p1          # MEM-003: move struct (non-Copy fields)
+# print(p1.x)        # MEM-004: rejected — p1 moved

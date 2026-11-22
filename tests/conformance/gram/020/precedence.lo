@@ -1,0 +1,7 @@
+# conformance/gram/020/precedence.lo
+# covers: GRAM-020, GRAM-021, GRAM-022, GRAM-023, GRAM-024
+#lingua: EN
+
+var x = 1 + 2 * 3
+var y = true && false
+var z = 5 > 3

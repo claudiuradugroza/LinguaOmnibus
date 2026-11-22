@@ -1,0 +1,9 @@
+# conformance/conv/010/rule-ids.lo
+# covers: CONV-010, CONV-011
+#lingua: EN
+
+# Every normative rule MUST carry a stable identifier {PREFIX}-{NNN}.
+# Rule identifiers MUST NOT be renumbered after Status: Stable.
+
+function main() returns Unit:
+    return Unit

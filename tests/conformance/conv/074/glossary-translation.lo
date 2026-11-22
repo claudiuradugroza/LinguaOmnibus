@@ -1,0 +1,8 @@
+# conformance/conv/074/glossary-translation.lo
+# covers: CONV-075
+#lingua: EN
+
+# Adding glossary translations MUST NOT change any normative meaning.
+
+function main() returns Unit:
+    return Unit

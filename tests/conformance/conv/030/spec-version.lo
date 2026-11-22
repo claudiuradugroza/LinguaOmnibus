@@ -1,0 +1,8 @@
+# conformance/conv/030/spec-version.lo
+# covers: CONV-033
+#lingua: EN
+
+# The specification set MUST be versioned as spec-{MAJOR}.{MINOR}.
+
+function main() returns Unit:
+    return Unit

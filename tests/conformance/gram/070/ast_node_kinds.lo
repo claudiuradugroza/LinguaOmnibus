@@ -1,0 +1,9 @@
+# conformance/gram/070/ast_node_kinds.lo
+# covers: GRAM-050
+#lingua: EN
+
+# Complete list of AST node kinds at spec-0.1: declarations, statements,
+# expressions, types, patterns, supporting nodes. Emitting outside this list = non-conforming.
+
+function main() returns Unit:
+    return Unit

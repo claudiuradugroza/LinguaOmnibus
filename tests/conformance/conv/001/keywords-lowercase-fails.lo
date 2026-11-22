@@ -1,0 +1,9 @@
+# conformance/conv/001/keywords-lowercase-fails.lo
+# covers: CONV-002
+#lingua: EN
+
+# lowercase "if" is prose, not a keyword — MUST fail to parse as a keyword.
+
+function main() returns Unit:
+    if true then:
+        pass

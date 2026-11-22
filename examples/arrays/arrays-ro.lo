@@ -1,0 +1,6 @@
+#lingua: RO
+funcție main() returnează Unit:
+    variabilă numere: [int32] = [1, 2, 3, 4, 5]
+    variabilă primul = numere[0]
+    print(primul)
+    return ()

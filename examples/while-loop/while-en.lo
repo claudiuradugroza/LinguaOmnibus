@@ -1,0 +1,9 @@
+#lingua: EN
+function main() returns Unit:
+    var i: int32 = 0
+    var sum: int32 = 0
+    while i <= 10:
+        sum = sum + i
+        i = i + 1
+    print(sum)
+    return ()

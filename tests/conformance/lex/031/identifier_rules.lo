@@ -1,0 +1,12 @@
+# conformance/lex/031/identifier_rules.lo
+# covers: LEX-034, LEX-035, LEX-036, LEX-037
+#lingua: EN
+
+# Identifier matching is byte-exact after NFC; no case-folding (eliminates Turkish i/I ambiguity).
+# __ prefix reserved for implementation; user code gets warning L0201_reserved_prefix but is accepted.
+# Support at least 255 code point identifiers; SHOULD support 1024.
+# SHOULD emit warning L0202_unicode_confusable for confusable identifiers; MUST NOT reject.
+
+var __reserved = 1
+var identifier = 2
+var іdentifier = 3

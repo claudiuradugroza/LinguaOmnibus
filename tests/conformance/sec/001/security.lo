@@ -1,0 +1,19 @@
+# conformance/sec/001/security.lo
+# covers: SEC-001, SEC-002, SEC-003, SEC-004, SEC-005, SEC-006, SEC-007, SEC-008
+#lingua: EN
+
+# Capabilities are declared permissions required by effects.
+# Sandbox restricts untrusted code by default (default-deny).
+# Capabilities granted via lopm.toml or command-line flag.
+# Quantum operations require quantum capability.
+# Sandbox boundary is the process.
+# Telemetry disabled by default (Principle 7).
+# No eval / dynamic code generation in spec-0.1.
+
+function read_file() returns int32 with [FILESYSTEM]:
+    return 1
+
+function use_quantum() returns Unit with [QUANTUM]:
+    quantum:
+        var q = alloc_qubit()
+        var r = measure(q)

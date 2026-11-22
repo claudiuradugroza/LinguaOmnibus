@@ -1,0 +1,10 @@
+# conformance/conv/034/compat-declaration.lo
+# covers: CONV-034
+#lingua: EN
+
+# A conforming implementation MUST declare, in machine-readable form:
+# spec_compatibility, bundled_langpacks, lir_version, conformance map.
+# Retrievable via loc --version --json.
+
+function main() returns Unit:
+    return Unit

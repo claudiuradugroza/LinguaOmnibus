@@ -1,0 +1,7 @@
+#lingua: EN
+function main() returns Unit:
+    quantum:
+        var q = alloc_qubit()
+        var r = measure(q)
+        print(r)
+    return ()

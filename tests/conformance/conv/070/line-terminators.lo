@@ -1,0 +1,8 @@
+# conformance/conv/070/line-terminators.lo
+# covers: CONV-073
+#lingua: EN
+
+# Implementations MUST accept both LF and CRLF as line terminators.
+
+function main() returns Unit:
+    return Unit

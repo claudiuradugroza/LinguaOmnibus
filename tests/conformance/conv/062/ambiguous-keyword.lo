@@ -1,0 +1,9 @@
+# conformance/conv/062/ambiguous-keyword.lo
+# covers: CONV-062
+#lingua: EN
+
+# A language pack MUST NOT introduce a keyword that aliases a keyword from another pack
+# in a way that makes auto-detection ambiguous, unless it declares requires_explicit_lingua_directive: true.
+
+function main() returns Unit:
+    return Unit

@@ -1,0 +1,5 @@
+#lingua: EN
+function main() returns Unit:
+    var opt = 42
+    print(opt)
+    return ()

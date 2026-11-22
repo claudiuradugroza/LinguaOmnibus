@@ -1,0 +1,5 @@
+# conformance/type/010/composite.lo
+# covers: TYPE-012, TYPE-013, TYPE-014, TYPE-015, TYPE-016, TYPE-017
+#lingua: EN
+
+var arr: [int32] = [1, 2, 3]

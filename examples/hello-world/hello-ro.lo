@@ -1,0 +1,4 @@
+#lingua: RO
+funcție main() returnează Unit:
+    print("Hello, world!")
+    return ()

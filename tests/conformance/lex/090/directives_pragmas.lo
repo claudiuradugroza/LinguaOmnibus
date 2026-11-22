@@ -1,0 +1,13 @@
+# conformance/lex/090/directives_pragmas.lo
+# covers: LEX-090, LEX-091, LEX-092, LEX-093, LEX-094, LEX-095, LEX-096
+#lingua: EN
+
+# Language directive #lingua: XX before first non-comment token; at most one per file.
+# Unknown pack rejected with L0600_unknown_langpack.
+# Pragma #pragma NAME [ARG ...]; unknown pragmas warn L0601_unknown_pragma.
+# lingua and pragma MUST be lowercase; uppercase rejected with L0602_bad_directive.
+# Missing pragma arg rejected with L0603_missing_pragma_arg.
+
+#pragma prefer_decimal "."
+function main() returns Unit:
+    return Unit

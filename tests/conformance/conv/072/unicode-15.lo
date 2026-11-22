@@ -1,0 +1,8 @@
+# conformance/conv/072/unicode-15.lo
+# covers: CONV-072
+#lingua: EN
+
+# Implementations MUST support the full Unicode 15.0+ code point range for identifiers and strings.
+
+function main() returns Unit:
+    return Unit

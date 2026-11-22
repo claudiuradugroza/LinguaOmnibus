@@ -1,0 +1,9 @@
+# conformance/gram/001/unicode_operators.lo
+# covers: GRAM-004, GRAM-005
+#lingua: EN
+
+# Unicode operator aliases (≤, ≥, ≠) canonicalized to ASCII (<=, >=, !=) after NFC.
+# Canonicalization does NOT apply inside string/char/byte/raw-string literals.
+
+var a = x ≤ y
+var b = "≤ is not an operator here"

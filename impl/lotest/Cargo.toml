@@ -1,0 +1,12 @@
+[package]
+name = "lotest"
+version = "0.1.0"
+edition = "2021"
+description = "Lingua Omnibus test runner"
+
+[[bin]]
+name = "lotest"
+path = "src/main.rs"
+
+[dependencies]
+walkdir = "2"

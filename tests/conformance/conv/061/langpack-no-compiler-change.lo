@@ -1,0 +1,9 @@
+# conformance/conv/061/langpack-no-compiler-change.lo
+# covers: CONV-061
+#lingua: EN
+
+# Adding a new language pack MUST NOT require changes to loc or any other tool.
+# If a language cannot be expressed by the current pack schema, the correct response is a new RFC.
+
+function main() returns Unit:
+    return Unit

@@ -1,0 +1,8 @@
+# conformance/conv/012/test-header-format.lo
+# covers: CONV-013
+#lingua: EN
+
+# Header comment declares covered rule identifiers.
+
+function main() returns Unit:
+    return Unit

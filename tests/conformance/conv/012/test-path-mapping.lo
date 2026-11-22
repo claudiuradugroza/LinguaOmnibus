@@ -1,0 +1,9 @@
+# conformance/conv/012/test-path-mapping.lo
+# covers: CONV-012, CONV-013
+#lingua: EN
+
+# Test path is normative: conformance/{PREFIX-lowercase}/{NNN}/{slug}.lo
+# A test MAY exercise multiple rule identifiers via # covers: header.
+
+function main() returns Unit:
+    return Unit

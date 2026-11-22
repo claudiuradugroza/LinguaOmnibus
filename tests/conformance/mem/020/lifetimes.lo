@@ -1,0 +1,15 @@
+# conformance/mem/020/lifetimes.lo
+# covers: MEM-020, MEM-021, MEM-022, MEM-023, MEM-024, MEM-025
+#lingua: EN
+
+function foo(x: int32, y: int32) returns int32:
+    if x > y then:
+        return x
+    else:
+        return y
+
+var a = 10
+var b = 20
+var r = foo(a, b)
+
+# MEM-024: drop checking — non-Copy value dropped exactly once at scope end

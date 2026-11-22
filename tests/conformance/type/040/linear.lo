@@ -1,0 +1,8 @@
+# conformance/type/040/linear.lo
+# covers: TYPE-027, TYPE-028, TYPE-029, TYPE-030, TYPE-031, TYPE-032, TYPE-033
+#lingua: EN
+
+function test_linear() returns Unit:
+    var x = 42
+    var y = x
+    return ()

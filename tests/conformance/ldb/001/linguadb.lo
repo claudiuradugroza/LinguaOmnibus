@@ -1,0 +1,6 @@
+# conformance/ldb/001/linguadb.lo
+# covers: LDB-001, LDB-002, LDB-003, LDB-004, LDB-005, LDB-006, LDB-007, LDB-008
+#lingua: EN
+
+function test_db() returns Unit with [DATABASE]:
+    return ()

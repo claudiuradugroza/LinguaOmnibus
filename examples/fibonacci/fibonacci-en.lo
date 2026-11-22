@@ -1,0 +1,11 @@
+#lingua: EN
+function fib(n: int32) returns int32:
+    if n <= 1 then:
+        return n
+    else:
+        return fib(n - 1) + fib(n - 2)
+
+function main() returns Unit:
+    var res = fib(10)
+    print(res)
+    return ()

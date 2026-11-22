@@ -1,0 +1,8 @@
+# conformance/gram/037/return_type_default.lo
+# covers: GRAM-037
+#lingua: EN
+
+# When KW_RETURNS type is omitted, return type MUST be KW_UNIT.
+
+function main():
+    return Unit

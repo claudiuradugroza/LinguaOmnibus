@@ -1,0 +1,13 @@
+# conformance/std/001/stdlib.lo
+# covers: STD-001, STD-002
+#lingua: EN
+
+# Standard library written in LO. Modules: core, io, db, quantum.
+# API stability follows SemVer for the language version.
+
+import std.io
+import std.db
+
+function main() returns Unit:
+    std.io.print("hello")
+    return Unit

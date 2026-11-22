@@ -1,0 +1,9 @@
+# conformance/conv/074/glossary.lo
+# covers: CONV-074, CONV-075
+#lingua: EN
+
+# English terms are normative; translations are normative for human-facing messages.
+# A language pack MAY add glossary translations under keywords.json "glossary".
+
+function main() returns Unit:
+    return Unit

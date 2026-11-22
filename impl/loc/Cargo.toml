@@ -1,0 +1,15 @@
+[package]
+name = "loc"
+version = "0.1.0"
+edition = "2021"
+description = "Lingua Omnibus compiler"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+walkdir = "2"
+clap = { version = "4", features = ["derive"] }
+unicode-normalization = "0.1"
+
+[profile.release]
+opt-level = 2

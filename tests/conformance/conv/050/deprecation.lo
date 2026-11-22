@@ -1,0 +1,10 @@
+# conformance/conv/050/deprecation.lo
+# covers: CONV-050, CONV-051, CONV-052
+#lingua: EN
+
+# Deprecated rule identifiers remain normative for at least one spec-MAJOR cycle.
+# Implementations MUST emit a warning (not an error) for deprecated behaviour.
+# Removal only in spec-MAJOR bump, documented in MIGRATION-{MAJOR}.md.
+
+function main() returns Unit:
+    return Unit

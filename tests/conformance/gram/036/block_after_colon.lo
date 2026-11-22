@@ -1,0 +1,7 @@
+# conformance/gram/036/block_after_colon.lo
+# covers: GRAM-036
+#lingua: EN
+
+function test() returns Unit:
+    if true then:
+        return ()

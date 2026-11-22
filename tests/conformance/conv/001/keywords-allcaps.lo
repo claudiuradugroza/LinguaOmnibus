@@ -1,0 +1,10 @@
+# conformance/conv/001/keywords-allcaps.lo
+# covers: CONV-001, CONV-002
+#lingua: EN
+
+# MUST parse: the all-caps keyword IF is normative.
+# MUST fail: the lowercase "if" is prose, not a keyword.
+
+function main() returns Unit:
+    IF true THEN:
+        pass

@@ -1,0 +1,8 @@
+# conformance/mem/030/stack_heap.lo
+# covers: MEM-030, MEM-031, MEM-032, MEM-033
+#lingua: EN
+
+var stack_val = 42           # MEM-030: stack-allocated (known size, bounded lifetime)
+var boxed = Box::new(42)     # MEM-031: heap-allocated via Box
+var b2 = boxed               # MEM-032: Box moved — pointer copied, pointee not duplicated
+# boxed is now uninitialized

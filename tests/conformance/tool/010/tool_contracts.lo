@@ -1,0 +1,12 @@
+# conformance/tool/010/tool_contracts.lo
+# covers: TOOL-006, TOOL-007, TOOL-008, TOOL-009, TOOL-010
+#lingua: EN
+
+# loc: build, check, run, emit-lir, dump-ast --canonical.
+# lolsp: autocomplete, goto definition, hover, diagnostics.
+# lofmt: indentation, decimal separator per pack.
+# lodoc: documentation from doc-comment metadata.
+# lotest: run conformance and unit tests.
+
+function main() returns Unit:
+    return Unit

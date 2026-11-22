@@ -1,0 +1,11 @@
+# conformance/gram/050/unified_ast.lo
+# covers: GRAM-050, GRAM-051, GRAM-052, GRAM-053, GRAM-054
+#lingua: EN
+
+# Parser builds unified AST from fixed node kinds (§8). Node has kind, children, lingua_meta.
+# lingua_meta stripped before LIR generation. ASTs differing only in lingua_meta are identical.
+# AST identity test: same #lingua: and pack → structurally identical, byte-identical JSON.
+# loc dump-ast --canonical: sorted keys, no whitespace, UTF-8, trailing newline.
+
+function main() returns Unit:
+    return Unit

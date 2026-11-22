@@ -1,0 +1,11 @@
+#lingua: RO
+funcție fib(n: int32) returnează int32:
+    dacă n <= 1 atunci:
+        returnează n
+    altfel:
+        returnează fib(n - 1) + fib(n - 2)
+
+funcție main() returnează Unit:
+    variabilă rez = fib(10)
+    print(rez)
+    return ()

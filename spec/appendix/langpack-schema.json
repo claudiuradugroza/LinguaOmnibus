@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Lingua Omnibus Language Pack Schema",
+  "description": "Contractul unui language pack. Fiecare limbă naturală este un director cu aceste fișiere.",
+  "type": "object",
+  "required": ["iso", "name", "script", "direction", "unicode_normalization", "grammar_variant", "keywords", "types", "number_format", "version"],
+  "properties": {
+    "iso": {
+      "type": "string",
+      "description": "ISO 639-1 code, e.g. 'en', 'ro', 'fr', 'de', 'es', 'ja'"
+    },
+    "name": {
+      "type": "string",
+      "description": "Numele limbii în limba respectivă, e.g. 'Română'"
+    },
+    "script": {
+      "type": "string",
+      "description": "Sistemul de scriere, e.g. 'Latin', 'CJK', 'Arabic'"
+    },
+    "direction": {
+      "type": "string",
+      "enum": ["ltr", "rtl"],
+      "description": "Direcția de scriere: ltr sau rtl"
+    },
+    "unicode_normalization": {
+      "type": "string",
+      "enum": ["NFC", "NFD", "NFKC", "NFKD"],
+      "description": "Normalizarea Unicode aplicată înainte de tokenizare"
+    },
+    "grammar_variant": {
+      "type": "string",
+      "enum": ["svo", "sov", "vso", "vos", "osv", "osp"],
+      "description": "Tiparul de ordine a cuvintelor: SVO, SOV, etc."
+    },
+    "keywords": {
+      "type": "object",
+      "description": "Mapare KW_X slot → cuvinte naturale",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string" }
+      }
+    },
+    "types": {
+      "type": "object",
+      "description": "Mapare TY_X slot → cuvinte naturale"
+    },
+    "number_format": {
+      "type": "object",
+      "required": ["decimal_sep", "thousand_sep"],
+      "properties": {
+        "decimal_sep": { "type": "string" },
+        "thousand_sep": { "type": "string" }
+      }
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "ISO 8601 date (CONV-032)"
+    },
+    "glossary": {
+      "type": "object",
+      "description": "Traduceri opționale pentru termenii din glosar (CONV-075)"
+    },
+    "requires_explicit_lingua_directive": {
+      "type": "boolean",
+      "description": "Dacă true, pachetul necesită #lingua: explicit (CONV-062)"
+    },
+    "testing": {
+      "type": "string",
+      "description": "Calea către testele de pachet, e.g. 'langpacks/ro/tests/'"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+[package]
+name = "lofmt"
+version = "0.1.0"
+edition = "2021"
+description = "Lingua Omnibus formatter"
+
+[[bin]]
+name = "lofmt"
+path = "src/main.rs"
+
+[dependencies]

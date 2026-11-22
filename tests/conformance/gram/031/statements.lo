@@ -1,0 +1,16 @@
+# conformance/gram/031/statements.lo
+# covers: GRAM-031
+#lingua: EN
+
+function main() returns Unit:
+    var x: int32 = 1
+    const Y: int32 = 2
+    if x <= Y then:
+        return ()
+    else:
+        return ()
+    while x < 10:
+        x = x + 1
+    for i in [1, 2, 3]:
+        return ()
+    print("done")

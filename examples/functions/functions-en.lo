@@ -1,0 +1,8 @@
+#lingua: EN
+function add(a: int32, b: int32) returns int32:
+    return a + b
+
+function main() returns Unit:
+    var res = add(5, 3)
+    print(res)
+    return ()

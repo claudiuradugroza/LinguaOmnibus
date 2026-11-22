@@ -1,0 +1,8 @@
+# conformance/conv/050/deprecated-warning.lo
+# covers: CONV-051
+#lingua: EN
+
+# Deprecated behaviour MUST emit a warning unless opted out via #pragma allow deprecated {OLD_ID}.
+
+function main() returns Unit:
+    return Unit

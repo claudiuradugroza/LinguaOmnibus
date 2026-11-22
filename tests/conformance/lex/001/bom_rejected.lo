@@ -1,0 +1,9 @@
+# conformance/lex/001/bom_rejected.lo
+# covers: LEX-002
+#lingua: EN
+
+# This file MUST be rejected because it would start with a BOM (U+FEFF).
+# The harness prepends U+FEFF and expects error L0001_bom_forbidden.
+
+function main() returns Unit:
+    return Unit

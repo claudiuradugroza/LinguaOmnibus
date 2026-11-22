@@ -1,0 +1,9 @@
+# conformance/type/070/compatibility.lo
+# covers: TYPE-040, TYPE-041, TYPE-042
+#lingua: EN
+
+var a: int32 = 42
+var b: int64 = a as int64    # TYPE-041: widening int32 → int64
+var c: f64 = a as f64        # TYPE-041: int → f64
+var d: Option<Integer> = 42 as Option<Integer>  # TYPE-041: T → Option<T>
+var e: byte = a as byte      # TYPE-042: narrowing cast — explicit, allowed if valid

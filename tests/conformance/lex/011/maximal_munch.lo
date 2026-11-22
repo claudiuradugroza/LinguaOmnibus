@@ -1,0 +1,7 @@
+# conformance/lex/011/maximal_munch.lo
+# covers: LEX-012
+#lingua: EN
+
+# The lexer MUST apply maximal munch: < and <=, the longer operator wins.
+var a = x <= y
+var b = x < y

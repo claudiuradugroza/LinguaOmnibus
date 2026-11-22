@@ -1,0 +1,11 @@
+[package]
+name = "lopm"
+version = "0.1.0"
+edition = "2021"
+description = "Lingua Omnibus package manager"
+
+[[bin]]
+name = "lopm"
+path = "src/main.rs"
+
+[dependencies]

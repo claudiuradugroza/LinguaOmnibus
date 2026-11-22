@@ -1,0 +1,9 @@
+# conformance/conv/042/byte-identical.lo
+# covers: CONV-042
+#lingua: EN
+
+# Programs without extensions MUST compile identically (byte-identical LIR)
+# on any two conforming implementations with same spec_compatibility and lir_version.
+
+function main() returns Unit:
+    return Unit

@@ -1,0 +1,11 @@
+[package]
+name = "lodoc"
+version = "0.1.0"
+edition = "2021"
+description = "Lingua Omnibus doc generator"
+
+[[bin]]
+name = "lodoc"
+path = "src/main.rs"
+
+[dependencies]

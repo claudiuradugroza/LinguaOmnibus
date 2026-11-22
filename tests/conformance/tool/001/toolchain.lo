@@ -1,0 +1,11 @@
+# conformance/tool/001/toolchain.lo
+# covers: TOOL-001, TOOL-002, TOOL-003, TOOL-004, TOOL-005
+#lingua: EN
+
+# All tools expose CONV-034 compatibility declaration via --version --json.
+# lopm supports local (vendor/) and remote (HTTP/S) registry modes.
+# No mandatory official registry. Arbitrary registries via lopm.toml.
+# Tooling works offline-first (no network required).
+
+function main() returns Unit:
+    return Unit

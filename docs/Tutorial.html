@@ -1,0 +1,204 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Lingua Omnibus - Tutorial</title>
+<style>body{font-family:system-ui,sans-serif;max-width:900px;margin:0 auto;padding:2rem;line-height:1.6;background:#f5f4f1;color:#141820}h1{color:#2c5282}h2{color:#2d6a4f;margin-top:2rem}h3{margin-top:1.5rem}code{background:#eef1f7;padding:.1rem .4rem;border-radius:4px;font-family:monospace}pre{background:#131a28;color:#d8e4f0;padding:1.5rem;border-radius:10px;overflow-x:auto;margin:1rem 0}a{color:#2c5282}table{width:100%;border-collapse:collapse;margin:1rem 0}th,td{padding:8px 12px;border:1px solid #e2ddd6}th{background:#141820;color:#d8e0ec}.lang-bar{background:#141820;padding:.45rem 2rem;display:flex;justify-content:flex-end;gap:.4rem}.ls-btn{background:none;border:1px solid #2e3a50;color:#8a9ab8;font-family:monospace;font-size:.68rem;padding:.22rem .6rem;border-radius:4px;cursor:pointer}.ls-btn.active{background:#2c3f60;border-color:#4a6a99;color:#c8d8f0}.lang-en,.lang-ro{display:none}.lang-en.active,.lang-ro.active{display:block}</style></head><body>
+<div class="lang-bar"><span style="font-family:monospace;font-size:.64rem;color:#6b7a90;text-transform:uppercase;letter-spacing:.12em;margin-right:.5rem">Language / Limba</span><button class="ls-btn active" onclick="setLang('en')">EN</button><button class="ls-btn" onclick="setLang('ro')">RO</button></div>
+<h1><span class="lang-en active">Lingua Omnibus - Tutorial</span><span class="lang-ro">Lingua Omnibus - Tutorial</span></h1>
+<div class="lang-en active"><p>A free, open, community-governed programming language. Write code in your native language, produce identical semantic output.</p></div>
+<div class="lang-ro"><p>Un limbaj de programare gratuit, open, community-governed. Scrie cod in limba ta nativa, produce output semantic identic.</p></div>
+<h2>1. Getting Started / Primii pasi</h2>
+<div class="lang-en active"><p>Create a file <code>hello.lo</code>:</p></div>
+<div class="lang-ro"><p>Creeaza un fisier <code>hello.lo</code>:</p></div>
+<pre><code>#lingua: EN
+function main() returns Unit:
+    print("Hello, world!")
+    return ()</code></pre>
+<div class="lang-en active"><p>Compile: <code>loc build hello.lo</code></p></div>
+<div class="lang-ro"><p>Compileaza: <code>loc build hello.lo</code></p></div>
+<h2>2. Variables and Types / Variabile si Tipuri</h2>
+<div class="lang-en active"><p>LO supports exact-width integer types, floats, booleans, strings, chars, bytes, and quantum types.</p></div>
+<div class="lang-ro"><p>LO suporta tipuri intregi cu latime exacta, float-uri, booleani, string-uri, char-uri, byte-uri si tipuri cuantice.</p></div>
+<pre><code>#lingua: EN
+function main() returns Unit:
+    var x: int32 = 42
+    var y: f64 = 3.14
+    var s: string = "hello"
+    var b: bool = true
+    var arr: [int32] = [1, 2, 3]
+    print(x)
+    return ()</code></pre>
+<h3>Types / Tipuri</h3>
+<table><tr><th>Type</th><th>Size</th><th>Copy</th></tr>
+<tr><td>int8, int16, int32, int64, int128</td><td>1-16 bytes</td><td>Yes</td></tr>
+<tr><td>uint8, uint16, uint32, uint64, uint128</td><td>1-16 bytes</td><td>Yes</td></tr>
+<tr><td>f32, f64</td><td>4, 8 bytes</td><td>Yes</td></tr>
+<tr><td>bool, char, byte, unit</td><td>1, 4, 1, 0 bytes</td><td>Yes</td></tr>
+<tr><td>string</td><td>growable</td><td>Yes (clone)</td></tr>
+<tr><td>qubit, qreg, qcircuit, qstate</td><td>linear</td><td>No</td></tr>
+<tr><td>Option, Result, Map, Array, Tuple</td><td>composite</td><td>Yes</td></tr></table>
+<h2>3. Functions / Functii</h2>
+<div class="lang-en active"><p>Functions are declared with function keyword, parameters with colon, and return type with returns.</p></div>
+<div class="lang-ro"><p>Functiile se declara cu cuvantul function, parametrii cu doua puncte, si tipul de return cu returns.</p></div>
+<pre><code>#lingua: EN
+function add(a: int32, b: int32) returns int32:
+    return a + b
+
+function main() returns Unit:
+    var res = add(5, 3)
+    print(res)
+    return ()</code></pre>
+<h2>4. Control Flow / Flux de control</h2>
+<div class="lang-en active"><p>LO supports if/else, while, for, and match statements.</p></div>
+<div class="lang-ro"><p>LO suporta if/else, while, for si match.</p></div>
+<h3>If/Else</h3>
+<pre><code>#lingua: EN
+function main() returns Unit:
+    var score: int32 = 85
+    if score >= 90 then:
+        print("A")
+    else:
+        if score >= 80 then:
+            print("B")
+        else:
+            print("C")
+    return ()</code></pre>
+<h3>While</h3>
+<pre><code>#lingua: EN
+function main() returns Unit:
+    var i: int32 = 0
+    var sum: int32 = 0
+    while i <= 10:
+        sum = sum + i
+        i = i + 1
+    print(sum)
+    return ()</code></pre>
+<h2>5. Memory and Ownership / Memorie si Proprietate</h2>
+<div class="lang-en active"><p>LO uses single ownership for non-Copy values. Borrowing uses shared and mutable references.</p></div>
+<div class="lang-ro"><p>LO foloseste proprietate unica pentru valori non-Copy. Imprumutul foloseste referinte shared si mutable.</p></div>
+<pre><code>#lingua: EN
+var s1 = String("hello")
+var s2 = s1          # s1 moved to s2
+var s3 = s2.clone()  # explicit clone
+var x = 42
+var r1 = x           # copy (int is Copy)
+var r2 = x           # still valid
+return ()</code></pre>
+<h2>6. Quantum Programming / Programare cuantica</h2>
+<div class="lang-en active"><p>LO supports quantum computing via quantum blocks that compile to OpenQASM 3.0.</p></div>
+<div class="lang-ro"><p>LO suporta computatie cuantica via blocuri quantum care compileaza la OpenQASM 3.0.</p></div>
+<pre><code>#lingua: EN
+quantum:
+    var q = alloc_qubit()
+    var r = measure(q)
+    print(r)
+return ()</code></pre>
+<h2>7. Toolchain / Toolchain</h2>
+<div class="lang-en active"><p>LO comes with a complete toolchain.</p></div>
+<div class="lang-ro"><p>LO vine cu un toolchain complet.</p></div>
+<table><tr><th>Tool</th><th>Command</th><th>Purpose</th></tr>
+<tr><td>loc</td><td>loc build file.lo</td><td>Compile</td></tr>
+<tr><td>loc</td><td>loc check file.lo</td><td>Type check</td></tr>
+<tr><td>loc</td><td>loc emit-lir file.lo</td><td>Emit LIR</td></tr>
+<tr><td>lofmt</td><td>lofmt file.lo</td><td>Format</td></tr>
+<tr><td>lodoc</td><td>lodoc file.lo</td><td>Docs</td></tr>
+<tr><td>lotest</td><td>lotest</td><td>Run tests</td></tr>
+<tr><td>lopm</td><td>lopm install --vendor</td><td>Packages</td></tr>
+</table>
+<h2>8. Language Packs / Pachete lingvistice</h2>
+<div class="lang-en active"><p>LO supports 30 languages via language packs (JSON + tests). Adding a language requires zero compiler changes.</p></div>
+<div class="lang-ro"><p>LO suporta 30 de limbi via language packs (JSON + teste). Adaugarea unei limbi nu necesita modificari in compilator.</p></div>
+<pre><code>// langpacks/en/keywords.json
+{
+  "iso": "en",
+  "name": "English",
+  "keywords": {
+    "KW_FUNCTION": ["function"],
+    "KW_RETURN": ["return", "returns"],
+    "KW_IF": ["if", "IF"],
+    "KW_THEN": ["then", "THEN"]
+  }
+}</code></pre>
+<h2>9. Conformance / Conformitate</h2>
+<div class="lang-en active"><p>107 conformance tests verify all 13 specification sections. Run with <code>lotest</code>.</p></div>
+<div class="lang-ro"><p>107 teste de conformanță verifică toate cele 13 secțiuni de specificație. Rulează cu <code>lotest</code>.</p></div>
+<hr><p><em>Licensed under Apache 2.0. Created by Claudiu Radu Groza.</em></p>
+<script>function setLang(l){document.querySelectorAll(".lang-en,.lang-ro").forEach(e=>e.classList.remove("active"));document.querySelectorAll(".lang-"+l).forEach(e=>e.classList.add("active"));document.querySelectorAll(".ls-btn").forEach(b=>b.classList.remove("active"));event.target.classList.add("active")}</script>
+</body></html>
+<h2>SPEC-02: Grammar</h2>
+<p>Reference EBNF grammar over keyword slots. Unified AST across all languages.</p>
+<pre><code># Significant indentation (GRAM-010 to GRAM-015)
+# Expression precedence table (GRAM-020)
+# No chained comparisons (GRAM-022)
+# Unified AST node kinds (GRAM-050)
+# AST identity test (GRAM-053)
+# loc dump-ast --canonical (GRAM-054)</code></pre>
+<h2>SPEC-03: Type System</h2>
+<p>Primitive types with exact bit widths, generics, linear types for qubits.</p>
+<pre><code>int8, int16, int32, int64, int128
+uint8...uint128, f32, f64, bool, char, byte, unit, string
+qubit, qreg, qcircuit, qstate (linear)
+Option, Result, Map, Array, Tuple, Function</code></pre>
+<h2>SPEC-04: Memory Model</h2>
+<p>Single ownership, borrowing, lifetimes, stack/heap, drop semantics, optional GC.</p>
+<pre><code># Move semantics
+var s1 = String("hello")
+var s2 = s1  # s1 moved
+# Borrowing
+var x = 42
+var r1 = x  # copy (int is Copy)
+# Drop: exactly once per owner
+# Stack overflow guard (1 MiB default)</code></pre>
+<h2>SPEC-05: Effects and Concurrency</h2>
+<p>Effect classes: IO, DATABASE, NETWORK, FILESYSTEM, QUANTUM. Async/await, spawn.</p>
+<pre><code>function read_file() returns string with [IO]:
+    return "data"
+
+async function fetch() returns string:
+    var data = await http_get("url")
+    return data
+
+function main() returns Unit:
+    var h = spawn(|| { return 42 })
+    var r = h.join()</code></pre>
+<h2>SPEC-06: LIR (Intermediate Representation)</h2>
+<p>Universal semantic form. Text + binary. Independent version (SemVer).</p>
+<pre><code>lir 1.2.0 module main entry: %r1 = const.str Hello world ret unit</code></pre>
+<h2>SPEC-07: Backends</h2>
+<p>LLVM, WASM, ARM64, RISC-V, PowerPC, OpenQASM 3.0.</p>
+<pre><code>Targets: x86_64, arm64, riscv64, powerpc64, wasm32, qasm3</code></pre>
+<h2>SPEC-08: LinguaDB</h2>
+<p>Integrated ACID database. Create, insert, select, update, delete.</p>
+<pre><code>db create table users (id int32, name string)</code></pre>
+<pre><code>db insert into users (id, name) values (1, Alice)</code></pre>
+<h2>SPEC-09: Toolchain</h2>
+<p>loc, lopm, lolsp, lofmt, lodoc, lotest. Offline-first, federated registries.</p>
+<pre><code>loc build file.lo</code></pre>
+<pre><code>loc check file.lo</code></pre>
+<pre><code>loc emit-lir file.lo</code></pre>
+<pre><code>lofmt file.lo</code></pre>
+<pre><code>lodoc file.lo</code></pre>
+<pre><code>lotest</code></pre>
+<h2>SPEC-10: Standard Library</h2>
+<p>Modules: core, io, db, quantum. Written in LO.</p>
+<pre><code>import std.io</code></pre>
+<pre><code>import std.db</code></pre>
+<h2>SPEC-11: Security</h2>
+<p>Sandbox default-deny. Capabilities: io, database, network, filesystem, quantum.</p>
+<pre><code># lopm.toml</code></pre>
+<pre><code>[capabilities]</code></pre>
+<pre><code>io = true</code></pre>
+<pre><code>filesystem = false</code></pre>
+<pre><code>network = false</code></pre>
+<h2>SPEC-12: Compatibility and Versioning</h2>
+<p>SemVer for language, LIR, language packs. Migration tool (lo-migrate).</p>
+<pre><code>Language: SemVer 2.0.0 (1.4.0)
+LIR: SemVer 2.0.0 (1.2.0)
+Language pack: ISO 8601 date (2026-01-01)
+Spec set: spec-MAJOR.MINOR (spec-0.1)</code></pre>
+<h2>SPEC-13: Governance</h2>
+<p>RFC process, maintainer election, trademark, fork rights. No BDFL.</p>
+<pre><code>RFC-0000: template</code></pre>
+<pre><code>RFC-0001: language pack derivation (approved)</code></pre>
+<pre><code>Maintainers elected annually</code></pre>
+<hr>
+<p><em>Licensed under Apache 2.0. Created by Claudiu Radu Groza.</em></p>
+<script>function setLang(l){document.querySelectorAll(".lang-en,.lang-ro").forEach(e=>e.classList.remove("active"));document.querySelectorAll(".lang-"+l).forEach(e=>e.classList.add("active"));document.querySelectorAll(".ls-btn").forEach(b=>b.classList.remove("active"));event.target.classList.add("active")}</script>
+</body></html>

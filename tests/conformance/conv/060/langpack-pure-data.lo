@@ -1,0 +1,8 @@
+# conformance/conv/060/langpack-pure-data.lo
+# covers: CONV-061
+#lingua: EN
+
+# Adding a new language pack MUST NOT require changes to loc or any other tool.
+
+function main() returns Unit:
+    return Unit

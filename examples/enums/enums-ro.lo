@@ -1,0 +1,7 @@
+#lingua: RO
+enumerare Culoare { Rosu, Verde, Albastru }
+
+funcție main() returnează Unit:
+    variabilă c = 0
+    print(c)
+    return ()

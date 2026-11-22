@@ -1,0 +1,7 @@
+#lingua: RO
+funcție main() returnează Unit:
+    quantum:
+        variabilă q = aloca_qubit()
+        variabilă r = măsoară(q)
+        print(r)
+    return ()

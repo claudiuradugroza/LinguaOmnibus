@@ -1,0 +1,14 @@
+# conformance/lex/060/numeric_literals.lo
+# covers: LEX-060, LEX-061, LEX-062, LEX-063, LEX-064, LEX-065, LEX-066, LEX-067
+#lingua: EN
+
+# Integer and Float literals. Digit grouping _ only between digits.
+# Both . and , accepted as decimal separator; must not mix or repeat.
+# 1.500 and 1,500 both denote Float 1.5, not integer 1500.
+# Integer overflow reported at lexing with L0311_integer_overflow.
+# Leading zeros accepted: 007 = 7. No type suffixes (1i32) in spec-0.1.
+
+var a = 1_000_000
+var b = 3.14159
+var c = 1,500
+var d = 007

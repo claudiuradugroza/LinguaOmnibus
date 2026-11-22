@@ -1,0 +1,9 @@
+# conformance/conv/030/langpack-version.lo
+# covers: CONV-032
+#lingua: EN
+
+# Language pack version is an ISO 8601 date (YYYY-MM-DD), not SemVer.
+# Recorded in keywords.json under field "version".
+
+function main() returns Unit:
+    return Unit

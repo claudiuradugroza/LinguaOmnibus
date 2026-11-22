@@ -1,0 +1,9 @@
+# conformance/gram/032/expressions.lo
+# covers: GRAM-032
+#lingua: EN
+
+var x = 1 + 2 * 3
+var y = true && false
+var z = x != 5
+var arr = [1, 2, 3]
+var s = "hello"

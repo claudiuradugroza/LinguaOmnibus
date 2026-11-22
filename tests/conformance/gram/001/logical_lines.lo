@@ -1,0 +1,7 @@
+# conformance/gram/001/logical_lines.lo
+# covers: GRAM-002
+#lingua: EN
+
+function test() returns Unit:
+    var x = 1 + 2 + 3
+    return ()

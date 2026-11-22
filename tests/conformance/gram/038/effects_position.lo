@@ -1,0 +1,9 @@
+# conformance/gram/038/effects_position.lo
+# covers: GRAM-038
+#lingua: EN
+
+# KW_WITH [ … ] MUST appear after optional KW_RETURNS type and before :.
+# Any other position rejected with L0532_effects_position.
+
+function main() returns Unit with [IO]:
+    return Unit

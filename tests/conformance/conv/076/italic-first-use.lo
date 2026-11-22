@@ -1,0 +1,8 @@
+# conformance/conv/076/italic-first-use.lo
+# covers: CONV-076
+#lingua: EN
+
+# Reserved words are italicised on first use in every SPEC-XX.
+
+function main() returns Unit:
+    return Unit

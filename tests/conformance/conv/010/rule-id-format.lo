@@ -1,0 +1,8 @@
+# conformance/conv/010/rule-id-format.lo
+# covers: CONV-010
+#lingua: EN
+
+# Rule identifier format: {PREFIX}-{NNN}, zero-padded three digits.
+
+function main() returns Unit:
+    return Unit

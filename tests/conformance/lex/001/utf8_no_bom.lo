@@ -1,0 +1,9 @@
+# conformance/lex/001/utf8_no_bom.lo
+# covers: LEX-001, LEX-002
+#lingua: EN
+
+# A .lo source file MUST be UTF-8 encoded without BOM.
+# If a BOM appears as the first code point, reject with L0001_bom_forbidden.
+
+function main() returns Unit:
+    return Unit

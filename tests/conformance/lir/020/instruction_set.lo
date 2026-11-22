@@ -1,0 +1,14 @@
+# conformance/lir/020/instruction_set.lo
+# covers: LIR-020, LIR-021, LIR-022, LIR-023, LIR-024, LIR-025, LIR-026
+#lingua: EN
+
+# Arithmetic: add, sub, mul, div, rem
+# Comparison: eq, ne, lt, le, gt, ge
+# Logic: and, or, xor, not, shl, shr
+# Memory: alloc, load, store, copy, move, drop
+# Control: call, ret, br, br.cond, switch
+# Quantum: qubit.alloc, qubit.measure, qubit.gate
+# Effects: effect.enter, effect.exit
+
+function main() returns Unit:
+    return Unit

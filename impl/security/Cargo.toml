@@ -1,0 +1,11 @@
+[package]
+name = "security"
+version = "0.1.0"
+edition = "2021"
+description = "Lingua Omnibus security sandbox"
+
+[[bin]]
+name = "security"
+path = "src/main.rs"
+
+[dependencies]

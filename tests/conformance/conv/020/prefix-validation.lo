@@ -1,0 +1,8 @@
+# conformance/conv/020/prefix-validation.lo
+# covers: CONV-021
+#lingua: EN
+
+# Unlisted prefixes MUST NOT be used by language packs, third-party tools, or examples.
+
+function main() returns Unit:
+    return Unit

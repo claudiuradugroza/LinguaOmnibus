@@ -1,0 +1,9 @@
+# conformance/lir/001/version.lo
+# covers: LIR-001, LIR-002, LIR-003
+#lingua: EN
+
+# LIR format has its own SemVer version independent of language version.
+# LIR file header declares version: lir 1.2.0
+
+function main() returns Unit:
+    return Unit

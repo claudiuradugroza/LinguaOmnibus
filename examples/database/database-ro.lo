@@ -1,0 +1,5 @@
+#lingua: RO
+funcție main() returnează Unit cu [DATABASE]:
+    variabilă rez = 1
+    print(rezultat)
+    return ()

@@ -1,0 +1,12 @@
+# conformance/lex/040/keywords.lo
+# covers: LEX-040, LEX-041, LEX-042, LEX-043, LEX-044, LEX-045
+#lingua: EN
+
+# Keyword matching is byte-exact after NFC; no case-folding.
+# For word_segmentation: none packs, longest-match-first keyword matching.
+# A pack with word_segmentation: none MUST NOT declare prefix-conflicting keywords.
+# requires_explicit_lingua_directive: true forces explicit #lingua: and disables auto-detection.
+# The 40 CONV-063 keyword slots are fixed; extra slots use KW_X_{NAME}.
+
+function main() returns Unit:
+    return Unit

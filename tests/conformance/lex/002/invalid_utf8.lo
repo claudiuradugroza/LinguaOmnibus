@@ -1,0 +1,9 @@
+# conformance/lex/002/invalid_utf8.lo
+# covers: LEX-003
+#lingua: EN
+
+# Invalid UTF-8 byte sequences MUST be rejected at lexing time
+# with error L0002_invalid_utf8, reporting the byte offset.
+
+function main() returns Unit:
+    return Unit

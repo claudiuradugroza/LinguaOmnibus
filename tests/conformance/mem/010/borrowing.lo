@@ -1,0 +1,16 @@
+# conformance/mem/010/borrowing.lo
+# covers: MEM-010, MEM-011, MEM-012, MEM-013, MEM-014, MEM-015
+#lingua: EN
+
+var x = 42
+var r1 = &x          # MEM-010: shared borrow — OK
+var r2 = &x          # MEM-010: multiple shared — OK
+# var r3 = &mut x    # MEM-012: rejected — M0201_borrow_conflict (r1, r2 live)
+
+var m = 100
+var rm = &m      # MEM-011: mutable borrow — exclusive
+# var rs = &m        # MEM-013: rejected — M0202_borrow_conflict (&mut active)
+
+function bad() returns int32:
+    var local = 7
+    return local    # MEM-015: rejected — M0204_return_local_ref

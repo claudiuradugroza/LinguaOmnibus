@@ -1,0 +1,8 @@
+# conformance/lex/002/nul_byte.lo
+# covers: LEX-005
+#lingua: EN
+
+# A NUL byte (U+0000) MUST be rejected with error L0003_nul_byte.
+
+function main() returns Unit:
+    return Unit

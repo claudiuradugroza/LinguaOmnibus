@@ -1,0 +1,15 @@
+# conformance/gram/033/types.lo
+# covers: GRAM-033
+#lingua: EN
+
+var a: int32
+var b: f64
+var c: bool
+var d: string
+var e: char
+var f: byte
+var g: unit
+var h: Option<int32>
+var i: Result<int32, string>
+var j: Map<string, int32>
+var k: [int32]

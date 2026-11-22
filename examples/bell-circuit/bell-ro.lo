@@ -1,0 +1,10 @@
+#lingua: RO
+funcție main() returnează Unit:
+    quantum:
+        variabilă q1 = aloca_qubit()
+        variabilă q2 = aloca_qubit()
+        q1 = H(q1)
+        q1 = CNOT(q1, q2)
+        variabilă m1 = măsoară(q1)
+        variabilă m2 = măsoară(q2)
+    return ()

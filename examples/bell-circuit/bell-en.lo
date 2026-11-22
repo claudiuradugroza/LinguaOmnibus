@@ -1,0 +1,10 @@
+#lingua: EN
+function main() returns Unit:
+    quantum:
+        var q1 = alloc_qubit()
+        var q2 = alloc_qubit()
+        q1 = H(q1)
+        q1 = CNOT(q1, q2)
+        var m1 = measure(q1)
+        var m2 = measure(q2)
+    return ()
