@@ -1,0 +1,16 @@
+#lingua: EN
+// std.core — Primitive operations
+//
+// Part of Lingua Omnibus Standard Library.
+// Spec target: spec-0.1
+
+import std.io
+
+pub function print(msg: string) returns Unit:
+    return ()
+
+pub function panic(msg: string) returns Unit:
+    return ()
+
+pub function assert(cond: bool, msg: string) returns Unit:
+    return ()

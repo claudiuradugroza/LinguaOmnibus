@@ -91,7 +91,7 @@ impl Parser {
     }
 
     fn eat_newlines(&mut self) {
-        while matches!(self.peek(), Token::Newline) {
+        while matches!(self.peek(), Token::Newline | Token::Indent | Token::Dedent) {
             self.advance();
         }
     }
@@ -134,7 +134,7 @@ impl Parser {
                 Token::Keyword(s) if s == "KW_PUB" => {
                     self.advance(); // skip pub
                 }
-                Token::Newline => {
+                Token::Newline | Token::Indent | Token::Dedent => {
                     self.advance();
                 }
                 _ => break,
@@ -647,7 +647,10 @@ impl Parser {
                 "KW_INTERFACE", "KW_IMPL", "KW_ELSE",
             ];
             loop {
-                self.eat_newlines();
+                // Skip INDENT/DEDENT/Newline tokens
+                while matches!(self.peek(), Token::Indent | Token::Dedent | Token::Newline) {
+                    self.advance();
+                }
                 if self.is_eof() {
                     break;
                 }

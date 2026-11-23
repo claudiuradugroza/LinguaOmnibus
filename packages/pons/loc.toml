@@ -7,7 +7,7 @@ authors = ["Claudiu Groza (Vemeth) <claudiu@lingua-omnibus.org>"]
 homepage = "https://github.com/claudiuradugroza/LinguaOmnibus/tree/main/packages/pons"
 repository = "https://github.com/claudiuradugroza/LinguaOmnibus"
 spec_compatibility = "0.1"
-lir_version = "0.3.0"
+lir_version = "1.2.0"
 
 [dependencies]
 std.io   = "0.1"

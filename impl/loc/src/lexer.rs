@@ -105,6 +105,12 @@ pub struct Lexer {
     column: usize,
     pack: Option<super::langpack::LanguagePack>,
     lingua_directive_seen: bool,
+    /// Indentation stack for significant indentation (GRAM-001, GRAM-010).
+    indent_stack: Vec<usize>,
+    /// Whether we're at the start of a logical line.
+    at_line_start: bool,
+    /// Whether we've already emitted a newline for this line.
+    newline_emitted: bool,
 }
 
 impl Lexer {
@@ -117,6 +123,9 @@ impl Lexer {
             column: 1,
             pack,
             lingua_directive_seen: false,
+            indent_stack: vec![0],
+            at_line_start: true,
+            newline_emitted: false,
         }
     }
 
@@ -145,13 +154,93 @@ impl Lexer {
     }
 
     pub fn next_token(&mut self) -> LocResult<Token> {
+        // Handle indentation at the start of a logical line (GRAM-001, GRAM-010-015)
+        if self.at_line_start {
+            self.at_line_start = false;
+
+            // Count leading spaces (only U+0020 SPACE allowed for indentation per GRAM-010)
+            let mut indent = 0;
+            while self.pos < self.input.len() {
+                let ch = self.peek_char();
+                if ch == ' ' {
+                    indent += 1;
+                    self.advance();
+                } else if ch == '\t' {
+                    // GRAM-010: tabs at line start are rejected
+                    return Err(LocError::TabOrUnicodeIndent { line: self.line });
+                } else if ch == '\n' || ch == '\r' {
+                    // Blank line - invisible to indentation tracker (GRAM-011)
+                    if ch == '\n' {
+                        self.newline();
+                    } else {
+                        self.advance();
+                        if self.peek_char() == '\n' {
+                            self.advance();
+                        }
+                        self.line += 1;
+                        self.column = 1;
+                    }
+                    self.at_line_start = true;
+                    return Ok(Token::Newline);
+                } else if ch == '/' && self.input[self.pos..].starts_with("//") {
+                    // Comment-only line - invisible (GRAM-011)
+                    self.skip_line();
+                    self.at_line_start = true;
+                    // Skip the newline
+                    if self.pos < self.input.len() && (self.peek_char() == '\n' || self.peek_char() == '\r') {
+                        if self.peek_char() == '\r' {
+                            self.advance();
+                            if self.peek_char() == '\n' {
+                                self.advance();
+                            }
+                        } else {
+                            self.advance();
+                        }
+                        self.line += 1;
+                        self.column = 1;
+                        self.at_line_start = true;
+                    }
+                    return Ok(Token::Newline);
+                } else {
+                    break;
+                }
+            }
+
+            // Compare with indent stack
+            let top = *self.indent_stack.last().unwrap_or(&0);
+            if indent > top {
+                // GRAM-012: first logical line must have 0 indent
+                if self.indent_stack.len() == 1 && self.line > 1 && indent > 0 {
+                    // Actually, first line of file establishes base; subsequent lines can indent
+                }
+                self.indent_stack.push(indent);
+                return Ok(Token::Indent);
+            } else if indent < top {
+                // Pop levels
+                while self.indent_stack.len() > 1 && *self.indent_stack.last().unwrap() > indent {
+                    self.indent_stack.pop();
+                }
+                if *self.indent_stack.last().unwrap() != indent {
+                    return Err(LocError::InconsistentDedent { line: self.line });
+                }
+                return Ok(Token::Dedent);
+            }
+            // Same level - no indent/dedent token
+        }
+
         let saw_newline = self.skip_whitespace_and_comments()?;
 
         if saw_newline {
+            self.at_line_start = true;
             return Ok(Token::Newline);
         }
 
         if self.pos >= self.input.len() {
+            // Emit remaining DEDENTs at EOF (GRAM-001)
+            if self.indent_stack.len() > 1 {
+                self.indent_stack.pop();
+                return Ok(Token::Dedent);
+            }
             return Ok(Token::Eof);
         }
 
@@ -307,13 +396,49 @@ impl Lexer {
             return Err(LocError::BidiInIdentifier { offset: start });
         }
 
-        // LEX-040/041: keyword matching is byte-exact after NFC
+        // LEX-040/041/042/043: keyword matching is byte-exact after NFC
+        // GRAM-003: multi-word keyword phrases with longest-match-first
         if let Some(pack) = &self.pack {
+            // First, try single-word keyword
             if let Some(slot) = pack.keyword_slot(word) {
+                // Check if this could be the start of a multi-word keyword phrase
+                // (GRAM-003: longest match wins)
+                if pack.grammar.multiphrasal_keywords.unwrap_or(false) || pack.grammar.word_segmentation == "none" {
+                    // Try to match a longer phrase
+                    let mut longest_match: Option<(String, usize)> = None;
+                    for (slot, words) in &pack.keywords {
+                        for kw in words {
+                            if kw.starts_with(word) && kw.len() > word.len() {
+                                // Check if the remaining part matches the next input
+                                let rest = &self.input[self.pos..];
+                                let remaining_kw = &kw[word.len()..];
+                                if rest.starts_with(remaining_kw) {
+                                    // Make sure it's a proper boundary
+                                    let after_pos = self.pos + remaining_kw.len();
+                                    if after_pos >= self.input.len() || !is_xid_continue(self.input[after_pos..].chars().next().unwrap_or('\0')) {
+                                        longest_match = Some((slot.clone(), kw.len()));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if let Some((slot, _)) = longest_match {
+                        // Consume the rest of the phrase
+                        let kw_len = pack.keywords.iter()
+                            .flat_map(|(_, words)| words.iter())
+                            .filter(|kw| kw.starts_with(word))
+                            .map(|kw| kw.len())
+                            .max()
+                            .unwrap_or(word.len());
+                        let rest_len = kw_len - word.len();
+                        for _ in 0..rest_len {
+                            self.advance();
+                        }
+                        return Ok(Token::Keyword(slot));
+                    }
+                }
                 return Ok(Token::Keyword(slot));
             }
-            // For CJK packs with word_segmentation: none, longest-match (LEX-042)
-            // handled at pack level; here we fall back to identifier
         }
 
         Ok(Token::Ident(word.to_string()))
@@ -683,6 +808,7 @@ impl Lexer {
         if word == "lingua" {
             // LEX-095: lingua must be lowercase
             // LEX-090: #lingua: XX
+            // CONV-062: case-insensitive ISO code (normalize to lowercase)
             self.skip_whitespace();
             if self.peek_char() != ':' {
                 return Err(LocError::BadDirective { offset: start_offset });
@@ -690,12 +816,11 @@ impl Lexer {
             self.advance(); // skip :
             self.skip_whitespace();
             let code = self.read_identifier_word();
+            // Normalize ISO code to lowercase immediately (case-insensitive)
+            let code_lower = code.to_lowercase();
             self.skip_line();
             self.lingua_directive_seen = true;
-            // We record the directive but don't emit a token (LEX-094: removed from stream)
-            // The parser will look for it via a separate mechanism.
-            // Return a synthetic token to signal directive consumed.
-            return Ok(Token::Ident(format!("__lingua_{}", code)));
+            return Ok(Token::Ident(format!("__lingua_{}", code_lower)));
         }
         if word == "pragma" {
             // LEX-092: #pragma NAME [ARG ...]

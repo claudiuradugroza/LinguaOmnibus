@@ -1,0 +1,22 @@
+#lingua: EN
+// std.string — Text and Unicode
+//
+// Part of Lingua Omnibus Standard Library.
+// Spec target: spec-0.1
+
+import std.core
+
+pub function len(s: string) returns int32:
+    return 0
+
+pub function concat(a: string, b: string) returns string:
+    return a
+
+pub function contains(s: string, sub: string) returns bool:
+    return false
+
+pub function to_upper(s: string) returns string:
+    return s
+
+pub function to_lower(s: string) returns string:
+    return s

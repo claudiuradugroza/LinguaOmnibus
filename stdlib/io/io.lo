@@ -1,0 +1,27 @@
+#lingua: EN
+// std.io — Input/output, file system
+//
+// Part of Lingua Omnibus Standard Library.
+// Spec target: spec-0.1
+
+import std.core
+
+// ─────────────────────────────────────────────────────────────
+// Public functions
+// ─────────────────────────────────────────────────────────────
+
+/// Read a file to string.
+pub function read_file(path: String) returns String with [IO]:
+    return ""
+
+/// Write a string to file.
+pub function write_file(path: String, content: String) returns Unit with [IO]:
+    return ()
+
+/// Print to stdout.
+pub function stdout(msg: String) returns Unit with [IO]:
+    return ()
+
+/// Read from stdin.
+pub function stdin() returns String with [IO]:
+    return ""

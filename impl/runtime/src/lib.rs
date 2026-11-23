@@ -78,17 +78,21 @@ pub extern "C" fn lo_qubit_measure(_qubit: usize) -> i32 {
 /// GC: mark-and-sweep (optional, MEM-050).
 pub struct GcHeap {
     pub objects: Vec<*mut u8>,
+    pub sizes: Vec<usize>,
+    pub aligns: Vec<usize>,
     pub marked: Vec<bool>,
 }
 
 impl GcHeap {
     pub fn new() -> Self {
-        GcHeap { objects: Vec::new(), marked: Vec::new() }
+        GcHeap { objects: Vec::new(), sizes: Vec::new(), aligns: Vec::new(), marked: Vec::new() }
     }
 
-    pub fn alloc(&mut self, size: usize) -> *mut u8 {
-        let ptr = unsafe { lo_alloc(size, 8) };
+    pub fn alloc(&mut self, size: usize, align: usize) -> *mut u8 {
+        let ptr = unsafe { lo_alloc(size, align) };
         self.objects.push(ptr);
+        self.sizes.push(size);
+        self.aligns.push(align);
         self.marked.push(false);
         ptr
     }
@@ -103,8 +107,10 @@ impl GcHeap {
         let mut i = 0;
         while i < self.objects.len() {
             if !self.marked[i] {
-                unsafe { lo_dealloc(self.objects[i], 0, 8) };
+                unsafe { lo_dealloc(self.objects[i], self.sizes[i], self.aligns[i]) };
                 self.objects.remove(i);
+                self.sizes.remove(i);
+                self.aligns.remove(i);
                 self.marked.remove(i);
             } else {
                 self.marked[i] = false;
