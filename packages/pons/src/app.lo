@@ -1,0 +1,60 @@
+#lingua: EN
+// app.lo — App builder, listen()
+//
+// Part of pons (RFC-0002).
+// Spec target: spec-0.1
+// Dependencies: router.lo, request.lo, response.lo
+//
+// See: rfcs/0002-pons-web-framework.md §4.2
+
+import std.io
+import std.net
+
+// ─────────────────────────────────────────────────────────────
+// Public types
+// ─────────────────────────────────────────────────────────────
+
+/// The pons application.
+pub struct App:
+    routes: List<Route>
+    default_lang: String
+
+/// A registered route.
+pub struct Route:
+    method: String
+    urls: Map<String, String>
+    handler: String
+
+// ─────────────────────────────────────────────────────────────
+// Public functions
+// ─────────────────────────────────────────────────────────────
+
+/// Listen on a port.
+pub function listen(app: App, port: Integer) returns Result<Unit, AppError>
+    with [IO, Network]:
+    print("pons listening on http://localhost:" + port)
+    return Ok(())
+
+/// Register a GET route.
+pub function get(app: App, url: String, handler: Function(Request) returns Response) returns Unit:
+    var route = Route { method: "GET", urls: Map::new(), handler: handler }
+    app.routes.push(route)
+    return ()
+
+/// Register a POST route.
+pub function post(app: App, url: String, handler: Function(Request) returns Response) returns Unit:
+    var route = Route { method: "POST", urls: Map::new(), handler: handler }
+    app.routes.push(route)
+    return ()
+
+/// Register a PUT route.
+pub function put(app: App, url: String, handler: Function(Request) returns Response) returns Unit:
+    var route = Route { method: "PUT", urls: Map::new(), handler: handler }
+    app.routes.push(route)
+    return ()
+
+/// Register a DELETE route.
+pub function delete(app: App, url: String, handler: Function(Request) returns Response) returns Unit:
+    var route = Route { method: "DELETE", urls: Map::new(), handler: handler }
+    app.routes.push(route)
+    return ()

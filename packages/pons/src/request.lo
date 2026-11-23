@@ -1,0 +1,36 @@
+#lingua: EN
+// request.lo — Request type
+//
+// Part of pons (RFC-0002).
+// Spec target: spec-0.1
+// Dependencies: none
+//
+// See: rfcs/0002-pons-web-framework.md §4.2
+
+// ─────────────────────────────────────────────────────────────
+// Public types
+// ─────────────────────────────────────────────────────────────
+
+/// An HTTP request.
+pub struct Request:
+    method: String
+    path: String
+    headers: Map<String, String>
+    body: String
+    query: Map<String, String>
+
+// ─────────────────────────────────────────────────────────────
+// Public functions
+// ─────────────────────────────────────────────────────────────
+
+/// Parse an HTTP request from raw bytes.
+pub function parse_request(raw: String) returns Request:
+    return Request { method: "GET", path: "/", headers: Map::new(), body: "", query: Map::new() }
+
+/// Get a header value.
+pub function get_header(req: Request, name: String) returns Option<String>:
+    return None
+
+/// Get a query parameter.
+pub function get_query(req: Request, name: String) returns Option<String>:
+    return None

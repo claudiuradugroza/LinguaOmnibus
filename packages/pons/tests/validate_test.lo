@@ -1,0 +1,14 @@
+#lingua: EN
+// validate_test.lo — tests for pons validation
+
+import pons
+
+function test_email_valid() returns Unit:
+    var res = pons.is_valid_email("test@example.com")
+    print(result)
+    return ()
+
+function test_age_valid() returns Unit:
+    var res = pons.is_valid_age(25)
+    print(result)
+    return ()

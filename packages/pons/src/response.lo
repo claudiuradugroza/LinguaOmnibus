@@ -1,0 +1,43 @@
+#lingua: EN
+// response.lo — Response type
+//
+// Part of pons (RFC-0002).
+// Spec target: spec-0.1
+// Dependencies: none
+//
+// See: rfcs/0002-pons-web-framework.md §4.2
+
+// ─────────────────────────────────────────────────────────────
+// Public types
+// ─────────────────────────────────────────────────────────────
+
+/// An HTTP response.
+pub struct Response:
+    status: Integer
+    body: String
+    headers: Map<String, String>
+
+// ─────────────────────────────────────────────────────────────
+// Public functions
+// ─────────────────────────────────────────────────────────────
+
+/// Create an HTML response.
+pub function html(content: String) returns Response:
+    var headers = Map::new()
+    return Response { status: 200, body: content, headers: headers }
+
+/// Create a JSON response.
+pub function json(status: Integer, body: String) returns Response:
+    var headers = Map::new()
+    headers.insert("Content-Type", "application/json")
+    return Response { status: status, body: body, headers: headers }
+
+/// Create a redirect response.
+pub function redirect(url: String) returns Response:
+    var headers = Map::new()
+    headers.insert("Location", url)
+    return Response { status: 302, body: "", headers: headers }
+
+/// Create an error response.
+pub function error(status: Integer, message: String) returns Response:
+    return Response { status: status, body: message, headers: Map::new() }

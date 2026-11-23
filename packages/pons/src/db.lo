@@ -1,0 +1,28 @@
+#lingua: EN
+// db.lo — LinguaDB integration
+//
+// Part of pons (RFC-0002).
+// Spec target: spec-0.1
+// Dependencies: none
+//
+// See: rfcs/0002-pons-web-framework.md §4.6
+
+// ─────────────────────────────────────────────────────────────
+// Public functions
+// ─────────────────────────────────────────────────────────────
+
+/// Insert a record into a table.
+pub function db_insert(table: String, data: String) returns String with [Database]:
+    return data
+
+/// Find a record by ID.
+pub function find(table: String, id: Integer) returns String with [Database]:
+    return ""
+
+/// Update a record.
+pub function db_update(table: String, data: String) returns Unit with [Database]:
+    return ()
+
+/// Delete a record.
+pub function delete(table: String, id: Integer) returns Unit with [Database]:
+    return ()

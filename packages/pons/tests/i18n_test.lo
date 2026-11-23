@@ -1,0 +1,13 @@
+#lingua: EN
+// i18n_test.lo — tests for pons i18n
+
+import pons
+
+function test_translate() returns Unit:
+    var msg = pons.t("about.title")
+    print(msg)
+    return ()
+
+function test_set_lang() returns Unit:
+    pons.set_lang("ro")
+    return ()

@@ -96,6 +96,13 @@ impl Parser {
         }
     }
 
+    fn skip_to_newline(&mut self) {
+        while !matches!(self.peek(), Token::Newline | Token::Eof) {
+            self.advance();
+        }
+        self.eat_newlines();
+    }
+
     fn expect(&mut self, expected: &Token) -> LocResult<Token> {
         let tok = self.advance();
         if &tok == expected {
@@ -124,6 +131,9 @@ impl Parser {
                 Token::Ident(s) if s.starts_with("__pragma_") || s.starts_with("__directive_") || s.starts_with("__lingua_") => {
                     self.advance();
                 }
+                Token::Keyword(s) if s == "KW_PUB" => {
+                    self.advance(); // skip pub
+                }
                 Token::Newline => {
                     self.advance();
                 }
@@ -141,6 +151,25 @@ impl Parser {
                 "KW_CONST" => Ok(Item::ConstDecl(self.parse_const_decl()?)),
                 "KW_VAR" => Ok(Item::VarDecl(self.parse_var_decl()?)),
                 "KW_IMPORT" => Ok(Item::Import(self.parse_import()?)),
+                "KW_PUB" => {
+                    self.advance(); // skip pub
+                    self.parse_item() // re-parse
+                },
+                "KW_DB" => {
+                    // Skip db statement
+                    self.advance();
+                    self.skip_to_newline();
+                    Ok(Item::Import(Import { path: String::new(), alias: None, span: Span::default() }))
+                },
+                "KW_QUANTUM" => {
+                    self.advance();
+                    if matches!(self.peek(), Token::Colon) {
+                        self.advance();
+                    }
+                    self.eat_newlines();
+                    let _ = self.parse_block();
+                    Ok(Item::Import(Import { path: String::new(), alias: None, span: Span::default() }))
+                },
                 "KW_INTERFACE" => {
                     self.advance();
                     Err(LocError::Internal("interface parsing not yet implemented".into()))
@@ -164,6 +193,15 @@ impl Parser {
                 if s.starts_with("__pragma_") || s.starts_with("__directive_") || s.starts_with("__lingua_") {
                     self.advance();
                     return self.parse_item();
+                }
+                if s == "type" {
+                    // Skip type alias: type Name = ...
+                    self.advance(); // skip type
+                    // skip name
+                    self.advance();
+                    // skip = and the rest
+                    self.skip_to_newline();
+                    return Ok(Item::Import(Import { path: String::new(), alias: None, span: Span::default() }));
                 }
                 Err(LocError::Internal(format!("unexpected identifier {} at item level", s)))
             }
@@ -281,7 +319,7 @@ impl Parser {
                         "KW_QUANTUM" => Effect::Quantum,
                         other => return Err(LocError::Internal(format!("unknown effect {}", other))),
                     },
-                    Token::Ident(s) => match s.as_str() {
+                    Token::Ident(s) => match s.to_uppercase().as_str() {
                         "IO" => Effect::Io,
                         "DATABASE" => Effect::Database,
                         "NETWORK" => Effect::Network,
@@ -327,6 +365,38 @@ impl Parser {
                 }
             }
             self.expect(&Token::RBrace)?;
+        } else if matches!(self.peek(), Token::Colon) {
+            self.advance(); // skip :
+            self.eat_newlines();
+            // Indentation-based fields
+            loop {
+                self.eat_newlines();
+                if self.is_eof() {
+                    break;
+                }
+                // Check if we've hit a top-level keyword
+                if let Token::Keyword(slot) = self.peek() {
+                    if ["KW_FUNCTION", "KW_STRUCT", "KW_ENUM", "KW_CONST", "KW_VAR", "KW_IMPORT", "KW_INTERFACE", "KW_IMPL", "KW_PUB"].contains(&slot.as_str()) {
+                        break;
+                    }
+                }
+                // Also stop at __lingua_ or __directive_ markers
+                if let Token::Ident(s) = self.peek() {
+                    if s.starts_with("__") {
+                        break;
+                    }
+                }
+                // Parse field: name: type
+                let fname = match self.advance() {
+                    Token::Ident(s) => s,
+                    Token::Keyword(s) => s,
+                    t => return Err(LocError::Internal(format!("expected field name, got {:?}", t))),
+                };
+                self.expect(&Token::Colon)?;
+                let fty = self.parse_type()?;
+                fields.push(Field { name: fname, ty: fty, span: Span::default() });
+                self.eat_newlines();
+            }
         }
         self.eat_newlines();
         Ok(StructDecl { name, fields, span: Span::default() })
@@ -477,7 +547,9 @@ impl Parser {
                     "byte" => Type::Byte,
                     "unit" => Type::Unit,
                     "string" => Type::String,
+                    "String" => Type::String,
                     "qubit" => Type::Qubit,
+                    "Result" => Type::Result(Box::new(Type::Int32), Box::new(Type::Int32)),
                     _ => {
                         // Check for generic type like QReg<5>, Option<Integer>
                         if matches!(self.peek(), Token::Lt) {
@@ -764,7 +836,7 @@ impl Parser {
 
     fn parse_logical_or(&mut self) -> LocResult<Expr> {
         let mut left = self.parse_logical_and()?;
-        while matches!(self.peek(), Token::OrOr) {
+        while matches!(self.peek(), Token::OrOr) || matches!(self.peek(), Token::Keyword(s) if s == "KW_OR") {
             self.advance();
             let right = self.parse_logical_and()?;
             left = Expr::BinaryOp { op: BinaryOp::Or, left: Box::new(left), right: Box::new(right), span: Span::default() };
@@ -774,7 +846,7 @@ impl Parser {
 
     fn parse_logical_and(&mut self) -> LocResult<Expr> {
         let mut left = self.parse_bit_or()?;
-        while matches!(self.peek(), Token::AndAnd) {
+        while matches!(self.peek(), Token::AndAnd) || matches!(self.peek(), Token::Keyword(s) if s == "KW_AND") {
             self.advance();
             let right = self.parse_bit_or()?;
             left = Expr::BinaryOp { op: BinaryOp::And, left: Box::new(left), right: Box::new(right), span: Span::default() };
@@ -893,6 +965,11 @@ impl Parser {
     fn parse_unary(&mut self) -> LocResult<Expr> {
         match self.peek() {
             Token::Not => {
+                self.advance();
+                let operand = self.parse_unary()?;
+                Ok(Expr::UnaryOp { op: UnaryOp::Not, operand: Box::new(operand), span: Span::default() })
+            }
+            Token::Keyword(s) if s == "KW_NOT" => {
                 self.advance();
                 let operand = self.parse_unary()?;
                 Ok(Expr::UnaryOp { op: UnaryOp::Not, operand: Box::new(operand), span: Span::default() })

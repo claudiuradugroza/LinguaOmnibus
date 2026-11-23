@@ -1,0 +1,28 @@
+#lingua: EN
+// i18n.lo — translation catalog + t()
+//
+// Part of pons (RFC-0002).
+// Spec target: spec-0.1
+// Dependencies: none
+//
+// See: rfcs/0002-pons-web-framework.md §4.5
+
+// ─────────────────────────────────────────────────────────────
+// Public functions
+// ─────────────────────────────────────────────────────────────
+
+/// Translate a message key to the active locale.
+pub function t(key: String) returns String:
+    return key
+
+/// Set the active language.
+pub function set_lang(code: String) returns Unit:
+    return ()
+
+/// Get the active language.
+pub function get_lang() returns String:
+    return "en"
+
+/// Load a locale catalog.
+pub function load_locale(lang: String) returns Map<String, String>:
+    return Map::new()

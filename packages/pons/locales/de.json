@@ -1,0 +1,13 @@
+{
+  "$schema": "https://lingua-omnibus.org/schema/pons-locale-0.1.json",
+  "lang": "de",
+  "version": "2026-01-01",
+  "messages": {
+    "errors.email.invalid": "Bitte geben Sie eine gueltige E-Mail-Adresse ein.",
+    "errors.age.out_of_range": "Das Alter muss zwischen 0 und 150 liegen.",
+    "ui.buttons.submit": "Senden",
+    "ui.buttons.cancel": "Abbrechen",
+    "about.title": "Ueber uns",
+    "about.body": "Willkommen auf unserer Website."
+  }
+}

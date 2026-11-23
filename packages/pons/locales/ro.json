@@ -1,0 +1,13 @@
+{
+  "$schema": "https://lingua-omnibus.org/schema/pons-locale-0.1.json",
+  "lang": "ro",
+  "version": "2026-01-01",
+  "messages": {
+    "errors.email.invalid": "Va rugam introduceti o adresa de email valida.",
+    "errors.age.out_of_range": "Varsta trebuie sa fie intre 0 si 150.",
+    "ui.buttons.submit": "Trimite",
+    "ui.buttons.cancel": "Anuleaza",
+    "about.title": "Despre",
+    "about.body": "Bine ati venit pe site-ul nostru."
+  }
+}

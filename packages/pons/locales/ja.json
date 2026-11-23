@@ -1,0 +1,13 @@
+{
+  "$schema": "https://lingua-omnibus.org/schema/pons-locale-0.1.json",
+  "lang": "ja",
+  "version": "2026-01-01",
+  "messages": {
+    "errors.email.invalid": "有効なメールアドレスを入力してください。",
+    "errors.age.out_of_range": "年齢は0〜150の範囲で入力してください。",
+    "ui.buttons.submit": "送信",
+    "ui.buttons.cancel": "キャンセル",
+    "about.title": "について",
+    "about.body": "私たちのサイトへようこそ。"
+  }
+}

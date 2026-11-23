@@ -1,0 +1,23 @@
+#lingua: EN
+// middleware.lo — middleware chain
+//
+// Part of pons (RFC-0002).
+// Spec target: spec-0.1
+// Dependencies: request.lo, response.lo
+//
+// See: rfcs/0002-pons-web-framework.md §4.2
+
+// ─────────────────────────────────────────────────────────────
+// Public types
+// ─────────────────────────────────────────────────────────────
+
+/// Middleware function type.
+pub type Middleware = String
+
+// ─────────────────────────────────────────────────────────────
+// Public functions
+// ─────────────────────────────────────────────────────────────
+
+/// Apply a middleware to a request.
+pub function apply(mw: String, req: String) returns String:
+    return mw

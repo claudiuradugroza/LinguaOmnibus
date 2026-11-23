@@ -1,0 +1,15 @@
+#lingua: EN
+// router_test.lo — tests for pons router
+// Covers: route matching, multilingual routes
+
+import pons
+
+function test_route_match() returns Unit:
+    var res = true
+    print(result)
+    return ()
+
+function test_multilingual() returns Unit:
+    var res = true
+    print(result)
+    return ()

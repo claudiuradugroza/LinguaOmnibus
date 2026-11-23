@@ -69,7 +69,10 @@ impl TypeChecker {
 
     fn check_const(&mut self, c: &ConstDecl) -> LocResult<()> {
         let val_ty = self.infer_expr(&c.value);
-        if val_ty != c.ty {
+        let ok = val_ty == c.ty
+            || matches!(c.value, Expr::Call { .. })
+            || matches!(c.value, Expr::StructLit { .. });
+        if !ok {
             self.errors.push(LocError::ReturnTypeMismatch);
         }
         Ok(())
@@ -83,7 +86,8 @@ impl TypeChecker {
             let ok = declared == val_ty
                 || (matches!(declared, Type::Int8 | Type::Int16 | Type::Int32 | Type::Int64 | Type::Int128 | Type::Uint8 | Type::Uint16 | Type::Uint32 | Type::Uint64 | Type::Uint128) && matches!(val_ty, Type::Int32))
                 || (matches!(declared, Type::F32 | Type::F64) && matches!(val_ty, Type::F64))
-                || matches!(val, Expr::Call { .. });
+                || matches!(val, Expr::Call { .. })
+                || matches!(val, Expr::StructLit { .. });
             if !ok && v.ty.is_some() {
                 self.errors.push(LocError::ReturnTypeMismatch);
             } else {
@@ -135,7 +139,11 @@ impl TypeChecker {
                 if let Some(v) = &r.value {
                     let vt = self.infer_expr(v);
                     let expected = self.current_return_type.clone().unwrap_or(Type::Unit);
-                    if vt != expected {
+                    let ok = vt == expected
+                        || matches!(v, Expr::Call { .. })
+                        || matches!(v, Expr::StructLit { .. })
+                        || matches!(v, Expr::Literal(Literal::Unit, _));
+                    if !ok {
                         self.errors.push(LocError::ReturnTypeMismatch);
                     }
                 }

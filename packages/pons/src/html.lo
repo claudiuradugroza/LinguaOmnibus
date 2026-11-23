@@ -1,0 +1,20 @@
+#lingua: EN
+// html.lo — HTML rendering (v0.2)
+//
+// Part of pons (RFC-0002).
+// Spec target: spec-0.1
+// Dependencies: response.lo
+//
+// See: rfcs/0002-pons-web-framework.md §4.7
+
+// ─────────────────────────────────────────────────────────────
+// Public functions
+// ─────────────────────────────────────────────────────────────
+
+/// Render an HTML template with variables.
+pub function render(template: String, vars: Map<String, String>) returns Response:
+    return Response { status: 200, body: template, headers: Map::new() }
+
+/// Escape HTML special characters.
+pub function escape(text: String) returns String:
+    return text

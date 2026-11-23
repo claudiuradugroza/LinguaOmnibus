@@ -1,0 +1,23 @@
+#lingua: EN
+// handlers.lo — handler trait
+//
+// Part of pons (RFC-0002).
+// Spec target: spec-0.1
+// Dependencies: request.lo, response.lo
+//
+// See: rfcs/0002-pons-web-framework.md §4.2
+
+// ─────────────────────────────────────────────────────────────
+// Public types
+// ─────────────────────────────────────────────────────────────
+
+/// Handler type alias.
+pub type Handler = String
+
+// ─────────────────────────────────────────────────────────────
+// Public functions
+// ─────────────────────────────────────────────────────────────
+
+/// Create a handler from a function.
+pub function make_handler(f: String) returns String:
+    return f

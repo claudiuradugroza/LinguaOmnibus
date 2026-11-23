@@ -1,0 +1,63 @@
+#lingua: EN
+// main.lo — pons public API re-exports
+//
+// Part of pons (RFC-0002).
+// Spec target: spec-0.1
+// Dependencies: app.lo, router.lo, request.lo, response.lo, i18n.lo, db.lo, validate.lo
+//
+// See: rfcs/0002-pons-web-framework.md §4.2
+
+import std.io
+import std.net
+
+// ─────────────────────────────────────────────────────────────
+// Public types
+// ─────────────────────────────────────────────────────────────
+
+/// An HTTP request.
+pub struct Request:
+    method: String
+    path: String
+    headers: Map<String, String>
+    body: String
+    query: Map<String, String>
+
+/// An HTTP response.
+pub struct Response:
+    status: Integer
+    body: String
+    headers: Map<String, String>
+
+/// Application error.
+pub struct AppError:
+    code: String
+    message: String
+
+/// Validation error.
+pub struct ValidationError:
+    field: String
+    code: String
+
+// ─────────────────────────────────────────────────────────────
+// Public functions
+// ─────────────────────────────────────────────────────────────
+
+/// Create a new pons application.
+pub function new_app() returns App with [IO]:
+    return App { routes: [], default_lang: "en" }
+
+/// Render HTML response.
+pub function html(content: String) returns Response:
+    return Response { status: 200, body: content, headers: Map::new() }
+
+/// Render JSON response.
+pub function json(status: Integer, body: String) returns Response:
+    return Response { status: status, body: body, headers: Map::new() }
+
+/// Translate a message key to the active locale.
+pub function t(key: String) returns String:
+    return key  # fallback: return key if not found
+
+/// Set the active language.
+pub function set_lang(code: String) returns Unit:
+    return ()

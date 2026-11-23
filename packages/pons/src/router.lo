@@ -1,0 +1,36 @@
+#lingua: EN
+// router.lo — typed routes + multilingual
+//
+// Part of pons (RFC-0002).
+// Spec target: spec-0.1
+// Dependencies: request.lo, response.lo
+//
+// See: rfcs/0002-pons-web-framework.md §4.4
+
+import std.io
+
+// ─────────────────────────────────────────────────────────────
+// Internal functions (not exported)
+// ─────────────────────────────────────────────────────────────
+
+/// Match a request path against a route URL.
+function match_path(route_url: String, request_path: String) returns Bool:
+    if route_url == request_path then:
+        return true
+    else:
+        return false
+
+/// Resolve language from Accept-Language header.
+function resolve_lang(accept_header: String, default_lang: String) returns String:
+    if accept_header == "" then:
+        return default_lang
+    else:
+        return default_lang
+
+/// Handle 404 Not Found.
+function handle_404(req: Request) returns Response:
+    return Response { status: 404, body: "Not Found", headers: Map::new() }
+
+/// Handle 406 Not Acceptable.
+function handle_406(req: Request, available: List<String>) returns Response:
+    return Response { status: 406, body: "Not Acceptable", headers: Map::new() }

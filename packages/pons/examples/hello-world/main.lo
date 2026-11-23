@@ -1,0 +1,11 @@
+#lingua: EN
+// Hello World example for pons
+import pons
+
+function index(req: Request) returns Response with [IO]:
+    return pons.html("<h1>Hello, world!</h1>")
+
+function main() returns Result<Unit, AppError> with [IO, Network]:
+    var app = pons.new_app()
+    app.get("/", index)
+    return app.listen(8080)

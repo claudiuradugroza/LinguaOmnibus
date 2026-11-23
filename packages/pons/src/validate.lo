@@ -1,0 +1,35 @@
+#lingua: EN
+// validate.lo — validation helpers
+//
+// Part of pons (RFC-0002).
+// Spec target: spec-0.1
+// Dependencies: none
+//
+// See: rfcs/0002-pons-web-framework.md §3.5
+
+// ─────────────────────────────────────────────────────────────
+// Public types
+// ─────────────────────────────────────────────────────────────
+
+/// A validation error.
+pub struct ValidationError:
+    field: String
+    code: String
+
+// ─────────────────────────────────────────────────────────────
+// Public functions
+// ─────────────────────────────────────────────────────────────
+
+/// Validate an email address.
+pub function is_valid_email(email: String) returns Bool:
+    if email.contains("@") then:
+        return true
+    else:
+        return false
+
+/// Validate an age range.
+pub function is_valid_age(age: Integer) returns Bool:
+    if age >= 0 and age <= 150 then:
+        return true
+    else:
+        return false
