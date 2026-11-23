@@ -21,14 +21,14 @@ pub struct ValidationError:
 // ─────────────────────────────────────────────────────────────
 
 /// Validate an email address.
-pub function is_valid_email(email: String) returns Bool:
+pub function is_valid_email(email: String) returns bool:
     if email.contains("@") then:
         return true
     else:
         return false
 
 /// Validate an age range.
-pub function is_valid_age(age: Integer) returns Bool:
+pub function is_valid_age(age: int32) returns bool:
     if age >= 0 and age <= 150 then:
         return true
     else:

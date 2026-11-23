@@ -13,7 +13,7 @@
 
 /// An HTTP response.
 pub struct Response:
-    status: Integer
+    status: int32
     body: String
     headers: Map<String, String>
 
@@ -27,17 +27,15 @@ pub function html(content: String) returns Response:
     return Response { status: 200, body: content, headers: headers }
 
 /// Create a JSON response.
-pub function json(status: Integer, body: String) returns Response:
+pub function json(status: int32, body: String) returns Response:
     var headers = Map::new()
-    headers.insert("Content-Type", "application/json")
     return Response { status: status, body: body, headers: headers }
 
 /// Create a redirect response.
 pub function redirect(url: String) returns Response:
     var headers = Map::new()
-    headers.insert("Location", url)
     return Response { status: 302, body: "", headers: headers }
 
 /// Create an error response.
-pub function error(status: Integer, message: String) returns Response:
+pub function error(status: int32, message: String) returns Response:
     return Response { status: status, body: message, headers: Map::new() }

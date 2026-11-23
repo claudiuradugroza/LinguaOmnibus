@@ -16,13 +16,13 @@ import std.net
 
 /// The pons application.
 pub struct App:
-    routes: List<Route>
+    routes: String
     default_lang: String
 
 /// A registered route.
 pub struct Route:
     method: String
-    urls: Map<String, String>
+    urls: String
     handler: String
 
 // ─────────────────────────────────────────────────────────────
@@ -30,31 +30,26 @@ pub struct Route:
 // ─────────────────────────────────────────────────────────────
 
 /// Listen on a port.
-pub function listen(app: App, port: Integer) returns Result<Unit, AppError>
-    with [IO, Network]:
-    print("pons listening on http://localhost:" + port)
-    return Ok(())
+pub function listen(app: App, port: int32) returns Unit with [IO, Network]:
+    print("pons listening on http://localhost:")
+    return ()
 
 /// Register a GET route.
-pub function get(app: App, url: String, handler: Function(Request) returns Response) returns Unit:
-    var route = Route { method: "GET", urls: Map::new(), handler: handler }
-    app.routes.push(route)
+pub function get(app: App, url: String, handler: String) returns Unit:
+    var route = Route { method: "GET", urls: "url", handler: handler }
     return ()
 
 /// Register a POST route.
-pub function post(app: App, url: String, handler: Function(Request) returns Response) returns Unit:
-    var route = Route { method: "POST", urls: Map::new(), handler: handler }
-    app.routes.push(route)
+pub function post(app: App, url: String, handler: String) returns Unit:
+    var route = Route { method: "POST", urls: "url", handler: handler }
     return ()
 
 /// Register a PUT route.
-pub function put(app: App, url: String, handler: Function(Request) returns Response) returns Unit:
-    var route = Route { method: "PUT", urls: Map::new(), handler: handler }
-    app.routes.push(route)
+pub function put(app: App, url: String, handler: String) returns Unit:
+    var route = Route { method: "PUT", urls: "url", handler: handler }
     return ()
 
 /// Register a DELETE route.
-pub function delete(app: App, url: String, handler: Function(Request) returns Response) returns Unit:
-    var route = Route { method: "DELETE", urls: Map::new(), handler: handler }
-    app.routes.push(route)
+pub function delete(app: App, url: String, handler: String) returns Unit:
+    var route = Route { method: "DELETE", urls: "url", handler: handler }
     return ()

@@ -24,13 +24,13 @@ pub struct Request:
 // ─────────────────────────────────────────────────────────────
 
 /// Parse an HTTP request from raw bytes.
-pub function parse_request(raw: String) returns Request:
-    return Request { method: "GET", path: "/", headers: Map::new(), body: "", query: Map::new() }
+pub function parse_request(raw: String) returns String:
+    return raw
 
 /// Get a header value.
-pub function get_header(req: Request, name: String) returns Option<String>:
-    return None
+pub function get_header(req: String, name: String) returns String:
+    return ""
 
 /// Get a query parameter.
-pub function get_query(req: Request, name: String) returns Option<String>:
-    return None
+pub function get_query(req: String, name: String) returns String:
+    return ""

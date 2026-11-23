@@ -1,16 +1,19 @@
 [package]
 name = "pons"
 version = "0.1.0"
-description = "The multilingual-first web framework for Lingua Omnibus"
+description = "Multilingual-first web framework for Lingua Omnibus"
 license = "Apache-2.0"
-authors = ["Claudiu Radu Groza"]
+authors = ["Claudiu Groza (Vemeth) <claudiu@lingua-omnibus.org>"]
+homepage = "https://github.com/claudiuradugroza/LinguaOmnibus/tree/main/packages/pons"
+repository = "https://github.com/claudiuradugroza/LinguaOmnibus"
+spec_compatibility = "0.1"
+lir_version = "0.3.0"
 
 [dependencies]
-std.io = "0.1"
-std.net = "0.1"
+std.io   = "0.1"
+std.net  = "0.1"
 std.json = "0.1"
 std.time = "0.1"
-lingua-db = "0.1"
 
 [pons]
 default_lang = "en"

@@ -16,7 +16,7 @@ pub function db_insert(table: String, data: String) returns String with [Databas
     return data
 
 /// Find a record by ID.
-pub function find(table: String, id: Integer) returns String with [Database]:
+pub function db_find(table: String, id: int32) returns String with [Database]:
     return ""
 
 /// Update a record.
@@ -24,5 +24,5 @@ pub function db_update(table: String, data: String) returns Unit with [Database]
     return ()
 
 /// Delete a record.
-pub function delete(table: String, id: Integer) returns Unit with [Database]:
+pub function db_delete(table: String, id: int32) returns Unit with [Database]:
     return ()

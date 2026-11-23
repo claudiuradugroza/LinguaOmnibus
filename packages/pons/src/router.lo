@@ -14,7 +14,7 @@ import std.io
 // ─────────────────────────────────────────────────────────────
 
 /// Match a request path against a route URL.
-function match_path(route_url: String, request_path: String) returns Bool:
+function match_path(route_url: String, request_path: String) returns bool:
     if route_url == request_path then:
         return true
     else:
@@ -28,9 +28,9 @@ function resolve_lang(accept_header: String, default_lang: String) returns Strin
         return default_lang
 
 /// Handle 404 Not Found.
-function handle_404(req: Request) returns Response:
+function handle_404(req: String) returns Response:
     return Response { status: 404, body: "Not Found", headers: Map::new() }
 
 /// Handle 406 Not Acceptable.
-function handle_406(req: Request, available: List<String>) returns Response:
+function handle_406(req: String, available: String) returns Response:
     return Response { status: 406, body: "Not Acceptable", headers: Map::new() }

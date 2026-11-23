@@ -1,0 +1,33 @@
+name: pons CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate JSON locales
+        run: |
+          for f in packages/pons/locales/*.json; do
+            python3 -c "import json,sys; json.load(open('$f')); print('OK: $f')" || exit 1
+          done
+
+      - name: Check .lo files have #lingua directive
+        run: |
+          for f in $(find packages/pons -name '*.lo'); do
+            if ! head -1 "$f" | grep -q '#lingua:'; then
+              echo "MISSING #lingua: in $f"
+              exit 1
+            fi
+          done
+          echo "All .lo files have #lingua: directive"
+
+      - name: Validate loc.toml
+        run: |
+          python3 -c "import tomllib; tomllib.load(open('packages/pons/loc.toml','rb')); print('OK: loc.toml is valid TOML')"

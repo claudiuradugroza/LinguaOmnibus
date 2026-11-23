@@ -1,0 +1,15 @@
+#lingua: EN
+// handler_test.lo — first conformance test for pons
+// Covers: handler creation, invocation
+
+import pons
+
+function test_make_handler() returns Unit:
+    var h = pons.make_handler("test")
+    print(h)
+    return ()
+
+function test_invoke() returns Unit:
+    var res = pons.invoke("handler", "request")
+    print(res)
+    return ()

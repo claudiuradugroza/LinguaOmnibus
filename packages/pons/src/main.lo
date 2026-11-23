@@ -24,7 +24,7 @@ pub struct Request:
 
 /// An HTTP response.
 pub struct Response:
-    status: Integer
+    status: int32
     body: String
     headers: Map<String, String>
 
@@ -43,20 +43,22 @@ pub struct ValidationError:
 // ─────────────────────────────────────────────────────────────
 
 /// Create a new pons application.
-pub function new_app() returns App with [IO]:
-    return App { routes: [], default_lang: "en" }
+pub function new_app() returns int32:
+    return 0
 
 /// Render HTML response.
 pub function html(content: String) returns Response:
-    return Response { status: 200, body: content, headers: Map::new() }
+    var headers = Map::new()
+    return Response { status: 200, body: content, headers: headers }
 
 /// Render JSON response.
-pub function json(status: Integer, body: String) returns Response:
-    return Response { status: status, body: body, headers: Map::new() }
+pub function json(status: int32, body: String) returns Response:
+    var headers = Map::new()
+    return Response { status: status, body: body, headers: headers }
 
 /// Translate a message key to the active locale.
 pub function t(key: String) returns String:
-    return key  # fallback: return key if not found
+    return key
 
 /// Set the active language.
 pub function set_lang(code: String) returns Unit:

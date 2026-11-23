@@ -24,5 +24,5 @@ pub function get_lang() returns String:
     return "en"
 
 /// Load a locale catalog.
-pub function load_locale(lang: String) returns Map<String, String>:
-    return Map::new()
+pub function load_locale(lang: String) returns String:
+    return lang
