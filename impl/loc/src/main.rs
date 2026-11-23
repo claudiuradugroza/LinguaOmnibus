@@ -4,6 +4,7 @@ use std::collections::BTreeMap;
 use std::path::PathBuf;
 
 mod ast;
+mod backend;
 mod error;
 mod langpack;
 mod lexer;
@@ -28,8 +29,17 @@ enum Commands {
         #[arg(value_name = "FILE")]
         file: PathBuf,
     },
-    /// Build a .lo source file (emit LIR + object)
+    /// Build a .lo source file (emit LIR + native binary)
     Build {
+        #[arg(value_name = "FILE")]
+        file: PathBuf,
+        #[arg(long, default_value = "c")]
+        backend: String,
+        #[arg(long, default_value = "x86_64")]
+        target: String,
+    },
+    /// Run a .lo source file (build + execute)
+    Run {
         #[arg(value_name = "FILE")]
         file: PathBuf,
     },
@@ -98,7 +108,7 @@ fn run_command(cmd: Commands) -> LocResult<()> {
             println!("check: OK");
             Ok(())
         }
-        Commands::Build { file } => {
+        Commands::Build { file, backend, target: _target } => {
             let source = std::fs::read_to_string(&file)
                 .map_err(|e| error::LocError::IoError(format!("cannot read {:?}: {}", file, e)))?;
             let pack = detect_pack(&source, &repo_root)?;
@@ -109,8 +119,70 @@ fn run_command(cmd: Commands) -> LocResult<()> {
             tc.check(&file_ast)?;
             let mut emitter = lir::LirEmitter::new();
             let lir = emitter.emit(&file_ast);
-            println!("{}", lir);
-            Ok(())
+
+            // Use C backend to compile to native binary
+            let be = backend::select_backend(&backend);
+            match be.emit(&lir) {
+                Ok(binary) => {
+                    let output_path = file.with_extension("bin");
+                    std::fs::write(&output_path, &binary)
+                        .map_err(|e| error::LocError::IoError(format!("cannot write binary: {}", e)))?;
+                    println!("Built: {} ({} bytes)", output_path.display(), binary.len());
+                    Ok(())
+                }
+                Err(e) => {
+                    // Fallback: emit LIR and C source
+                    println!("{}", lir);
+                    eprintln!("Backend error: {}", e);
+                    // Also emit C source for debugging
+                    let c_be = backend::c::CBackend::new();
+                    if let Ok(c_source) = c_be.emit_c_source(&lir) {
+                        let c_path = file.with_extension("c");
+                        let _ = std::fs::write(&c_path, &c_source);
+                        eprintln!("C source written to: {}", c_path.display());
+                    }
+                    Ok(())
+                }
+            }
+        }
+        Commands::Run { file } => {
+            let source = std::fs::read_to_string(&file)
+                .map_err(|e| error::LocError::IoError(format!("cannot read {:?}: {}", file, e)))?;
+            let pack = detect_pack(&source, &repo_root)?;
+            let lexer = lexer::Lexer::new(&source, pack.clone());
+            let parser = parser::Parser::new(lexer);
+            let file_ast = parser.parse()?;
+            let mut tc = type_checker::TypeChecker::new();
+            tc.check(&file_ast)?;
+            let mut emitter = lir::LirEmitter::new();
+            let lir = emitter.emit(&file_ast);
+
+            let be = backend::select_backend("c");
+            match be.emit(&lir) {
+                Ok(binary) => {
+                    let output_path = std::env::temp_dir().join("loc-run");
+                    std::fs::write(&output_path, &binary)
+                        .map_err(|e| error::LocError::IoError(format!("cannot write binary: {}", e)))?;
+                    #[cfg(unix)]
+                    {
+                        use std::os::unix::fs::PermissionsExt;
+                        let mut perms = std::fs::metadata(&output_path)?.permissions();
+                        perms.set_mode(0o755);
+                        std::fs::set_permissions(&output_path, perms)?;
+                    }
+                    let status = std::process::Command::new(&output_path)
+                        .status()
+                        .map_err(|e| error::LocError::IoError(format!("cannot run: {}", e)))?;
+                    if !status.success() {
+                        return Err(error::LocError::Internal(format!("exit code: {}", status.code().unwrap_or(-1))));
+                    }
+                    Ok(())
+                }
+                Err(e) => {
+                    eprintln!("Backend error: {}", e);
+                    Err(error::LocError::Internal(e.to_string()))
+                }
+            }
         }
         Commands::EmitLir { file } => {
             let source = std::fs::read_to_string(&file)

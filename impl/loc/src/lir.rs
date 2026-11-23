@@ -113,27 +113,35 @@ impl LirEmitter {
             }
             Statement::ReturnStmt(r) => {
                 if let Some(v) = &r.value {
-                    let reg = self.emit_expr(v);
-                    self.output.push_str(&format!("    ret {}\n", reg));
+                    match v {
+                        Expr::Literal(Literal::Unit, _) => {
+                            self.output.push_str("    ret unit\n");
+                        }
+                        _ => {
+                            let reg = self.emit_expr(v);
+                            self.output.push_str(&format!("    ret {}\n", reg));
+                        }
+                    }
                 } else {
                     self.output.push_str("    ret unit\n");
                 }
             }
             Statement::IfStmt(i) => {
                 let cond_reg = self.emit_expr(&i.cond);
+                let then_label = self.new_label();
                 let else_label = self.new_label();
                 let end_label = self.new_label();
-                self.output.push_str(&format!("    br.cond {} {}, {}\n", cond_reg, else_label, end_label));
-                self.output.push_str(&format!("  {}:\n", else_label));
+                // if cond then goto then_label else goto else_label
+                self.output.push_str(&format!("    br.cond {} {}, {}\n", cond_reg, then_label, else_label));
+                self.output.push_str(&format!("  {}:\n", then_label));
                 self.emit_block(&i.then_block);
                 self.output.push_str(&format!("    br {}\n", end_label));
-                self.output.push_str(&format!("  {}:\n", end_label));
+                self.output.push_str(&format!("  {}:\n", else_label));
                 if let Some(eb) = &i.else_block {
-                    self.output.push_str(&format!("  {}:\n", else_label));
                     self.emit_block(eb);
                     self.output.push_str(&format!("    br {}\n", end_label));
-                    self.output.push_str(&format!("  {}:\n", end_label));
                 }
+                self.output.push_str(&format!("  {}:\n", end_label));
             }
             Statement::WhileStmt(w) => {
                 let start_label = self.new_label();
