@@ -174,20 +174,31 @@ The goal is seamless collaboration between:
 
 ---
 
-# 🚀 Planned Features
+# 🚀 Implementation Status
 
 | Feature | Status |
 |----------|----------|
-| Language Specification | ✅ In Progress |
-| Universal Syntax Engine | ✅ Concept |
-| Multilingual Keywords | ✅ Concept |
-| Compiler | 🔄 Planned |
-| Virtual Machine | 🔄 Planned |
-| Package Manager | 🔄 Planned |
+| Language Specification (SPEC-00...SPEC-13) | ✅ Complete (14 docs) |
+| Universal Syntax Engine | ✅ Implemented |
+| Multilingual Keywords (30 languages) | ✅ Implemented |
+| Compiler (loc) | ✅ Functional (lexer, parser, type checker, LIR, C backend) |
+| Virtual Machine | ⚠️ Stub (runtime partial) |
+| Package Manager (lopm) | ⚠️ Stub (basic CLI) |
+| Test Runner (lotest) | ✅ Functional (107/107 tests) |
+| Formatter (lofmt) | ✅ Functional |
+| Doc Generator (lodoc) | ✅ Functional |
+| Language Server (lolsp) | ⚠️ Stub |
+| Backends (C/x86_64) | ✅ Functional (hello world + fibonacci run) |
+| Backends (LLVM, WASM, ARM64, RISC-V, PowerPC) | ⚠️ Stub |
+| Quantum (OpenQASM 3.0) | ⚠️ Stub |
 | AI Engine | 🔄 Planned |
-| IDE Integration | 🔄 Planned |
+| IDE Integration | ⚠️ Partial (lolsp stub) |
 | Cloud Runtime | 🔄 Planned |
-| Hybrid Quantum Runtime | 🔄 Planned |
+| Hybrid Quantum Runtime | ⚠️ Stub |
+| Conformance tests | ✅ 107/107 passing |
+| Language packs | ✅ 30 (EN + RO tested, 28 stubs) |
+| Examples | ✅ 14 programs (EN + RO) |
+| Documentation | ✅ Tutorial (EN/RO), Book (HTML) |
 
 ---
 
@@ -198,28 +209,39 @@ Lingua-Omnibus/
 
 ├── README.md
 ├── LICENSE
-├── ROADMAP.md
-├── SPECIFICATION.md
-├── CONTRIBUTING.md
+├── IMPLEMENTATION_STATUS.md
+├── MILESTONES.md
+├── .gitignore
 │
-├── docs/
-│   ├── architecture/
-│   ├── language/
-│   └── quantum/
+├── spec/                    # Normative specification (SPEC-00 … SPEC-13)
+│   ├── 00-conventions.md
+│   ├── 01-lexical.md
+│   ├── ...
+│   ├── 13-governance.md
+│   └── appendix/
 │
-├── examples/
-│   ├── hello-world/
-│   ├── database/
-│   ├── ai/
-│   └── quantum/
+├── rfcs/                    # Change proposals (RFC-0000 … RFC-0003)
+├── impl/                    # Reference implementation
+│   ├── loc/                 # Compiler (Rust)
+│   ├── lopm/                # Package manager
+│   ├── lolsp/               # Language server
+│   ├── lofmt/               # Formatter
+│   ├── lodoc/               # Doc generator
+│   ├── lotest/              # Test runner
+│   ├── runtime/             # Minimal runtime
+│   ├── backends/            # Multi-arch + quantum
+│   ├── linguadb/            # ACID database
+│   ├── stdlib/              # Standard library
+│   └── security/            # Security sandbox
 │
-├── compiler/
-│
-├── runtime/
-│
-├── sdk/
-│
-└── ide/
+├── langpacks/               # 30 language packs (en, ro, fr, de, es, ja, ...)
+├── stdlib/                  # Standard library (.lo files)
+├── packages/pons/           # Pons web framework (RFC-0002)
+├── tests/conformance/       # 107 conformance tests
+├── examples/                # 14 demo programs (EN + RO)
+├── docs/                    # Book, tutorials, guides, pitch
+├── governance/              # CHARTER, CONTRIBUTING, etc.
+└── ci/                      # Reproducible build, bootstrap chain, conformance gate
 ```
 
 ---
@@ -289,6 +311,14 @@ Areas where contributors can help:
 - Testing
 
 ---
+
+## Getting started
+
+1. Read `spec/00-conventions.md` (SPEC-00).
+2. Write code in your language: create a `.lo` file starting with `#lingua: XX`.
+3. Build with `loc build <file>.lo`.
+4. See [examples/hello-world/](examples/hello-world/) for a complete example.
+5. See [docs/Tutorial.html](docs/Tutorial.html) for a full tutorial (EN/RO).
 
 # 📜 License
 
