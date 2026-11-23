@@ -48,8 +48,11 @@ impl LirEmitter {
 
         self.output.push_str(&format!("  fn {} : ({}) -> {}\n", f.name, params_str, ret_str));
         self.output.push_str("  entry:\n");
+        let has_return = self.block_has_return(&f.body);
         self.emit_block(&f.body);
-        self.output.push_str("    ret unit\n");
+        if !has_return {
+            self.output.push_str("    ret unit\n");
+        }
         self.output.push_str("  }\n");
     }
 
@@ -57,6 +60,36 @@ impl LirEmitter {
         for stmt in &block.statements {
             self.emit_statement(stmt);
         }
+    }
+
+    fn block_has_return(&self, block: &Block) -> bool {
+        for stmt in &block.statements {
+            match stmt {
+                Statement::ReturnStmt(_) => return true,
+                Statement::IfStmt(i) => {
+                    if self.block_has_return(&i.then_block) {
+                        return true;
+                    }
+                    if let Some(eb) = &i.else_block {
+                        if self.block_has_return(eb) {
+                            return true;
+                        }
+                    }
+                }
+                Statement::WhileStmt(w) => {
+                    if self.block_has_return(&w.body) {
+                        return true;
+                    }
+                }
+                Statement::QuantumBlock(b) => {
+                    if self.block_has_return(b) {
+                        return true;
+                    }
+                }
+                _ => {}
+            }
+        }
+        false
     }
 
     fn emit_statement(&mut self, stmt: &Statement) {
@@ -140,7 +173,23 @@ impl LirEmitter {
             }
             Expr::Literal(Literal::String(s), _) => {
                 let reg = self.new_reg();
-                self.output.push_str(&format!("    {} = const.str \"{}\"\n", reg, s));
+                // Escape special characters for LIR (LEX-079: bidi controls → \\u{XXXX})
+                let escaped = s.chars().map(|c| {
+                    match c {
+                        '"' => "\\\"".to_string(),
+                        '\\' => "\\\\".to_string(),
+                        '\n' => "\\n".to_string(),
+                        '\t' => "\\t".to_string(),
+                        '\r' => "\\r".to_string(),
+                        '\0' => "\\0".to_string(),
+                        c if (c as u32) >= 0x200E && (c as u32) <= 0x200F => format!("\\u{{{:04X}}}", c as u32),
+                        c if (c as u32) >= 0x202A && (c as u32) <= 0x202E => format!("\\u{{{:04X}}}", c as u32),
+                        c if (c as u32) >= 0x2066 && (c as u32) <= 0x2069 => format!("\\u{{{:04X}}}", c as u32),
+                        c if (c as u32) == 0x2028 || (c as u32) == 0x2029 => format!("\\u{{{:04X}}}", c as u32),
+                        c => c.to_string(),
+                    }
+                }).collect::<String>();
+                self.output.push_str(&format!("    {} = const.str \"{}\"\n", reg, escaped));
                 reg
             }
             Expr::Literal(Literal::Char(c), _) => {
