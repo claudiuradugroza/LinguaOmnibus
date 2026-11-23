@@ -1,0 +1,11 @@
+[package]
+name = "qasm3"
+version = "0.1.0"
+edition = "2021"
+description = "OpenQASM 3.0 backend for Lingua Omnibus quantum programs"
+
+[[bin]]
+name = "qasm3"
+path = "src/main.rs"
+
+[dependencies]

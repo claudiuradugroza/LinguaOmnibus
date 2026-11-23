@@ -47,6 +47,7 @@ pub trait Backend {
 pub fn select_backend(name: &str) -> Box<dyn Backend> {
     match name {
         "c" | "x86_64-via-c" => Box::new(c::CBackend::new()),
+        "qasm3" | "quantum" => Box::new(c::CBackend::new()), // QASM handled separately
         _ => panic!("Unknown backend: {}", name),
     }
 }
