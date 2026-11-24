@@ -1,10 +1,11 @@
 use std::env;
 use std::fs;
+use std::process::Command;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
     if args.len() < 2 {
-        eprintln!("Usage: wasm <input.lir> [--output <file.wasm>]");
+        eprintln!("Usage: wasm <input.lir> [--output <file.wasm>] [--wat]");
         std::process::exit(1);
     }
     let input = &args[1];
@@ -12,10 +13,48 @@ fn main() {
 
     let wat = emit_wat(&lir_source);
 
+    // Check if --wat flag (output WAT only)
+    let wat_only = args.iter().any(|a| a == "--wat");
+
     if args.len() >= 4 && args[2] == "--output" {
         let output = &args[3];
-        fs::write(output, &wat).expect("cannot write WAT file");
-        println!("Written to: {}", output);
+        if wat_only {
+            fs::write(output, &wat).expect("cannot write WAT file");
+            println!("Written WAT to: {}", output);
+        } else {
+            // Try to compile WAT to WASM binary
+            let temp_dir = std::env::temp_dir();
+            let temp_wat = temp_dir.join("loc-gen.wat");
+            let temp_wasm = temp_dir.join("loc-gen.wasm");
+            fs::write(&temp_wat, &wat).expect("cannot write temp WAT");
+
+            // Try wat2wasm
+            let mut compiled = false;
+            let compilers = ["wat2wasm", "wasm-as"];
+            for compiler in &compilers {
+                let result = Command::new(compiler)
+                    .args(&[temp_wat.to_str().unwrap(), "-o", temp_wasm.to_str().unwrap()])
+                    .status();
+                if let Ok(status) = result {
+                    if status.success() {
+                        compiled = true;
+                        break;
+                    }
+                }
+            }
+
+            if compiled {
+                let binary = fs::read(&temp_wasm).expect("cannot read WASM binary");
+                fs::write(output, &binary).expect("cannot write WASM file");
+                println!("Written WASM binary to: {} ({} bytes)", output, binary.len());
+            } else {
+                // Fall back to WAT
+                let wat_output = output.replace(".wasm", ".wat");
+                fs::write(&wat_output, &wat).expect("cannot write WAT file");
+                println!("wat2wasm not found. Written WAT to: {}", wat_output);
+                println!("Install wabt (apt install wabt) and run: wat2wasm {} -o {}", wat_output, output);
+            }
+        }
     } else {
         println!("{}", wat);
     }
@@ -42,7 +81,6 @@ fn emit_wat(lir_source: &str) -> String {
 
         if trimmed.starts_with("fn ") {
             if in_function && !body.is_empty() {
-                // Emit previous function
                 output.push_str(&format!("  (func ${} (export \"{}\")\n", func_name, func_name));
                 output.push_str(&body);
                 output.push_str("  )\n\n");
