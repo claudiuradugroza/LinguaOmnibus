@@ -80,17 +80,17 @@ Last updated: 2026-11-23
 
 | Component | Status |
 |---|---|
-| loc (compiler) | ✅ Functional (lexer, parser, type checker, LIR emitter) |
+| loc (compiler) | ✅ Functional (lexer, parser, type checker, LIR emitter, C backend, x86_64 backend) |
 | lotest (test runner) | ✅ Functional (107 tests) |
-| lofmt (formatter) | ✅ Functional (basic) |
+| lofmt (formatter) | ✅ Functional (basic + --check + --ast) |
 | lodoc (doc generator) | ✅ Functional (basic) |
-| lopm (package manager) | ✅ Stub |
-| lolsp (language server) | ✅ Stub |
-| runtime | ✅ Partial (panic handler, GC, alloc tracker) |
-| backends | ✅ Stub (x86_64, ARM64, RISC-V, PowerPC, WASM, OpenQASM 3.0) |
-| linguadb | ✅ Stub (in-memory, ACID) |
-| stdlib | ✅ Stub (core, io, db, quantum) |
-| security | ✅ Stub (default-deny, capabilities) |
+| lopm (package manager) | ✅ Functional (init, install, publish, list, check, version) |
+| lolsp (language server) | ✅ Functional (JSON-RPC, autocomplete, hover, diagnostics) |
+| runtime | ✅ Functional (panic handler, GC mark-and-sweep, alloc tracker, stack guard) |
+| backends | ✅ Functional (x86_64 native, C, OpenQASM 3.0) |
+| linguadb | ✅ Functional (in-memory, ACID transactions) |
+| stdlib | ✅ Partial (core, io, string) |
+| security | ✅ Functional (default-deny, capabilities, lopm.toml parsing) |
 
 ## Known Issues
 
