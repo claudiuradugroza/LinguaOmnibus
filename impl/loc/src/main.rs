@@ -42,6 +42,8 @@ enum Commands {
     Run {
         #[arg(value_name = "FILE")]
         file: PathBuf,
+        #[arg(long, default_value = "c")]
+        backend: String,
     },
     /// Emit LIR text for a .lo source file
     EmitLir {
@@ -145,7 +147,7 @@ fn run_command(cmd: Commands) -> LocResult<()> {
                 }
             }
         }
-        Commands::Run { file } => {
+        Commands::Run { file, backend } => {
             let source = std::fs::read_to_string(&file)
                 .map_err(|e| error::LocError::IoError(format!("cannot read {:?}: {}", file, e)))?;
             let pack = detect_pack(&source, &repo_root)?;
@@ -157,7 +159,7 @@ fn run_command(cmd: Commands) -> LocResult<()> {
             let mut emitter = lir::LirEmitter::new();
             let lir = emitter.emit(&file_ast);
 
-            let be = backend::select_backend("c");
+            let be = backend::select_backend(&backend);
             match be.emit(&lir) {
                 Ok(binary) => {
                     let output_path = std::env::temp_dir().join("loc-run");

@@ -8,9 +8,8 @@
 static void lo_main(void) {
 entry:
     const char* r1 = "Hello, world!";
-    int64_t r2 = printf("%s\\n", r1);
-    int r3 = 0; /* unit */
-    return r3;
+    int64_t r2 = printf("%s\n", r1);
+    return;
 }
 
 
