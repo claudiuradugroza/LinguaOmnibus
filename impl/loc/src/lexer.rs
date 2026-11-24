@@ -1,5 +1,6 @@
 use crate::ast::Span;
 use crate::error::{LocError, LocResult};
+use std::collections::VecDeque;
 use unicode_normalization::UnicodeNormalization;
 
 /// A token produced by the lexer.
@@ -109,8 +110,8 @@ pub struct Lexer {
     indent_stack: Vec<usize>,
     /// Whether we're at the start of a logical line.
     at_line_start: bool,
-    /// Whether we've already emitted a newline for this line.
-    newline_emitted: bool,
+    /// Token queue for multi-level DEDENT emission (P0 fix).
+    token_queue: VecDeque<Token>,
 }
 
 impl Lexer {
@@ -125,7 +126,7 @@ impl Lexer {
             lingua_directive_seen: false,
             indent_stack: vec![0],
             at_line_start: true,
-            newline_emitted: false,
+            token_queue: VecDeque::new(),
         }
     }
 
@@ -154,6 +155,11 @@ impl Lexer {
     }
 
     pub fn next_token(&mut self) -> LocResult<Token> {
+        // First, check if there are pending tokens in the queue (for multi-level DEDENT)
+        if let Some(tok) = self.token_queue.pop_front() {
+            return Ok(tok);
+        }
+
         // Handle indentation at the start of a logical line (GRAM-001, GRAM-010-015)
         if self.at_line_start {
             self.at_line_start = false;
@@ -216,12 +222,20 @@ impl Lexer {
                 self.indent_stack.push(indent);
                 return Ok(Token::Indent);
             } else if indent < top {
-                // Pop levels
+                // Pop levels - emit one DEDENT per level (P0 fix)
+                let mut dedent_count = 0;
                 while self.indent_stack.len() > 1 && *self.indent_stack.last().unwrap() > indent {
                     self.indent_stack.pop();
+                    dedent_count += 1;
                 }
                 if *self.indent_stack.last().unwrap() != indent {
                     return Err(LocError::InconsistentDedent { line: self.line });
+                }
+                // Emit first DEDENT now, queue the rest
+                if dedent_count > 1 {
+                    for _ in 1..dedent_count {
+                        self.token_queue.push_back(Token::Dedent);
+                    }
                 }
                 return Ok(Token::Dedent);
             }
@@ -239,6 +253,11 @@ impl Lexer {
             // Emit remaining DEDENTs at EOF (GRAM-001)
             if self.indent_stack.len() > 1 {
                 self.indent_stack.pop();
+                // Queue remaining dedents
+                for _ in 1..self.indent_stack.len() {
+                    self.token_queue.push_back(Token::Dedent);
+                }
+                self.indent_stack = vec![0]; // reset
                 return Ok(Token::Dedent);
             }
             return Ok(Token::Eof);
