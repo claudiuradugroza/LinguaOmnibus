@@ -92,7 +92,7 @@ Last updated: 2026-11-23
 | stdlib | ✅ Partial (core, io, string) |
 | security | ✅ Functional (default-deny, capabilities, lopm.toml parsing) |
 | backends (LLVM) | ⚠️ Stub (planned for Phase 2) |
-| backends (WASM) | ✅ Functional (WAT emitter, wasmtime compatible) |
+| backends (WASM) | 🟡 Experimental (WAT + wat2wasm binar) |
 | backends (ARM64) | ⚠️ Stub (QEMU user-mode testing planned) |
 | backends (RISC-V) | ⚠️ Stub (QEMU user-mode testing planned) |
 | backends (PowerPC) | ⚠️ Stub (QEMU user-mode testing planned) |

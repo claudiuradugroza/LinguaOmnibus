@@ -189,7 +189,9 @@ The goal is seamless collaboration between:
 | Doc Generator (lodoc) | ✅ Functional |
 | Language Server (lolsp) | ✅ Functional (JSON-RPC, autocomplete, hover, diagnostics) |
 | Backends (C/x86_64) | ✅ Functional (hello world + fibonacci run) |
-| Backends (LLVM, WASM, ARM64, RISC-V, PowerPC) | ⚠️ Stub (planned for Phase 2) |
+| Backends (LLVM) | ⚠️ Stub (planned for Phase 2) |
+| Backends (WASM) | 🟡 Experimental (WAT + wat2wasm binar) |
+| Backends (ARM64, RISC-V, PowerPC) | ⚠️ Stub (QEMU CI pregătit) |
 | Quantum (OpenQASM 3.0) | ✅ Functional (qasm3 backend) |
 | AI Engine | 🔄 Planned |
 | IDE Integration | ✅ Functional (lolsp) |
