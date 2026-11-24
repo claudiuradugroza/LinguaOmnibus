@@ -312,6 +312,20 @@ Areas where contributors can help:
 
 ---
 
+
+## Backends
+
+| Backend | Status | Notes |
+|---------|--------|-------|
+| C (x86_64) | Production-ready | hello world + fibonacci verified, reproducible builds |
+| x86_64 Native | Production-ready | Direct assembly, no C dependency, hello world + fibonacci verified |
+| OpenQASM 3.0 | Production-ready | Quantum codegen, bell circuit + hadamard |
+| LLVM | Experimental | Planned for Phase 2 (optimizations) |
+| WASM | Experimental | WAT emitter, wasmtime compatible |
+| ARM64 | Experimental | QEMU user-mode testing planned |
+| RISC-V | Experimental | QEMU user-mode testing planned |
+| PowerPC | Experimental | QEMU user-mode testing planned |
+
 ## Getting started
 
 1. Read `spec/00-conventions.md` (SPEC-00).
