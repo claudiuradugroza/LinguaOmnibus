@@ -100,7 +100,7 @@ Last updated: 2026-11-23
 | backends (C) | ✅ Functional (x86_64 via clang) |
 | backends (OpenQASM 3.0) | ✅ Functional (quantum codegen) |
 | AI Engine | 🔄 Planned |
-| Cloud Runtime | 🔄 Planned |
+| Cloud Runtime | 📋 Designed (RFC-0004) |
 | Hybrid Quantum Runtime | ✅ Functional (state vector simulator, H/X/Y/Z/CNOT gates, measurement) |
 
 ## Known Issues
