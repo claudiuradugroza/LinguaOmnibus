@@ -182,19 +182,19 @@ The goal is seamless collaboration between:
 | Universal Syntax Engine | ✅ Implemented |
 | Multilingual Keywords (30 languages) | ✅ Implemented |
 | Compiler (loc) | ✅ Functional (lexer, parser, type checker, LIR, C backend) |
-| Virtual Machine | ⚠️ Stub (runtime partial) |
-| Package Manager (lopm) | ⚠️ Stub (basic CLI) |
+| Virtual Machine | ✅ Functional (GC, alloc tracker, stack guard) |
+| Package Manager (lopm) | ✅ Functional (init, install, publish, list, check, version) |
 | Test Runner (lotest) | ✅ Functional (107/107 tests) |
 | Formatter (lofmt) | ✅ Functional |
 | Doc Generator (lodoc) | ✅ Functional |
-| Language Server (lolsp) | ⚠️ Stub |
+| Language Server (lolsp) | ✅ Functional (JSON-RPC, autocomplete, hover, diagnostics) |
 | Backends (C/x86_64) | ✅ Functional (hello world + fibonacci run) |
-| Backends (LLVM, WASM, ARM64, RISC-V, PowerPC) | ⚠️ Stub |
-| Quantum (OpenQASM 3.0) | ⚠️ Stub |
+| Backends (LLVM, WASM, ARM64, RISC-V, PowerPC) | ⚠️ Stub (planned for Phase 2) |
+| Quantum (OpenQASM 3.0) | ✅ Functional (qasm3 backend) |
 | AI Engine | 🔄 Planned |
-| IDE Integration | ⚠️ Partial (lolsp stub) |
+| IDE Integration | ✅ Functional (lolsp) |
 | Cloud Runtime | 🔄 Planned |
-| Hybrid Quantum Runtime | ⚠️ Stub |
+| Hybrid Quantum Runtime | ⚠️ Partial |
 | Conformance tests | ✅ 107/107 passing |
 | Language packs | ✅ 30 (EN + RO tested, 28 stubs) |
 | Examples | ✅ 14 programs (EN + RO) |

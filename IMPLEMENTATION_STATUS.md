@@ -86,11 +86,19 @@ Last updated: 2026-11-23
 | lodoc (doc generator) | ✅ Functional (basic) |
 | lopm (package manager) | ✅ Functional (init, install, publish, list, check, version) |
 | lolsp (language server) | ✅ Functional (JSON-RPC, autocomplete, hover, diagnostics) |
-| runtime | ✅ Functional (panic handler, GC mark-and-sweep, alloc tracker, stack guard) |
+| runtime | ✅ Functional (panic handler, GC mark-and-sweep, alloc tracker, stack guard, quantum sim) |
 | backends | ✅ Functional (x86_64 native, C, OpenQASM 3.0) |
 | linguadb | ✅ Functional (in-memory, ACID transactions) |
 | stdlib | ✅ Partial (core, io, string) |
 | security | ✅ Functional (default-deny, capabilities, lopm.toml parsing) |
+| backends (LLVM) | ⚠️ Stub (planned for Phase 2) |
+| backends (WASM) | ⚠️ Stub (planned for Phase 2) |
+| backends (ARM64) | ⚠️ Stub (planned for Phase 2) |
+| backends (RISC-V) | ⚠️ Stub (planned for Phase 2) |
+| backends (PowerPC) | ⚠️ Stub (planned for Phase 2) |
+| AI Engine | 🔄 Planned |
+| Cloud Runtime | 🔄 Planned |
+| Hybrid Quantum Runtime | ⚠️ Partial |
 
 ## Known Issues
 
