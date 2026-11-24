@@ -92,10 +92,13 @@ Last updated: 2026-11-23
 | stdlib | ✅ Partial (core, io, string) |
 | security | ✅ Functional (default-deny, capabilities, lopm.toml parsing) |
 | backends (LLVM) | ⚠️ Stub (planned for Phase 2) |
-| backends (WASM) | ⚠️ Stub (planned for Phase 2) |
-| backends (ARM64) | ⚠️ Stub (planned for Phase 2) |
-| backends (RISC-V) | ⚠️ Stub (planned for Phase 2) |
-| backends (PowerPC) | ⚠️ Stub (planned for Phase 2) |
+| backends (WASM) | ✅ Functional (WAT emitter, wasmtime compatible) |
+| backends (ARM64) | ⚠️ Stub (QEMU user-mode testing planned) |
+| backends (RISC-V) | ⚠️ Stub (QEMU user-mode testing planned) |
+| backends (PowerPC) | ⚠️ Stub (QEMU user-mode testing planned) |
+| backends (x86_64 native) | ✅ Functional (hello world + fibonacci run) |
+| backends (C) | ✅ Functional (x86_64 via clang) |
+| backends (OpenQASM 3.0) | ✅ Functional (quantum codegen) |
 | AI Engine | 🔄 Planned |
 | Cloud Runtime | 🔄 Planned |
 | Hybrid Quantum Runtime | ✅ Functional (state vector simulator, H/X/Y/Z/CNOT gates, measurement) |

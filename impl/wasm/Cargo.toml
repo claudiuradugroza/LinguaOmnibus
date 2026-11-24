@@ -1,0 +1,11 @@
+[package]
+name = "wasm"
+version = "0.1.0"
+edition = "2021"
+description = "WebAssembly backend for Lingua Omnibus"
+
+[[bin]]
+name = "wasm"
+path = "src/main.rs"
+
+[dependencies]

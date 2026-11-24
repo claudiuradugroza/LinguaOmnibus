@@ -1,0 +1,27 @@
+name: Backend ARM64 Tests
+on: [push, pull_request]
+jobs:
+  test-arm64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install QEMU user-mode
+        run: sudo apt-get update && sudo apt-get install -y qemu-user-static
+
+      - name: Install cross-compiler
+        run: sudo apt-get install -y gcc-aarch64-linux-gnu
+
+      - name: Build loc
+        run: cargo build --release --manifest-path impl/loc/Cargo.toml
+
+      - name: Compile hello-world for ARM64
+        run: |
+          ./impl/loc/target/release/loc build examples/hello-world/hello-en.lo \
+            --target=aarch64-unknown-linux-gnu \
+            -o /tmp/hello-arm64
+
+      - name: Run under QEMU
+        run: |
+          qemu-aarch64-static -L /usr/aarch64-linux-gnu /tmp/hello-arm64
+        # Expected output: Hello, world!

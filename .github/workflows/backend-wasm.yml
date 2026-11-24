@@ -1,0 +1,24 @@
+name: Backend WASM Tests
+on: [push, pull_request]
+jobs:
+  test-wasm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install wasmtime
+        run: curl https://wasmtime.dev/install.sh -sSf | bash
+
+      - name: Build loc
+        run: cargo build --release --manifest-path impl/loc/Cargo.toml
+
+      - name: Compile hello-world for WASM
+        run: |
+          ./impl/loc/target/release/loc build examples/hello-world/hello-en.lo \
+            --target=wasm32-wasip2 \
+            -o /tmp/hello.wasm
+
+      - name: Run with wasmtime
+        run: |
+          wasmtime run /tmp/hello.wasm
+        # Expected output: Hello, world!
