@@ -41,8 +41,9 @@ impl Parser {
         // Parse top-level items
         let mut items = Vec::new();
         while !self.is_eof() {
-            // Skip extra newlines between items
+            // Skip extra newlines / indentation tokens between items
             self.eat_newlines();
+            self.skip_indent_tokens();
             if self.is_eof() {
                 break;
             }
@@ -90,8 +91,17 @@ impl Parser {
         matches!(self.peek(), Token::Eof)
     }
 
+    /// Consume only Newline tokens (not INDENT/DEDENT).
+    /// Separated from indentation handling per P0 fix.
     fn eat_newlines(&mut self) {
-        while matches!(self.peek(), Token::Newline | Token::Indent | Token::Dedent) {
+        while matches!(self.peek(), Token::Newline) {
+            self.advance();
+        }
+    }
+
+    /// Skip INDENT/DEDENT tokens (used when transitioning between blocks).
+    fn skip_indent_tokens(&mut self) {
+        while matches!(self.peek(), Token::Indent | Token::Dedent) {
             self.advance();
         }
     }
@@ -627,51 +637,69 @@ impl Parser {
     fn parse_block(&mut self) -> LocResult<Block> {
         let mut statements = Vec::new();
 
+        // Consume leading indentation / newline / dedent tokens
+        while matches!(self.peek(), Token::Indent | Token::Dedent | Token::Newline) {
+            self.advance();
+        }
+
         // Support both { ... } and indentation-based blocks
         if matches!(self.peek(), Token::LBrace) {
             self.advance(); // skip {
-            self.eat_newlines();
+            // consume leading indentation inside the braces
+            while matches!(self.peek(), Token::Indent | Token::Dedent | Token::Newline) {
+                self.advance();
+            }
             while !matches!(self.peek(), Token::RBrace) {
                 if self.is_eof() {
                     break;
                 }
-                let stmt = self.parse_statement()?;
-                statements.push(stmt);
-                self.eat_newlines();
-            }
-            self.expect(&Token::RBrace)?;
-        } else {
-            // Indentation-based: parse statements until we hit a top-level keyword or EOF
-            let block_end_keywords = [
-                "KW_FUNCTION", "KW_STRUCT", "KW_ENUM", "KW_IMPORT",
-                "KW_INTERFACE", "KW_IMPL", "KW_ELSE",
-            ];
-            loop {
-                // Skip INDENT/DEDENT/Newline tokens
                 while matches!(self.peek(), Token::Indent | Token::Dedent | Token::Newline) {
                     self.advance();
                 }
-                if self.is_eof() {
+                if matches!(self.peek(), Token::RBrace) {
                     break;
-                }
-                // Check if we've hit a top-level declaration keyword
-                if let Token::Keyword(slot) = self.peek() {
-                    if block_end_keywords.contains(&slot.as_str()) {
-                        break;
-                    }
                 }
                 let stmt = self.parse_statement()?;
                 statements.push(stmt);
-                self.eat_newlines();
-                // After each statement, check again for block end
+                while matches!(self.peek(), Token::Indent | Token::Dedent | Token::Newline) {
+                    self.advance();
+                }
+            }
+            self.expect(&Token::RBrace)?;
+        } else {
+            // Strict indentation-based block parsing
+            loop {
+                // Skip indentation / newline tokens
+                while matches!(self.peek(), Token::Indent | Token::Dedent | Token::Newline) {
+                    self.advance();
+                }
+
                 if self.is_eof() {
                     break;
                 }
+
+                // Check for DEDENT (end of block) — already consumed above, but guard
+                if matches!(self.peek(), Token::Dedent) {
+                    self.advance();
+                    break;
+                }
+
+                // Check for top-level declaration keywords that end the block
                 if let Token::Keyword(slot) = self.peek() {
-                    if block_end_keywords.contains(&slot.as_str()) {
+                    if ["KW_FUNCTION", "KW_STRUCT", "KW_ENUM",
+                        "KW_IMPORT", "KW_INTERFACE", "KW_IMPL",
+                        "KW_ELSE", "KW_RBRACE"].contains(&slot.as_str()) {
                         break;
                     }
                 }
+
+                // End of braced block
+                if matches!(self.peek(), Token::RBrace) {
+                    break;
+                }
+
+                let stmt = self.parse_statement()?;
+                statements.push(stmt);
             }
         }
 
@@ -681,6 +709,10 @@ impl Parser {
     // ---------- statement ----------
 
     fn parse_statement(&mut self) -> LocResult<Statement> {
+        // Skip leading indentation/newline tokens
+        while matches!(self.peek(), Token::Indent | Token::Dedent | Token::Newline) {
+            self.advance();
+        }
         let tok = self.peek();
 
         match tok {
