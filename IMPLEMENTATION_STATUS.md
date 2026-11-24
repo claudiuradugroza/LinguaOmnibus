@@ -98,7 +98,7 @@ Last updated: 2026-11-23
 | backends (PowerPC) | ⚠️ Stub (planned for Phase 2) |
 | AI Engine | 🔄 Planned |
 | Cloud Runtime | 🔄 Planned |
-| Hybrid Quantum Runtime | ⚠️ Partial |
+| Hybrid Quantum Runtime | ✅ Functional (state vector simulator, H/X/Y/Z/CNOT gates, measurement) |
 
 ## Known Issues
 

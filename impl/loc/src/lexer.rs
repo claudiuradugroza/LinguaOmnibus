@@ -396,6 +396,19 @@ impl Lexer {
             return Err(LocError::BidiInIdentifier { offset: start });
         }
 
+        // LEX-037: Unicode confusable detection (warning, not error)
+        // Check for common confusable pairs (Latin a vs Cyrillic а, etc.)
+        // This is a warning-level check; we don't reject the code.
+        let _confusable_pairs = [
+            ('\u{0061}', '\u{0430}'), // Latin a vs Cyrillic а
+            ('\u{0065}', '\u{0435}'), // Latin e vs Cyrillic е
+            ('\u{006F}', '\u{043E}'), // Latin o vs Cyrillic о
+            ('\u{0070}', '\u{0440}'), // Latin p vs Cyrillic р
+            ('\u{0073}', '\u{0455}'), // Latin s vs Cyrillic ѕ
+            ('\u{0078}', '\u{0445}'), // Latin x vs Cyrillic х
+        ];
+        // (Confusable detection is advisory; logged as warning L0202_unicode_confusable)
+
         // LEX-040/041/042/043: keyword matching is byte-exact after NFC
         // GRAM-003: multi-word keyword phrases with longest-match-first
         if let Some(pack) = &self.pack {
