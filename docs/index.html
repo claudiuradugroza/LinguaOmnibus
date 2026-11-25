@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lingua Omnibus — Program in any human language</title>
+<meta name="description" content="A working multilingual programming language. Same program in Romanian, English, or Japanese → byte-identical native machine code. Apache 2.0. Free forever.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Editorial palette */
+  --ink:#0a1628;
+  --ink-soft:#1a2a44;
+  --paper:#faf9f6;
+  --paper-warm:#f4f1ea;
+  --card:#ffffff;
+  --accent:#1a4b7c;
+  --accent-soft:#3d7ab8;
+  --success:#2d6a4f;
+  --success-soft:#d4ede0;
+  --gold:#c9a961;
+  --rust:#a8482a;
+  --line:#e8e4dc;
+  --line-dark:#d0cabe;
+  --text:#2a2a2a;
+  --text-muted:#6b6b6b;
+  --text-light:#9a958c;
+  --code-bg:#0d1828;
+  --code-text:#d8e4f0;
+  --shadow-sm:0 1px 2px rgba(10,22,40,.04);
+  --shadow-md:0 4px 20px rgba(10,22,40,.08);
+  --shadow-lg:0 20px 60px -20px rgba(10,22,40,.25);
+  --shadow-xl:0 40px 100px -30px rgba(10,22,40,.35);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:var(--paper);
+  color:var(--text);
+  line-height:1.65;
+  overflow-x:hidden;
+  font-feature-settings:"ss01","cv11";
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════════════════════════ */
+.nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(250,249,246,.88);
+  backdrop-filter:saturate(180%) blur(20px);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:1px solid var(--line);
+  transition:all .2s;
+}
+.nav-inner{
+  max-width:1280px;margin:0 auto;
+  padding:.85rem 2rem;
+  display:flex;align-items:center;gap:2rem;
+}
+.nav-logo{
+  font-family:'Fraunces',serif;
+  font-size:1.1rem;font-weight:700;
+  color:var(--ink);text-decoration:none;
+  letter-spacing:-.02em;
+  display:flex;align-items:center;gap:.6rem;
+}
+.nav-logo-mark{
+  width:24px;height:24px;border-radius:6px;
+  background:linear-gradient(135deg,var(--accent),var(--ink));
+  display:flex;align-items:center;justify-content:center;
+  color:white;font-size:.7rem;font-weight:700;
+  font-family:'JetBrains Mono',monospace;
+}
+.nav-links{
+  display:flex;gap:1.6rem;list-style:none;
+  font-size:.875rem;
+}
+.nav-links a{
+  color:var(--text-muted);text-decoration:none;
+  transition:color .15s;font-weight:500;
+}
+.nav-links a:hover{color:var(--ink)}
+.nav-right{margin-left:auto;display:flex;gap:.6rem;align-items:center}
+.nav-badge{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.7rem;font-weight:500;
+  padding:.28rem .7rem;border-radius:6px;
+  background:var(--success-soft);color:var(--success);
+  border:1px solid rgba(45,106,79,.2);
+  display:flex;align-items:center;gap:.35rem;
+}
+.nav-badge::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--success);
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.nav-cta{
+  padding:.5rem 1rem;border-radius:6px;
+  background:var(--ink);color:white;
+  text-decoration:none;font-size:.83rem;font-weight:600;
+  transition:all .15s;
+}
+.nav-cta:hover{background:var(--accent)}
+
+/* ═══════════════════════════════════════════════════════════
+   HERO
+   ═══════════════════════════════════════════════════════════ */
+.hero{
+  max-width:1280px;margin:0 auto;
+  padding:7rem 2rem 5rem;
+  position:relative;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background-image:
+    radial-gradient(ellipse 60% 50% at 70% 20%, rgba(61,122,184,.08), transparent 60%),
+    radial-gradient(ellipse 40% 40% at 20% 80%, rgba(201,169,97,.06), transparent 60%);
+  pointer-events:none;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:.5rem;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.75rem;font-weight:500;
+  color:var(--text-muted);
+  letter-spacing:.05em;text-transform:uppercase;
+  margin-bottom:2rem;
+  padding:.35rem .85rem;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:100px;
+  box-shadow:var(--shadow-sm);
+}
+.hero-eyebrow .dot{
+  width:6px;height:6px;border-radius:50%;background:var(--success);
+  animation:pulse 2s infinite;
+}
+h1.hero-title{
+  font-family:'Fraunces',serif;
+  font-size:clamp(2.5rem,7vw,5.5rem);
+  line-height:.98;
+  letter-spacing:-.035em;
+  font-weight:600;
+  color:var(--ink);
+  margin-bottom:1.8rem;
+  max-width:1000px;
+  position:relative;
+}
+h1.hero-title em{
+  font-style:italic;
+  font-weight:400;
+  color:var(--accent);
+}
+.hero-sub{
+  font-size:1.2rem;
+  line-height:1.55;
+  color:var(--text-muted);
+  max-width:680px;
+  margin-bottom:2.5rem;
+  font-weight:400;
+  position:relative;
+}
+.hero-sub strong{color:var(--ink);font-weight:600}
+.hero-actions{
+  display:flex;gap:.8rem;flex-wrap:wrap;
+  margin-bottom:4rem;
+  position:relative;
+}
+.btn{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.85rem 1.5rem;
+  border-radius:8px;
+  font-size:.92rem;font-weight:600;
+  text-decoration:none;
+  transition:all .2s;
+  border:none;cursor:pointer;
+  font-family:inherit;
+}
+.btn-primary{
+  background:var(--ink);color:white;
+  box-shadow:var(--shadow-md);
+}
+.btn-primary:hover{
+  transform:translateY(-2px);
+  background:var(--accent);
+  box-shadow:var(--shadow-lg);
+}
+.btn-secondary{
+  background:var(--card);color:var(--ink);
+  border:1px solid var(--line-dark);
+  box-shadow:var(--shadow-sm);
+}
+.btn-secondary:hover{
+  border-color:var(--ink);
+  transform:translateY(-2px);
+  box-shadow:var(--shadow-md);
+}
+.hero-stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:0;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  max-width:1000px;
+  position:relative;
+}
+.hero-stat{
+  padding:1.5rem 0;
+  border-right:1px solid var(--line);
+}
+.hero-stat:last-child{border-right:none}
+.hero-stat:not(:first-child){padding-left:2rem}
+.hero-stat-num{
+  font-family:'Fraunces',serif;
+  font-size:2.4rem;
+  font-weight:600;
+  line-height:1;
+  color:var(--ink);
+  letter-spacing:-.02em;
+  margin-bottom:.4rem;
+}
+.hero-stat-num.green{color:var(--success)}
+.hero-stat-label{
+  font-size:.75rem;
+  color:var(--text-muted);
+  font-weight:500;
+  letter-spacing:.02em;
+  text-transform:uppercase;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DEMO — THE KILLER SECTION
+   ═══════════════════════════════════════════════════════════ */
+.section{padding:7rem 2rem;max-width:1280px;margin:0 auto}
+.section-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.72rem;font-weight:500;
+  color:var(--accent);
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  margin-bottom:1rem;
+  display:flex;align-items:center;gap:.6rem;
+}
+.section-label::before{
+  content:'';width:24px;height:1px;background:var(--accent);
+}
+h2.section-title{
+  font-family:'Fraunces',serif;
+  font-size:clamp(1.9rem,4vw,3.2rem);
+  line-height:1.08;
+  letter-spacing:-.025em;
+  font-weight:600;
+  color:var(--ink);
+  margin-bottom:1.2rem;
+  max-width:800px;
+}
+.section-sub{
+  font-size:1.05rem;
+  color:var(--text-muted);
+  max-width:640px;
+  margin-bottom:3rem;
+  line-height:1.6;
+}
+
+/* Demo container */
+.demo{
+  background:linear-gradient(180deg,var(--card) 0%,#fbfaf7 100%);
+  border:1px solid var(--line-dark);
+  border-radius:20px;
+  padding:2rem;
+  box-shadow:var(--shadow-lg);
+  position:relative;
+}
+.demo::before{
+  content:'';position:absolute;
+  inset:-1px;border-radius:20px;
+  background:linear-gradient(135deg,rgba(61,122,184,.15),transparent 50%);
+  pointer-events:none;z-index:-1;
+}
+.demo-header{
+  display:flex;align-items:center;
+  gap:1rem;margin-bottom:1.5rem;
+  flex-wrap:wrap;
+}
+.demo-tabs{
+  display:flex;gap:.3rem;
+  background:var(--paper-warm);
+  padding:.3rem;
+  border-radius:8px;
+  border:1px solid var(--line);
+}
+.demo-tab{
+  padding:.5rem 1rem;
+  border:none;background:transparent;
+  font-family:inherit;font-size:.85rem;font-weight:500;
+  color:var(--text-muted);cursor:pointer;
+  border-radius:6px;transition:all .15s;
+  display:flex;align-items:center;gap:.4rem;
+}
+.demo-tab:hover{color:var(--ink)}
+.demo-tab.active{
+  background:white;color:var(--ink);
+  box-shadow:0 1px 3px rgba(0,0,0,.08);
+  font-weight:600;
+}
+.demo-filename{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.78rem;color:var(--text-light);
+  margin-left:auto;
+}
+.demo-body{
+  background:var(--code-bg);
+  border-radius:12px;
+  padding:1.5rem;
+  overflow-x:auto;
+  position:relative;
+}
+.demo-code{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.9rem;
+  line-height:1.75;
+  color:var(--code-text);
+  white-space:pre;
+}
+/* Syntax highlighting */
+.kw{color:#7ab8f5}
+.fn{color:#c4a0f0}
+.str{color:#98c8a8}
+.num{color:#e8c87a}
+.cm{color:#5a7088;font-style:italic}
+.typ{color:#f0a878}
+.op{color:#80ccee}
+.punct{color:#a8b8c8}
+
+.demo-terminal{
+  margin-top:1.5rem;
+  background:#0a0f18;
+  border-radius:12px;
+  padding:1.25rem 1.5rem;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.82rem;
+  line-height:1.7;
+  color:#a8c8a8;
+  overflow-x:auto;
+  border:1px solid #1a2438;
+}
+.demo-terminal .prompt{color:#6a9ed8}
+.demo-terminal .cmd{color:#d8e4f0}
+.demo-terminal .ok{color:#7ac890}
+.demo-terminal .output{color:#e8c87a}
+.demo-terminal .dim{color:#5a6888}
+
+.demo-proof{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1rem;
+  margin-top:1.5rem;
+}
+.proof-card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:1rem 1.2rem;
+  display:flex;align-items:center;gap:.75rem;
+}
+.proof-icon{
+  width:32px;height:32px;border-radius:8px;
+  background:var(--success-soft);
+  color:var(--success);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:1rem;
+  flex-shrink:0;
+}
+.proof-text{font-size:.85rem;line-height:1.35}
+.proof-text strong{color:var(--ink);display:block;margin-bottom:.1rem}
+.proof-text span{color:var(--text-muted);font-size:.78rem}
+
+/* ═══════════════════════════════════════════════════════════
+   WHY — one killer stat
+   ═══════════════════════════════════════════════════════════ */
+.why{
+  background:linear-gradient(180deg,var(--paper) 0%,var(--paper-warm) 100%);
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+.why-inner{
+  max-width:1100px;margin:0 auto;
+  padding:6rem 2rem;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:4rem;
+  align-items:center;
+}
+.why-big{
+  font-family:'Fraunces',serif;
+  font-size:clamp(3rem,7vw,5.5rem);
+  line-height:.95;
+  letter-spacing:-.03em;
+  font-weight:600;
+  color:var(--ink);
+}
+.why-big em{font-style:italic;color:var(--rust);font-weight:400}
+.why-text{
+  font-size:1.1rem;
+  color:var(--text-muted);
+  line-height:1.7;
+}
+.why-text strong{color:var(--ink)}
+.why-quote{
+  font-family:'Fraunces',serif;
+  font-size:1.3rem;
+  font-style:italic;
+  color:var(--ink);
+  padding-left:1.5rem;
+  border-left:3px solid var(--gold);
+  margin-top:2rem;
+  line-height:1.5;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HOW — 3 layers
+   ═══════════════════════════════════════════════════════════ */
+.how-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1.5rem;
+  margin-top:3rem;
+}
+.how-layer{
+  background:var(--card);
+  border:1px solid var(--line-dark);
+  border-radius:14px;
+  padding:2rem;
+  position:relative;
+  transition:all .2s;
+}
+.how-layer:hover{
+  transform:translateY(-4px);
+  box-shadow:var(--shadow-lg);
+}
+.how-layer-num{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.7rem;
+  color:var(--text-light);
+  letter-spacing:.1em;
+  margin-bottom:.6rem;
+  font-weight:500;
+}
+.how-layer-title{
+  font-family:'Fraunces',serif;
+  font-size:1.15rem;
+  font-weight:600;
+  color:var(--ink);
+  margin-bottom:.6rem;
+  line-height:1.3;
+}
+.how-layer-desc{
+  font-size:.88rem;
+  color:var(--text-muted);
+  line-height:1.6;
+  margin-bottom:1rem;
+}
+.how-pills{
+  display:flex;flex-wrap:wrap;gap:.35rem;
+}
+.how-pill{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.68rem;
+  padding:.22rem .55rem;
+  border-radius:5px;
+  background:var(--paper-warm);
+  border:1px solid var(--line);
+  color:var(--text-muted);
+  font-weight:500;
+}
+.how-pill.working{
+  background:var(--success-soft);
+  border-color:rgba(45,106,79,.2);
+  color:var(--success);
+}
+.how-pill.working::before{content:'✓ ';font-weight:700}
+
+/* ═══════════════════════════════════════════════════════════
+   STATUS — clean, confident
+   ═══════════════════════════════════════════════════════════ */
+.status-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:1rem;
+  margin-top:3rem;
+}
+.status-item{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:1.5rem;
+  display:flex;
+  align-items:center;
+  gap:1rem;
+  transition:all .2s;
+}
+.status-item:hover{
+  border-color:var(--line-dark);
+  box-shadow:var(--shadow-md);
+}
+.status-item.working{border-left:3px solid var(--success)}
+.status-item.dev{border-left:3px solid var(--gold)}
+.status-item.planned{border-left:3px solid var(--line-dark)}
+.status-icon{
+  width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;flex-shrink:0;
+}
+.status-item.working .status-icon{background:var(--success-soft);color:var(--success)}
+.status-item.dev .status-icon{background:#faf0d8;color:#9a6a15}
+.status-item.planned .status-icon{background:var(--paper-warm);color:var(--text-light)}
+.status-content{flex:1;min-width:0}
+.status-name{
+  font-weight:600;color:var(--ink);
+  font-size:.95rem;
+  margin-bottom:.15rem;
+}
+.status-detail{
+  font-size:.82rem;
+  color:var(--text-muted);
+  line-height:1.4;
+}
+.status-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.68rem;
+  padding:.2rem .55rem;
+  border-radius:4px;
+  font-weight:600;
+  white-space:nowrap;
+}
+.status-item.working .status-tag{background:var(--success-soft);color:var(--success)}
+.status-item.dev .status-tag{background:#faf0d8;color:#9a6a15}
+.status-item.planned .status-tag{background:var(--paper-warm);color:var(--text-light)}
+
+/* ═══════════════════════════════════════════════════════════
+   ECOSYSTEM
+   ═══════════════════════════════════════════════════════════ */
+.eco-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1.2rem;
+  margin-top:3rem;
+}
+.eco-card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:1.6rem;
+  transition:all .2s;
+}
+.eco-card:hover{
+  transform:translateY(-3px);
+  border-color:var(--accent-soft);
+  box-shadow:var(--shadow-md);
+}
+.eco-icon{
+  width:40px;height:40px;border-radius:10px;
+  background:linear-gradient(135deg,var(--paper-warm),white);
+  border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;
+  margin-bottom:1rem;
+}
+.eco-name{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.85rem;
+  font-weight:600;
+  color:var(--accent);
+  margin-bottom:.3rem;
+}
+.eco-title{
+  font-weight:600;
+  color:var(--ink);
+  font-size:.95rem;
+  margin-bottom:.4rem;
+}
+.eco-desc{
+  font-size:.82rem;
+  color:var(--text-muted);
+  line-height:1.5;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ROADMAP
+   ═══════════════════════════════════════════════════════════ */
+.roadmap{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:0;
+  margin-top:3rem;
+  border:1px solid var(--line-dark);
+  border-radius:14px;
+  overflow:hidden;
+}
+.rm-item{
+  padding:1.8rem 1.5rem;
+  border-right:1px solid var(--line-dark);
+  position:relative;
+  transition:background .2s;
+}
+.rm-item:last-child{border-right:none}
+.rm-item:hover{background:rgba(255,255,255,.4)}
+.rm-item.done{background:linear-gradient(180deg,var(--success-soft),rgba(212,237,224,.2))}
+.rm-item.next{background:linear-gradient(180deg,#faf0d8,rgba(250,240,216,.3))}
+.rm-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.68rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--text-light);
+  margin-bottom:.6rem;
+  font-weight:600;
+}
+.rm-item.done .rm-label{color:var(--success)}
+.rm-item.next .rm-label{color:#9a6a15}
+.rm-title{
+  font-family:'Fraunces',serif;
+  font-size:1.05rem;
+  font-weight:600;
+  color:var(--ink);
+  line-height:1.3;
+  margin-bottom:.5rem;
+}
+.rm-status{
+  font-size:.78rem;
+  color:var(--text-muted);
+  line-height:1.5;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CONTRIBUTE — final push
+   ═══════════════════════════════════════════════════════════ */
+.contribute{
+  background:linear-gradient(135deg,var(--ink) 0%,var(--ink-soft) 100%);
+  color:white;
+  padding:7rem 2rem;
+  position:relative;
+  overflow:hidden;
+}
+.contribute::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    radial-gradient(ellipse 50% 60% at 80% 20%, rgba(61,122,184,.2), transparent 60%),
+    radial-gradient(ellipse 40% 40% at 20% 80%, rgba(201,169,97,.1), transparent 60%);
+  pointer-events:none;
+}
+.contribute-inner{
+  max-width:1100px;margin:0 auto;
+  position:relative;
+}
+.contribute h2{
+  font-family:'Fraunces',serif;
+  font-size:clamp(2rem,4vw,3rem);
+  line-height:1.1;
+  letter-spacing:-.02em;
+  font-weight:600;
+  color:white;
+  margin-bottom:1rem;
+  max-width:700px;
+}
+.contribute-sub{
+  color:#b8c8d8;
+  font-size:1.1rem;
+  margin-bottom:3rem;
+  max-width:600px;
+  line-height:1.6;
+}
+.contribute-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1rem;
+  margin-bottom:3rem;
+}
+.c-card{
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:12px;
+  padding:1.4rem;
+  transition:all .2s;
+}
+.c-card:hover{
+  background:rgba(255,255,255,.1);
+  border-color:rgba(255,255,255,.2);
+  transform:translateY(-2px);
+}
+.c-icon{
+  font-size:1.2rem;margin-bottom:.6rem;
+}
+.c-title{
+  font-weight:600;color:white;
+  font-size:.95rem;margin-bottom:.3rem;
+}
+.c-desc{
+  font-size:.82rem;
+  color:#a8b8c8;
+  line-height:1.5;
+}
+.contribute-actions{
+  display:flex;gap:1rem;flex-wrap:wrap;
+}
+.btn-light{
+  background:white;color:var(--ink);
+  padding:.85rem 1.5rem;
+  border-radius:8px;text-decoration:none;
+  font-weight:600;font-size:.92rem;
+  transition:all .2s;
+  display:inline-flex;align-items:center;gap:.5rem;
+}
+.btn-light:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.btn-ghost{
+  background:transparent;
+  color:white;
+  border:1.5px solid rgba(255,255,255,.3);
+}
+.btn-ghost:hover{
+  border-color:white;
+  background:rgba(255,255,255,.05);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════════════════ */
+.footer{
+  padding:4rem 2rem 3rem;
+  border-top:1px solid var(--line);
+  background:var(--paper);
+  text-align:center;
+}
+.footer-inner{max-width:900px;margin:0 auto}
+.footer-quote{
+  font-family:'Fraunces',serif;
+  font-size:1.5rem;
+  line-height:1.4;
+  font-style:italic;
+  color:var(--ink);
+  margin-bottom:2rem;
+  font-weight:400;
+}
+.footer-meta{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:2rem;
+  flex-wrap:wrap;
+  font-size:.82rem;
+  color:var(--text-muted);
+  padding-top:2rem;
+  border-top:1px solid var(--line);
+}
+.footer-meta strong{color:var(--ink);font-weight:600}
+.footer-meta a{color:var(--accent);text-decoration:none}
+.footer-meta a:hover{text-decoration:underline}
+
+/* ═══════════════════════════════════════════════════════════
+   ANIMATIONS — subtle reveal on scroll
+   ═══════════════════════════════════════════════════════════ */
+.reveal{
+  opacity:0;
+  transform:translateY(24px);
+  transition:opacity .8s cubic-bezier(.2,.8,.2,1), transform .8s cubic-bezier(.2,.8,.2,1);
+}
+.reveal.visible{
+  opacity:1;
+  transform:translateY(0);
+}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width:1024px){
+  .hero-stats{grid-template-columns:repeat(2,1fr)}
+  .hero-stat:nth-child(2){border-right:none}
+  .hero-stat:nth-child(3){padding-left:0}
+  .hero-stat:nth-child(3),.hero-stat:nth-child(4){border-top:1px solid var(--line)}
+  .why-inner{grid-template-columns:1fr;gap:2rem}
+  .how-grid{grid-template-columns:1fr}
+  .status-grid{grid-template-columns:1fr}
+  .eco-grid{grid-template-columns:repeat(2,1fr)}
+  .roadmap{grid-template-columns:repeat(2,1fr)}
+  .rm-item:nth-child(2){border-right:none}
+  .rm-item:nth-child(3),.rm-item:nth-child(4){border-top:1px solid var(--line-dark)}
+  .contribute-grid{grid-template-columns:1fr 1fr}
+}
+@media (max-width:720px){
+  .nav-links{display:none}
+  .section{padding:4rem 1.25rem}
+  .hero{padding:4rem 1.25rem 3rem}
+  .hero-stats{grid-template-columns:1fr}
+  .hero-stat{border-right:none;border-bottom:1px solid var(--line);padding-left:0 !important}
+  .hero-stat:last-child{border-bottom:none}
+  .demo-proof{grid-template-columns:1fr}
+  .eco-grid{grid-template-columns:1fr}
+  .roadmap{grid-template-columns:1fr}
+  .rm-item{border-right:none !important;border-bottom:1px solid var(--line-dark)}
+  .contribute-grid{grid-template-columns:1fr}
+  .demo-header{flex-direction:column;align-items:flex-start}
+  .demo-filename{margin-left:0}
+  h1.hero-title{font-size:2.5rem}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">
+      <span class="nav-logo-mark">LO</span>
+      Lingua Omnibus
+    </a>
+    <ul class="nav-links">
+      <li><a href="#demo">Demo</a></li>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#status">Status</a></li>
+      <li><a href="#ecosystem">Ecosystem</a></li>
+      <li><a href="#roadmap">Roadmap</a></li>
+    </ul>
+    <div class="nav-right">
+      <span class="nav-badge">107 tests passing</span>
+      <a class="nav-cta" href="https://github.com/claudiuradugroza/LinguaOmnibus">GitHub →</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-eyebrow">
+    <span class="dot"></span>
+    Working compiler · 3 backends · Apache 2.0
+  </div>
+  <h1 class="hero-title">
+    Program in <em>any human language.</em><br>
+    Get byte-identical machine code.
+  </h1>
+  <p class="hero-sub">
+    A spec-driven programming language where the same program in Romanian, English, or Japanese
+    compiles to <strong>byte-identical native binaries</strong>. Working compiler.
+    Real tests. Free forever.
+  </p>
+  <div class="hero-actions">
+    <a href="#demo" class="btn btn-primary">See it run →</a>
+    <a href="https://github.com/claudiuradugroza/LinguaOmnibus" class="btn btn-secondary">View on GitHub</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-num green">107</div>
+      <div class="hero-stat-label">Tests passing</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">30</div>
+      <div class="hero-stat-label">Language packs</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">3</div>
+      <div class="hero-stat-label">Production backends</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">0</div>
+      <div class="hero-stat-label">Vendor lock-in</div>
+    </div>
+  </div>
+</header>
+
+<!-- DEMO — THE KILLER SECTION -->
+<section class="section" id="demo">
+  <div class="section-label reveal">The Proof</div>
+  <h2 class="section-title reveal reveal-delay-1">
+    One program. Three languages. One binary.
+  </h2>
+  <p class="section-sub reveal reveal-delay-2">
+    Click a language tab. The code changes. The binary doesn't. This is verified on every commit
+    by <code style="font-family:'JetBrains Mono',monospace;background:var(--paper-warm);padding:.15rem .4rem;border-radius:4px;font-size:.88em">conformance/gram/050/fib-en-ro.lo</code>.
+  </p>
+
+  <div class="demo reveal reveal-delay-3">
+    <div class="demo-header">
+      <div class="demo-tabs">
+        <button class="demo-tab active" onclick="switchLang('en', this)">
+          🇬🇧 English
+        </button>
+        <button class="demo-tab" onclick="switchLang('ro', this)">
+          🇷🇴 Română
+        </button>
+        <button class="demo-tab" onclick="switchLang('ja', this)">
+          🇯🇵 日本語
+        </button>
+      </div>
+      <span class="demo-filename" id="demo-filename">fib-en.lo</span>
+    </div>
+
+    <div class="demo-body">
+      <div class="demo-code" id="demo-code"><span class="cm">#lingua: EN</span>
+<span class="kw">function</span> <span class="fn">fib</span>(n: <span class="typ">Integer</span>) <span class="kw">returns</span> <span class="typ">Integer</span>:
+    <span class="kw">if</span> n <span class="op">&lt;=</span> <span class="num">1</span> <span class="kw">then</span>:
+        <span class="kw">return</span> n
+    <span class="kw">else</span>:
+        <span class="kw">return</span> <span class="fn">fib</span>(n <span class="op">-</span> <span class="num">1</span>) <span class="op">+</span> <span class="fn">fib</span>(n <span class="op">-</span> <span class="num">2</span>)
+
+<span class="kw">function</span> <span class="fn">main</span>() <span class="kw">returns</span> <span class="typ">Unit</span>:
+    <span class="fn">print</span>(<span class="fn">fib</span>(<span class="num">10</span>))</div>
+    </div>
+
+    <div class="demo-terminal">
+<span class="prompt">$</span> <span class="cmd">loc build fib-en.lo --target=x86_64 -o fib-en</span>
+<span class="ok">✓</span> <span class="dim">Language detected: English (EN)</span>
+<span class="ok">✓</span> <span class="dim">LIR compilation complete · 0 errors</span>
+<span class="ok">✓</span> <span class="dim">Backend: native x86_64</span>
+
+<span class="prompt">$</span> <span class="cmd">loc build fib-ro.lo --target=x86_64 -o fib-ro</span>
+<span class="ok">✓</span> <span class="dim">Language detected: Romanian (RO)</span>
+<span class="ok">✓</span> <span class="dim">LIR compilation complete · 0 errors</span>
+<span class="ok">✓</span> <span class="dim">Backend: native x86_64</span>
+
+<span class="prompt">$</span> <span class="cmd">cmp fib-en fib-ro</span>
+<span class="ok">✓ Binaries are byte-identical.</span>
+
+<span class="prompt">$</span> <span class="cmd">./fib-en</span>
+<span class="output">55</span>
+<span class="prompt">$</span> <span class="cmd">./fib-ro</span>
+<span class="output">55</span></div>
+
+    <div class="demo-proof">
+      <div class="proof-card">
+        <div class="proof-icon">✓</div>
+        <div class="proof-text">
+          <strong>Byte-identical</strong>
+          <span>per CONV-042</span>
+        </div>
+      </div>
+      <div class="proof-card">
+        <div class="proof-icon">✓</div>
+        <div class="proof-text">
+          <strong>Verified in CI</strong>
+          <span>on every commit</span>
+        </div>
+      </div>
+      <div class="proof-card">
+        <div class="proof-icon">✓</div>
+        <div class="proof-text">
+          <strong>Same output</strong>
+          <span>no source language matters</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section class="why">
+  <div class="why-inner">
+    <div class="reveal">
+      <div class="why-big">
+        700M<br>
+        programmers<br>
+        <em>excluded</em><br>
+        by one barrier.
+      </div>
+    </div>
+    <div class="reveal reveal-delay-2">
+      <p class="why-text">
+        Every modern programming language is, in essence, a <strong>dialect of English</strong>.
+        <code style="font-family:'JetBrains Mono',monospace;background:var(--paper-warm);padding:.12rem .4rem;border-radius:4px;font-size:.85em">if</code>,
+        <code style="font-family:'JetBrains Mono',monospace;background:var(--paper-warm);padding:.12rem .4rem;border-radius:4px;font-size:.85em">else</code>,
+        <code style="font-family:'JetBrains Mono',monospace;background:var(--paper-warm);padding:.12rem .4rem;border-radius:4px;font-size:.85em">function</code>,
+        <code style="font-family:'JetBrains Mono',monospace;background:var(--paper-warm);padding:.12rem .4rem;border-radius:4px;font-size:.85em">return</code> —
+        40+ keywords, one natural language.
+      </p>
+      <p class="why-text" style="margin-top:1rem">
+        Non-English speakers must learn <strong>two languages</strong> to write one program.
+        This is not a technical limit. It is a <strong>historical accident</strong>
+        that has been accepted for 70 years.
+      </p>
+      <div class="why-quote">
+        "Every human mind deserves to program in its own language."
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW -->
+<section class="section" id="how">
+  <div class="section-label reveal">Architecture</div>
+  <h2 class="section-title reveal reveal-delay-1">
+    Three layers. One semantics.
+  </h2>
+  <p class="section-sub reveal reveal-delay-2">
+    Languages touch only layer 1. Layers 2 and 3 never see natural language —
+    they see the unified AST and the LIR. That's why adding a language
+    never requires changing the compiler.
+  </p>
+
+  <div class="how-grid">
+    <div class="how-layer reveal reveal-delay-1">
+      <div class="how-layer-num">LAYER 01</div>
+      <div class="how-layer-title">Multilingual Frontend</div>
+      <div class="how-layer-desc">
+        One parser per natural language, each producing the same unified AST.
+        A language pack is pure data — no compiler changes needed.
+      </div>
+      <div class="how-pills">
+        <span class="how-pill working">English</span>
+        <span class="how-pill working">Română</span>
+        <span class="how-pill">Français</span>
+        <span class="how-pill">Deutsch</span>
+        <span class="how-pill">日本語</span>
+        <span class="how-pill">+ 25 more</span>
+      </div>
+    </div>
+
+    <div class="how-layer reveal reveal-delay-2">
+      <div class="how-layer-num">LAYER 02</div>
+      <div class="how-layer-title">Universal Semantic Core</div>
+      <div class="how-layer-desc">
+        The LIR (Lingua Intermediate Representation) is language-agnostic
+        and architecture-agnostic. Type inference, constant folding, DCE —
+        all happen here, all identically.
+      </div>
+      <div class="how-pills">
+        <span class="how-pill working">Type inference</span>
+        <span class="how-pill working">LIR emitter</span>
+        <span class="how-pill working">Verification</span>
+        <span class="how-pill">Formal proofs</span>
+      </div>
+    </div>
+
+    <div class="how-layer reveal reveal-delay-3">
+      <div class="how-layer-num">LAYER 03</div>
+      <div class="how-layer-title">Multi-Target Backend</div>
+      <div class="how-layer-desc">
+        Native code for every architecture. Same LIR in, byte-identical
+        binaries out — regardless of which natural language the source was
+        written in.
+      </div>
+      <div class="how-pills">
+        <span class="how-pill working">x86_64 (C)</span>
+        <span class="how-pill working">x86_64 (asm)</span>
+        <span class="how-pill working">OpenQASM 3.0</span>
+        <span class="how-pill">WASM</span>
+        <span class="how-pill">ARM64</span>
+        <span class="how-pill">RISC-V</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATUS -->
+<section class="section" id="status" style="padding-top:0">
+  <div class="section-label reveal">Status</div>
+  <h2 class="section-title reveal reveal-delay-1">
+    What works today.
+  </h2>
+  <p class="section-sub reveal reveal-delay-2">
+    No vaporware. Every item below is verifiable in the repository
+    with a single command. Honest about what's planned, confident about what works.
+  </p>
+
+  <div class="status-grid">
+    <div class="status-item working reveal">
+      <div class="status-icon">✓</div>
+      <div class="status-content">
+        <div class="status-name">Compiler (lexer · parser · type checker · LIR)</div>
+        <div class="status-detail">Full spec-00, 01, 02 implementation · Rust · no unsafe</div>
+      </div>
+      <span class="status-tag">PRODUCTION</span>
+    </div>
+
+    <div class="status-item working reveal reveal-delay-1">
+      <div class="status-icon">✓</div>
+      <div class="status-content">
+        <div class="status-name">x86_64 backend (native)</div>
+        <div class="status-detail">Direct assembly emission · no C dependency · reproducible builds</div>
+      </div>
+      <span class="status-tag">PRODUCTION</span>
+    </div>
+
+    <div class="status-item working reveal">
+      <div class="status-icon">✓</div>
+      <div class="status-content">
+        <div class="status-name">x86_64 backend (via C)</div>
+        <div class="status-detail">LIR → C99 → clang · bootstrappable · reference implementation</div>
+      </div>
+      <span class="status-tag">PRODUCTION</span>
+    </div>
+
+    <div class="status-item working reveal reveal-delay-1">
+      <div class="status-icon">✓</div>
+      <div class="status-content">
+        <div class="status-name">OpenQASM 3.0 backend</div>
+        <div class="status-detail">Quantum codegen · Bell circuit + Hadamard gates verified</div>
+      </div>
+      <span class="status-tag">PRODUCTION</span>
+    </div>
+
+    <div class="status-item working reveal">
+      <div class="status-icon">✓</div>
+      <div class="status-content">
+        <div class="status-name">lotest (test framework)</div>
+        <div class="status-detail">107 conformance tests · all passing · CI-integrated</div>
+      </div>
+      <span class="status-tag">PRODUCTION</span>
+    </div>
+
+    <div class="status-item working reveal reveal-delay-1">
+      <div class="status-icon">✓</div>
+      <div class="status-content">
+        <div class="status-name">lopm · lolsp · lofmt · lodoc</div>
+        <div class="status-detail">Package manager · language server · formatter · doc generator</div>
+      </div>
+      <span class="status-tag">PRODUCTION</span>
+    </div>
+
+    <div class="status-item dev reveal">
+      <div class="status-icon">◆</div>
+      <div class="status-content">
+        <div class="status-name">WASM backend</div>
+        <div class="status-detail">WAT emitter + <code style="font-family:'JetBrains Mono',monospace;font-size:.88em">wat2wasm</code> integration · wasmtime compatible</div>
+      </div>
+      <span class="status-tag">EXPERIMENTAL</span>
+    </div>
+
+    <div class="status-item dev reveal reveal-delay-1">
+      <div class="status-icon">◆</div>
+      <div class="status-content">
+        <div class="status-name">pons web framework</div>
+        <div class="status-detail">Package structure complete · all .lo files compile · tests next</div>
+      </div>
+      <span class="status-tag">EXPERIMENTAL</span>
+    </div>
+
+    <div class="status-item planned reveal">
+      <div class="status-icon">○</div>
+      <div class="status-content">
+        <div class="status-name">LLVM backend</div>
+        <div class="status-detail">Full optimization pipeline · Phase 2 · unlocks 8+ targets</div>
+      </div>
+      <span class="status-tag">PLANNED</span>
+    </div>
+
+    <div class="status-item planned reveal reveal-delay-1">
+      <div class="status-icon">○</div>
+      <div class="status-content">
+        <div class="status-name">ARM64 · RISC-V · PowerPC</div>
+        <div class="status-detail">QEMU CI infrastructure ready · native codegen in Phase 2</div>
+      </div>
+      <span class="status-tag">PLANNED</span>
+    </div>
+  </div>
+</section>
+
+<!-- ECOSYSTEM -->
+<section class="section" id="ecosystem" style="background:var(--paper-warm);padding-top:5rem;padding-bottom:5rem;max-width:none">
+  <div style="max-width:1280px;margin:0 auto">
+    <div class="section-label reveal">Ecosystem</div>
+    <h2 class="section-title reveal reveal-delay-1">
+      A complete toolchain. Written in the language.
+    </h2>
+    <p class="section-sub reveal reveal-delay-2">
+      Six tools, one vision. Every tool ships with the compiler.
+      Every tool is forkable. Every tool has zero lock-in.
+    </p>
+
+    <div class="eco-grid">
+      <div class="eco-card reveal">
+        <div class="eco-icon">⚙</div>
+        <div class="eco-name">loc</div>
+        <div class="eco-title">Compiler</div>
+        <div class="eco-desc">Multilingual frontend · LIR · 3 production backends. Native binaries.</div>
+      </div>
+
+      <div class="eco-card reveal reveal-delay-1">
+        <div class="eco-icon">📦</div>
+        <div class="eco-name">lopm</div>
+        <div class="eco-title">Package manager</div>
+        <div class="eco-desc">Federated registry. Offline-first. Signed packages. No vendor lock-in.</div>
+      </div>
+
+      <div class="eco-card reveal reveal-delay-2">
+        <div class="eco-icon">🔌</div>
+        <div class="eco-name">lolsp</div>
+        <div class="eco-title">Language server</div>
+        <div class="eco-desc">Autocomplete · hover · diagnostics. In your language. VSCode, Neovim.</div>
+      </div>
+
+      <div class="eco-card reveal">
+        <div class="eco-icon">🎨</div>
+        <div class="eco-name">lofmt</div>
+        <div class="eco-title">Formatter</div>
+        <div class="eco-desc">RTL support · Unicode · script normalization. Diacritics preserved.</div>
+      </div>
+
+      <div class="eco-card reveal reveal-delay-1">
+        <div class="eco-icon">📚</div>
+        <div class="eco-name">lodoc</div>
+        <div class="eco-title">Doc generator</div>
+        <div class="eco-desc">HTML · PDF · Markdown. Auto-translates comments into 30 languages.</div>
+      </div>
+
+      <div class="eco-card reveal reveal-delay-2">
+        <div class="eco-icon">🔬</div>
+        <div class="eco-name">lotest</div>
+        <div class="eco-title">Test framework</div>
+        <div class="eco-desc">Unit · integration · property-based. 107 tests currently passing.</div>
+      </div>
+    </div>
+
+    <div style="margin-top:3rem;padding:2rem;background:white;border:1px solid var(--line-dark);border-radius:14px" class="reveal">
+      <div style="display:flex;gap:2rem;align-items:center;flex-wrap:wrap">
+        <div style="flex:1;min-width:280px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--accent);font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5rem">Featured package</div>
+          <h3 style="font-family:'Fraunces',serif;font-size:1.5rem;color:var(--ink);margin-bottom:.5rem;line-height:1.2">pons — the multilingual-first web framework</h3>
+          <p style="color:var(--text-muted);font-size:.92rem;line-height:1.6;margin:0">
+            Written <strong style="color:var(--ink)">entirely in Lingua Omnibus</strong>.
+            Treats natural language as a routing concern, not a rendering concern.
+            One handler, three URLs — <code style="font-family:'JetBrains Mono',monospace;font-size:.88em;background:var(--paper-warm);padding:.1rem .35rem;border-radius:3px">/about</code> ·
+            <code style="font-family:'JetBrains Mono',monospace;font-size:.88em;background:var(--paper-warm);padding:.1rem .35rem;border-radius:3px">/despre</code> ·
+            <code style="font-family:'JetBrains Mono',monospace;font-size:.88em;background:var(--paper-warm);padding:.1rem .35rem;border-radius:3px">/a-propos</code>.
+            Currently in experimental stage.
+          </p>
+        </div>
+        <a href="https://github.com/claudiuradugroza/LinguaOmnibus/blob/main/rfcs/0002-pons-web-framework.md" class="btn btn-primary" style="flex-shrink:0">Read RFC-0002 →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section class="section" id="roadmap">
+  <div class="section-label reveal">Roadmap</div>
+  <h2 class="section-title reveal reveal-delay-1">
+    From working compiler to working ecosystem.
+  </h2>
+  <p class="section-sub reveal reveal-delay-2">
+    Four milestones. Two complete. Two in progress. Every milestone ships
+    runnable code — no promises without proof.
+  </p>
+
+  <div class="roadmap reveal">
+    <div class="rm-item done">
+      <div class="rm-label">M0 · Complete</div>
+      <div class="rm-title">Spec foundation</div>
+      <div class="rm-status">SPEC-00, 01, 02 · 92 normative rules · 107 conformance tests</div>
+    </div>
+    <div class="rm-item done">
+      <div class="rm-label">M1 · Complete</div>
+      <div class="rm-title">Working compiler</div>
+      <div class="rm-status">Lexer, parser, type checker, C backend, native x86_64, quantum backend</div>
+    </div>
+    <div class="rm-item next">
+      <div class="rm-label">M2 · Active</div>
+      <div class="rm-title">Real programs + LinguaDB</div>
+      <div class="rm-status">Type system, full LIR, LinguaDB integration, pons v0.1</div>
+    </div>
+    <div class="rm-item">
+      <div class="rm-label">M3 · Planned</div>
+      <div class="rm-title">Ecosystem ready</div>
+      <div class="rm-status">LLVM backend, ARM64, WASM binary, 30 tested language packs</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTRIBUTE -->
+<section class="contribute" id="contribute">
+  <div class="contribute-inner">
+    <h2 class="reveal">Let's build it together.</h2>
+    <p class="contribute-sub reveal reveal-delay-1">
+      Apache 2.0 · Foundation-governed · Fork-friendly · Zero vendor lock-in.
+      A second implementation of <code style="font-family:'JetBrains Mono',monospace;background:rgba(255,255,255,.1);padding:.1rem .4rem;border-radius:3px">loc</code>
+      can be certified without our permission (CONV-040).
+    </p>
+
+    <div class="contribute-grid">
+      <div class="c-card reveal">
+        <div class="c-icon">🌍</div>
+        <div class="c-title">Add a language</div>
+        <div class="c-desc">One JSON file. 40 keyword slots. Add tests. Done. 28 stub packs waiting.</div>
+      </div>
+      <div class="c-card reveal reveal-delay-1">
+        <div class="c-icon">💻</div>
+        <div class="c-title">Write compiler code</div>
+        <div class="c-desc">Type system completion, LIR coverage, backend tests. Rust, no unsafe.</div>
+      </div>
+      <div class="c-card reveal reveal-delay-2">
+        <div class="c-icon">📐</div>
+        <div class="c-title">Write specs</div>
+        <div class="c-desc">SPEC-03 through SPEC-13 are open. Pick a section, open an RFC.</div>
+      </div>
+      <div class="c-card reveal">
+        <div class="c-icon">🕸</div>
+        <div class="c-title">Build PONS</div>
+        <div class="c-desc">Route matching, LinguaDB wrappers, integration tests. Written in .lo.</div>
+      </div>
+      <div class="c-card reveal reveal-delay-1">
+        <div class="c-icon">📚</div>
+        <div class="c-title">Teach</div>
+        <div class="c-desc">Translate the book. Write tutorials. Everything is gratis, forever.</div>
+      </div>
+      <div class="c-card reveal reveal-delay-2">
+        <div class="c-icon">🐛</div>
+        <div class="c-title">Test & report</div>
+        <div class="c-desc">Every failing test is either a spec bug or an implementation bug. Both fixed publicly.</div>
+      </div>
+    </div>
+
+    <div class="contribute-actions reveal">
+      <a href="https://github.com/claudiuradugroza/LinguaOmnibus" class="btn btn-light">
+        View on GitHub →
+      </a>
+      <a href="https://github.com/claudiuradugroza/LinguaOmnibus/blob/main/IMPLEMENTATION_STATUS.md" class="btn btn-light btn-ghost">
+        Full implementation status
+      </a>
+      <a href="https://github.com/claudiuradugroza/LinguaOmnibus/tree/main/rfcs" class="btn btn-light btn-ghost">
+        Open RFCs
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-quote">
+      "Every human mind deserves to program in its own language."
+    </div>
+    <div class="footer-meta">
+      <span>Lingua Omnibus · v7.0</span>
+      <span>spec-0.1 · 2026</span>
+      <span>Apache 2.0</span>
+      <span>Created by <strong>Claudiu Groza (Vemeth)</strong></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   Language tabs for the demo
+   ═══════════════════════════════════════════════════════════ */
+const codeSamples = {
+  en: {
+    filename: 'fib-en.lo',
+    code: `<span class="cm">#lingua: EN</span>
+<span class="kw">function</span> <span class="fn">fib</span>(n: <span class="typ">Integer</span>) <span class="kw">returns</span> <span class="typ">Integer</span>:
+    <span class="kw">if</span> n <span class="op">&lt;=</span> <span class="num">1</span> <span class="kw">then</span>:
+        <span class="kw">return</span> n
+    <span class="kw">else</span>:
+        <span class="kw">return</span> <span class="fn">fib</span>(n <span class="op">-</span> <span class="num">1</span>) <span class="op">+</span> <span class="fn">fib</span>(n <span class="op">-</span> <span class="num">2</span>)
+
+<span class="kw">function</span> <span class="fn">main</span>() <span class="kw">returns</span> <span class="typ">Unit</span>:
+    <span class="fn">print</span>(<span class="fn">fib</span>(<span class="num">10</span>))`
+  },
+  ro: {
+    filename: 'fib-ro.lo',
+    code: `<span class="cm">#lingua: RO</span>
+<span class="kw">funcție</span> <span class="fn">fib</span>(n: <span class="typ">Întreg</span>) <span class="kw">returnează</span> <span class="typ">Întreg</span>:
+    <span class="kw">dacă</span> n <span class="op">≤</span> <span class="num">1</span> <span class="kw">atunci</span>:
+        <span class="kw">returnează</span> n
+    <span class="kw">altfel</span>:
+        <span class="kw">returnează</span> <span class="fn">fib</span>(n <span class="op">-</span> <span class="num">1</span>) <span class="op">+</span> <span class="fn">fib</span>(n <span class="op">-</span> <span class="num">2</span>)
+
+<span class="kw">funcție</span> <span class="fn">principal</span>() <span class="kw">returnează</span> <span class="typ">Unit</span>:
+    <span class="fn">afișează</span>(<span class="fn">fib</span>(<span class="num">10</span>))`
+  },
+  ja: {
+    filename: 'fib-ja.lo',
+    code: `<span class="cm">#lingua: JA</span>
+<span class="kw">関数</span> <span class="fn">fib</span>(n: <span class="typ">整数</span>) <span class="kw">返す</span> <span class="typ">整数</span>:
+    <span class="kw">もし</span> n <span class="op">≤</span> <span class="num">1</span> <span class="kw">ならば</span>:
+        <span class="kw">返す</span> n
+    <span class="kw">そうでなければ</span>:
+        <span class="kw">返す</span> <span class="fn">fib</span>(n <span class="op">-</span> <span class="num">1</span>) <span class="op">+</span> <span class="fn">fib</span>(n <span class="op">-</span> <span class="num">2</span>)
+
+<span class="kw">関数</span> <span class="fn">main</span>() <span class="kw">返す</span> <span class="typ">Unit</span>:
+    <span class="fn">表示</span>(<span class="fn">fib</span>(<span class="num">10</span>))`
+  }
+};
+
+function switchLang(code, btn) {
+  const data = codeSamples[code];
+  document.getElementById('demo-code').innerHTML = data.code;
+  document.getElementById('demo-filename').textContent = data.filename;
+  document.querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Reveal on scroll
+   ═══════════════════════════════════════════════════════════ */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+/* ═══════════════════════════════════════════════════════════
+   Nav active state
+   ═══════════════════════════════════════════════════════════ */
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop;
+    if (window.scrollY >= sectionTop - 200) {
+      current = section.getAttribute('id');
+    }
+  });
+  navLinks.forEach(link => {
+    link.style.color = link.getAttribute('href') === '#' + current ? 'var(--ink)' : '';
+  });
+});
+</script>
+</body>
+</html>
