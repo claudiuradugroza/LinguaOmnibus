@@ -1,0 +1,64 @@
+#lingua: EN
+// std.math — Mathematical functions
+//
+// Part of Lingua Omnibus Standard Library.
+// Delegates to C libm via FFI.
+
+import std.core
+
+// Extern declarations for C math library (libm)
+extern function c_sqrt(x: f64) returns f64
+extern function c_exp(x: f64) returns f64
+extern function c_log(x: f64) returns f64
+extern function c_sin(x: f64) returns f64
+extern function c_cos(x: f64) returns f64
+extern function c_pow(x: f64, y: f64) returns f64
+extern function c_fabs(x: f64) returns f64
+extern function c_floor(x: f64) returns f64
+extern function c_ceil(x: f64) returns f64
+
+// Public wrappers
+pub function sqrt(x: f64) returns f64:
+    return c_sqrt(x)
+
+pub function exp(x: f64) returns f64:
+    return c_exp(x)
+
+pub function log(x: f64) returns f64:
+    return c_log(x)
+
+pub function sin(x: f64) returns f64:
+    return c_sin(x)
+
+pub function cos(x: f64) returns f64:
+    return c_cos(x)
+
+pub function pow(x: f64, y: f64) returns f64:
+    return c_pow(x, y)
+
+pub function abs(x: f64) returns f64:
+    return c_fabs(x)
+
+pub function floor(x: f64) returns f64:
+    return c_floor(x)
+
+pub function ceil(x: f64) returns f64:
+    return c_ceil(x)
+
+// Integer math
+pub function min(a: int32, b: int32) returns int32:
+    if a < b then:
+        return a
+    return b
+
+pub function max(a: int32, b: int32) returns int32:
+    if a > b then:
+        return a
+    return b
+
+pub function clamp(x: int32, lo: int32, hi: int32) returns int32:
+    if x < lo then:
+        return lo
+    if x > hi then:
+        return hi
+    return x

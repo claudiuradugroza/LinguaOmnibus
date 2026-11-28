@@ -280,14 +280,37 @@ impl CBackend {
         if parts.is_empty() {
             return Ok(String::new());
         }
+        if parts[0] == "alloca" {
+            // alloca i32  -> declare variable named after lhs
+            // instr format: %var_x = alloca i32
+            if let Some(eq) = instr.find('=') {
+                let lhs = instr[..eq].trim().trim_start_matches('%');
+                return Ok(format!("    int64_t {} = 0;", lhs));
+            }
+            return Ok(String::new());
+        }
+        if parts[0] == "load" {
+            // load %slot  -> value of slot
+            // instr format: %r = load %slot
+            if let Some(eq) = instr.find('=') {
+                let lhs = instr[..eq].trim().trim_start_matches('%');
+                let rhs = instr[eq+1..].trim();
+                let slot = rhs.trim_start_matches("load").trim().trim_start_matches('%');
+                return Ok(format!("    int64_t {} = {};", lhs, slot));
+            }
+            return Ok(String::new());
+        }
         if parts[0] == "store" {
-            // store %obj, %idx, %val
-            // parts: store obj, idx, val
+            // store %slot, %val   (scalar)  OR  store %obj, %idx, %val (array)
             if parts.len() >= 4 {
                 let obj = self.sanitize_reg(parts[1].trim_end_matches(','));
                 let idx = self.sanitize_reg(parts[2].trim_end_matches(','));
                 let val = self.sanitize_reg(parts[3]);
                 return Ok(format!("    {}[{}] = {};", obj, idx, val));
+            } else if parts.len() >= 3 {
+                let slot = self.sanitize_reg(parts[1].trim_end_matches(','));
+                let val = self.sanitize_reg(parts[2]);
+                return Ok(format!("    {} = {};", slot, val));
             }
             return Ok(String::new());
         }
@@ -510,6 +533,16 @@ impl CBackend {
                             let src = self.sanitize_reg(rhs_parts[1]);
                             return Ok(format!("    int64_t {} = {};", lhs, src));
                         }
+                    }
+                    "alloca" => {
+                        return Ok(format!("    int64_t {} = 0;", lhs));
+                    }
+                    "load" => {
+                        if rhs_parts.len() >= 2 {
+                            let slot = self.sanitize_reg(rhs_parts[1]);
+                            return Ok(format!("    int64_t {} = {};", lhs, slot));
+                        }
+                        return Ok(format!("    int64_t {} = 0;", lhs));
                     }
                     _ => {
                         return Err(BackendError::UnsupportedInstruction(format!("{}", instr)));

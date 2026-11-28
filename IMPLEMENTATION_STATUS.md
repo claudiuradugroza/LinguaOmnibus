@@ -90,7 +90,7 @@ Last updated: 2026-11-23
 | backends | Functional (x86_64 native, C, OpenQASM 3.0) |
 | FFI (extern function) | Functional (C + LLVM backends, tested) |
 | linguadb | ✅ Functional (in-memory, ACID transactions) |
-| stdlib | ✅ Partial (core, io, string) |
+| stdlib | Partial (core, io, string, math, simd) |
 | security | ✅ Functional (default-deny, capabilities, lopm.toml parsing) |
 | backends (LLVM) | Functional (hello world + fibonacci + FFI via clang) |
 | backends (WASM) | 🟡 Experimental (WAT + wat2wasm binar) |

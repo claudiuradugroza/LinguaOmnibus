@@ -106,18 +106,20 @@ impl LirEmitter {
     fn emit_statement(&mut self, stmt: &Statement) {
         match stmt {
             Statement::VarDecl(v) => {
+                let slot = format!("%var_{}", v.name);
+                self.output.push_str(&format!("    {} = alloca i32\n", slot));
                 if let Some(val) = &v.value {
                     let val_reg = self.emit_expr(val);
-                    let reg = self.new_reg();
-                    self.output.push_str(&format!("    {} = move {}\n", reg, val_reg));
-                    self.var_map.insert(v.name.clone(), reg);
+                    self.output.push_str(&format!("    store {}, {}\n", slot, val_reg));
                 }
+                self.var_map.insert(v.name.clone(), slot);
             }
             Statement::ConstDecl(c) => {
+                let slot = format!("%var_{}", c.name);
+                self.output.push_str(&format!("    {} = alloca i32\n", slot));
                 let val_reg = self.emit_expr(&c.value);
-                let reg = self.new_reg();
-                self.output.push_str(&format!("    {} = copy {}\n", reg, val_reg));
-                self.var_map.insert(c.name.clone(), reg);
+                self.output.push_str(&format!("    store {}, {}\n", slot, val_reg));
+                self.var_map.insert(c.name.clone(), slot);
             }
             Statement::ExprStmt(e, _) => {
                 let _ = self.emit_expr(e);
@@ -159,10 +161,12 @@ impl LirEmitter {
             }
             Statement::WhileStmt(w) => {
                 let start_label = self.new_label();
+                let body_label = self.new_label();
                 let end_label = self.new_label();
                 self.output.push_str(&format!("  {}:\n", start_label));
                 let cond_reg = self.emit_expr(&w.cond);
-                self.output.push_str(&format!("    br.cond {} {}, {}\n", cond_reg, end_label, start_label));
+                self.output.push_str(&format!("    br.cond {} {}, {}\n", cond_reg, body_label, end_label));
+                self.output.push_str(&format!("  {}:\n", body_label));
                 self.emit_block(&w.body);
                 self.output.push_str(&format!("    br {}\n", start_label));
                 self.output.push_str(&format!("  {}:\n", end_label));
@@ -236,8 +240,11 @@ impl LirEmitter {
             }
             Expr::Ident(name, _) => {
                 // Use canonical register from var_map if available
-                if let Some(reg) = self.var_map.get(name) {
-                    reg.clone()
+                if let Some(slot) = self.var_map.get(name).cloned() {
+                    // Slot-based variable: load from slot
+                    let reg = self.new_reg();
+                    self.output.push_str(&format!("    {} = load {}\n", reg, slot));
+                    reg
                 } else {
                     // Unknown identifier — create a new register reference
                     format!("%{}", name)
@@ -247,10 +254,10 @@ impl LirEmitter {
                 let val_reg = self.emit_expr(value);
                 match target.as_ref() {
                     Expr::Ident(name, _) => {
-                        let reg = self.new_reg();
-                        self.output.push_str(&format!("    {} = move {}\n", reg, val_reg));
-                        self.var_map.insert(name.clone(), reg.clone());
-                        reg
+                        if let Some(slot) = self.var_map.get(name).cloned() {
+                            self.output.push_str(&format!("    store {}, {}\n", slot, val_reg));
+                        }
+                        val_reg
                     }
                     Expr::Index { object, index, .. } => {
                         let obj_reg = self.emit_expr(object);

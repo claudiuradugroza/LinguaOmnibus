@@ -2,26 +2,27 @@
 // std.io — Input/output, file system
 //
 // Part of Lingua Omnibus Standard Library.
-// Spec target: spec-0.1
+// Delegates to C stdio via FFI.
 
 import std.core
 
-// ─────────────────────────────────────────────────────────────
-// Public functions
-// ─────────────────────────────────────────────────────────────
-
-/// Read a file to string.
-pub function read_file(path: String) returns String with [IO]:
-    return ""
-
-/// Write a string to file.
-pub function write_file(path: String, content: String) returns Unit with [IO]:
-    return ()
+// Extern declarations for C stdio (simplified)
+extern function c_printf(msg: string) returns int32
+extern function c_puts(msg: string) returns int32
 
 /// Print to stdout.
-pub function stdout(msg: String) returns Unit with [IO]:
+pub function stdout(msg: string) returns Unit:
+    c_puts(msg)
     return ()
 
-/// Read from stdin.
-pub function stdin() returns String with [IO]:
+/// Read a file to string (stub — full impl requires runtime support).
+pub function read_file(path: string) returns string:
+    return ""
+
+/// Write a string to file (stub — full impl requires runtime support).
+pub function write_file(path: string, content: string) returns Unit:
+    return ()
+
+/// Read from stdin (stub).
+pub function stdin() returns string:
     return ""

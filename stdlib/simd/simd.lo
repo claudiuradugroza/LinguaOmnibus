@@ -1,0 +1,31 @@
+#lingua: EN
+// std.simd — SIMD vector operations
+//
+// Part of Lingua Omnibus Standard Library.
+// Delegates to native kernels (C with auto-vectorization, or asm).
+// Types: f32x4, f32x8, f64x2, i32x4, i32x8, i64x2
+
+import std.core
+
+// Extern declarations for SIMD kernels (implemented in kernels.c / asm)
+extern function simd_add_f32x4(a: int32, b: int32) returns int32
+extern function simd_mul_f32x4(a: int32, b: int32) returns int32
+extern function simd_dot_f32(a: int32, b: int32, n: int32) returns int32
+extern function simd_rms_norm(buf: int32, n: int32, eps: int32) returns int32
+extern function simd_softmax(buf: int32, n: int32) returns int32
+
+// Public wrappers
+pub function add_f32x4(a: int32, b: int32) returns int32:
+    return simd_add_f32x4(a, b)
+
+pub function mul_f32x4(a: int32, b: int32) returns int32:
+    return simd_mul_f32x4(a, b)
+
+pub function dot_f32(a: int32, b: int32, n: int32) returns int32:
+    return simd_dot_f32(a, b, n)
+
+pub function rms_norm(buf: int32, n: int32, eps: int32) returns int32:
+    return simd_rms_norm(buf, n, eps)
+
+pub function softmax(buf: int32, n: int32) returns int32:
+    return simd_softmax(buf, n)

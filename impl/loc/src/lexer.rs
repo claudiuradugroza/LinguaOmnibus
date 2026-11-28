@@ -329,14 +329,15 @@ impl Lexer {
     fn skip_whitespace_and_comments(&mut self) -> LocResult<bool> {
         let mut saw_newline = false;
         loop {
-            // Skip whitespace (spaces, tabs, etc.)
+            // Skip trailing whitespace on the current line only
             while self.pos < self.input.len() {
                 let ch = self.peek_char();
-                if is_whitespace(ch) {
-                    self.advance();
-                } else if ch == '\n' || ch == '\r' {
+                if ch == '\n' || ch == '\r' {
                     self.newline();
                     saw_newline = true;
+                    break; // Stop after newline — let at_line_start handle leading spaces
+                } else if is_whitespace(ch) {
+                    self.advance();
                 } else {
                     break;
                 }

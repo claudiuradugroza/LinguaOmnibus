@@ -42,8 +42,14 @@ impl Parser {
         let mut items = Vec::new();
         while !self.is_eof() {
             // Skip extra newlines / indentation tokens between items
-            self.eat_newlines();
-            self.skip_indent_tokens();
+            loop {
+                let before = self.pos;
+                self.eat_newlines();
+                self.skip_indent_tokens();
+                if self.pos == before {
+                    break;
+                }
+            }
             if self.is_eof() {
                 break;
             }
@@ -409,10 +415,19 @@ impl Parser {
         } else if matches!(self.peek(), Token::Colon) {
             self.advance(); // skip :
             self.eat_newlines();
+            self.skip_indent_tokens();
             // Indentation-based fields
             loop {
                 self.eat_newlines();
+                // skip stray indents but NOT dedent (dedent ends the block)
+                while matches!(self.peek(), Token::Indent) {
+                    self.advance();
+                }
                 if self.is_eof() {
+                    break;
+                }
+                if matches!(self.peek(), Token::Dedent) {
+                    self.advance();
                     break;
                 }
                 // Check if we've hit a top-level keyword
@@ -673,6 +688,11 @@ impl Parser {
 
     fn parse_block(&mut self) -> LocResult<Block> {
         let mut statements = Vec::new();
+
+        // Consume leading indentation / newline tokens (not DEDENT, which ends a block)
+        while matches!(self.peek(), Token::Indent | Token::Newline) {
+            self.advance();
+        }
 
         // Support both { ... } and indentation-based blocks
         if matches!(self.peek(), Token::LBrace) {
