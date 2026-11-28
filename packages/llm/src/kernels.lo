@@ -1,0 +1,23 @@
+#lingua: EN
+// kernels.lo — FFI declarations for native SIMD kernels (llm.asm / kernels.c)
+//
+// These functions are implemented in kernels/kernels.c (and, in the future,
+// in hand-written x86-64 assembly). They are linked at build time.
+
+import std.io
+
+// RMSNorm: in-place normalisation of a buffer (scaled integers).
+extern function rms_norm(buf: int32, n: int32, eps: int32) returns int32
+
+// Softmax over a buffer (scaled integers).
+extern function softmax(buf: int32, n: int32) returns int32
+
+// Matrix-vector product: y = W * x (scaled integers).
+extern function matvec(W: int32, x: int32, y: int32, rows: int32, cols: int32) returns int32
+
+// Dot product of two vectors.
+extern function dot(a: int32, b: int32, n: int32) returns int32
+
+// Entry point demonstrating FFI availability.
+pub function kernels_available() returns int32:
+    return 1

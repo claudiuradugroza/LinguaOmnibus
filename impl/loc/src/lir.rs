@@ -38,6 +38,17 @@ impl LirEmitter {
     }
 
     fn emit_function(&mut self, f: &FunctionDecl) {
+        if f.is_extern {
+            let params_str = f.params.iter()
+                .map(|p| format!("{} {}", p.ty.lir_name(), p.name))
+                .collect::<Vec<_>>()
+                .join(", ");
+            let ret_str = f.return_type.as_ref()
+                .map(|t| t.lir_name())
+                .unwrap_or_else(|| "unit".into());
+            self.output.push_str(&format!("  extern fn {} : ({}) -> {}\n", f.name, params_str, ret_str));
+            return;
+        }
         let params_str = f.params.iter()
             .map(|p| format!("{} {}", p.ty.lir_name(), p.name))
             .collect::<Vec<_>>()

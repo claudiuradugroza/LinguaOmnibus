@@ -42,6 +42,18 @@ impl CBackend {
     /// Parse LIR and emit C source.
     pub fn emit_c_source(&self, lir_source: &str) -> Result<String, BackendError> {
         let mut c_source = self.emit_header();
+        // Collect extern function names (FFI)
+        let mut externs: std::collections::HashSet<String> = std::collections::HashSet::new();
+        let mut extern_decls: Vec<String> = Vec::new();
+        for line in lir_source.lines() {
+            let t = line.trim();
+            if t.starts_with("extern fn ") {
+                let rest = &t["extern ".len()..];
+                if let Some(colon) = rest.find(" : ") {
+                    externs.insert(rest[3..colon].trim().to_string());
+                }
+            }
+        }
         let mut functions: Vec<String> = Vec::new();
         let mut current_func: Option<String> = None;
         let mut current_params: String = String::new();
@@ -113,6 +125,65 @@ impl CBackend {
                 continue;
             }
 
+            if trimmed.starts_with("extern fn ") {
+                // extern fn name : (params) -> ret
+                let rest = &trimmed["extern ".len()..];
+                let mut name = String::new();
+                let mut params = String::new();
+                let mut ret_type = String::from("unit");
+                if let Some(colon_pos) = rest.find(" : ") {
+                    name = rest[3..colon_pos].trim().to_string(); // skip "fn "
+                    if let Some(paren_start) = rest.find('(') {
+                        if let Some(paren_end) = rest.find(')') {
+                            params = rest[paren_start + 1..paren_end].trim().to_string();
+                        }
+                    }
+                }
+                if let Some(arrow_pos) = rest.find("->") {
+                    let ret_part = &rest[arrow_pos + 2..];
+                    ret_type = ret_part.trim().to_string();
+                }
+                let c_ret = match ret_type.as_str() {
+                    "unit" => "void",
+                    "i32" | "int32" => "int32_t",
+                    "i64" | "int64" => "int64_t",
+                    "f32" => "float",
+                    "f64" | "double" => "double",
+                    "bool" => "int",
+                    "string" | "str" => "const char*",
+                    _ => "void",
+                };
+                // Build param list
+                let mut c_params = Vec::new();
+                if !params.is_empty() && params != "unit" {
+                    for p in params.split(',') {
+                        let p = p.trim();
+                        if p.is_empty() { continue; }
+                        // format: "type name"
+                        let parts: Vec<&str> = p.split_whitespace().collect();
+                        if parts.len() >= 2 {
+                            let ty = parts[0];
+                            let pname = parts[1];
+                            let cty = match ty {
+                                "i32" | "int32" => "int32_t",
+                                "i64" | "int64" => "int64_t",
+                                "f32" => "float",
+                                "f64" | "double" => "double",
+                                "bool" => "int",
+                                "string" | "str" => "const char*",
+                                _ => "void*",
+                            };
+                            c_params.push(format!("{} {}", cty, pname));
+                        } else if parts.len() == 1 {
+                            c_params.push(format!("void* {}", parts[0]));
+                        }
+                    }
+                }
+                let c_param_str = if c_params.is_empty() { "void".to_string() } else { c_params.join(", ") };
+                extern_decls.push(format!("extern {} {}({});", c_ret, name, c_param_str));
+                continue;
+            }
+
             if trimmed.starts_with("fn ") {
                 // fn name : (params) -> ret {
                 in_function = true;
@@ -145,7 +216,7 @@ impl CBackend {
 
             if in_function {
                 // Emit instruction as C
-                let c_instr = self.emit_instruction(trimmed, &current_func.clone().unwrap_or_default(), &mut string_regs)?;
+                let c_instr = self.emit_instruction(trimmed, &current_func.clone().unwrap_or_default(), &mut string_regs, &externs)?;
                 if !c_instr.is_empty() {
                     current_body.push_str(&c_instr);
                     current_body.push('\n');
@@ -155,6 +226,13 @@ impl CBackend {
 
         // Build final C source
         let mut result = self.emit_header();
+        for decl in &extern_decls {
+            result.push_str(decl);
+            result.push('\n');
+        }
+        if !extern_decls.is_empty() {
+            result.push('\n');
+        }
         for func in &functions {
             result.push_str(func);
             result.push('\n');
@@ -172,7 +250,7 @@ impl CBackend {
     }
 
     /// Emit a single LIR instruction as C.
-    fn emit_instruction(&self, instr: &str, func_name: &str, string_regs: &mut std::collections::HashSet<String>) -> Result<String, BackendError> {
+    fn emit_instruction(&self, instr: &str, func_name: &str, string_regs: &mut std::collections::HashSet<String>, externs: &std::collections::HashSet<String>) -> Result<String, BackendError> {
         let parts: Vec<&str> = instr.split_whitespace().collect();
         if parts.is_empty() {
             return Ok(String::new());
@@ -368,6 +446,8 @@ impl CBackend {
                                 "printf".to_string()
                             } else if func_sanitized == "fib" {
                                 "lo_fib".to_string()
+                            } else if externs.contains(func_sanitized.as_str()) || externs.contains(func_name.trim_start_matches('%')) {
+                                func_sanitized.clone()
                             } else {
                                 format!("lo_{}", func_sanitized)
                             };

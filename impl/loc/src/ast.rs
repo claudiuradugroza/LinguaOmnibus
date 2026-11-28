@@ -42,6 +42,7 @@ pub struct FunctionDecl {
     pub return_type: Option<Type>,
     pub effects: Vec<Effect>,
     pub body: Block,
+    pub is_extern: bool,
     pub span: Span,
 }
 

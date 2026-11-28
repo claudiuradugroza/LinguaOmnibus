@@ -87,11 +87,12 @@ Last updated: 2026-11-23
 | lopm (package manager) | ✅ Functional (init, install, publish, list, check, version) |
 | lolsp (language server) | ✅ Functional (JSON-RPC, autocomplete, hover, diagnostics) |
 | runtime | ✅ Functional (panic handler, GC mark-and-sweep, alloc tracker, stack guard, quantum sim) |
-| backends | ✅ Functional (x86_64 native, C, OpenQASM 3.0) |
+| backends | Functional (x86_64 native, C, OpenQASM 3.0) |
+| FFI (extern function) | Functional (C + LLVM backends, tested) |
 | linguadb | ✅ Functional (in-memory, ACID transactions) |
 | stdlib | ✅ Partial (core, io, string) |
 | security | ✅ Functional (default-deny, capabilities, lopm.toml parsing) |
-| backends (LLVM) | ⚠️ Stub (planned for Phase 2) |
+| backends (LLVM) | Functional (hello world + fibonacci + FFI via clang) |
 | backends (WASM) | 🟡 Experimental (WAT + wat2wasm binar) |
 | backends (ARM64) | ⚠️ Stub (QEMU user-mode testing planned) |
 | backends (RISC-V) | ⚠️ Stub (QEMU user-mode testing planned) |

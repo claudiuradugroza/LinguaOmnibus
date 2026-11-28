@@ -48,6 +48,7 @@ pub fn select_backend(name: &str) -> Box<dyn Backend> {
     match name {
         "c" | "x86_64-via-c" => Box::new(c::CBackend::new()),
         "x86_64" | "native" => Box::new(x86_64::X86_64Backend::new()),
+        "llvm" | "llvm-ir" => Box::new(llvm::LlvmBackend::new()),
         "qasm3" | "quantum" => Box::new(c::CBackend::new()), // QASM handled separately
         _ => panic!("Unknown backend: {}", name),
     }
@@ -55,3 +56,4 @@ pub fn select_backend(name: &str) -> Box<dyn Backend> {
 
 pub mod c;
 pub mod x86_64;
+pub mod llvm;

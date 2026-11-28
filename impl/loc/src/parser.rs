@@ -155,7 +155,7 @@ impl Parser {
 
         match tok {
             Token::Keyword(slot) => match slot.as_str() {
-                "KW_FUNCTION" => Ok(Item::FunctionDecl(self.parse_function_decl()?)),
+                "KW_FUNCTION" => Ok(Item::FunctionDecl(self.parse_function_decl(false)?)),
                 "KW_STRUCT" => Ok(Item::StructDecl(self.parse_struct_decl()?)),
                 "KW_ENUM" => Ok(Item::EnumDecl(self.parse_enum_decl()?)),
                 "KW_CONST" => Ok(Item::ConstDecl(self.parse_const_decl()?)),
@@ -199,6 +199,14 @@ impl Parser {
                 }
                 _ => Err(LocError::Internal(format!("unexpected keyword {} at item level", slot))),
             },
+            Token::Ident(s) if s.eq_ignore_ascii_case("extern") => {
+                self.advance(); // consume 'extern'
+                // optional ABI string: extern "C" function ...
+                if let Token::Str(_abi) = self.peek() {
+                    self.advance();
+                }
+                Ok(Item::FunctionDecl(self.parse_function_decl(true)?))
+            }
             Token::Ident(s) => {
                 if s.starts_with("__pragma_") || s.starts_with("__directive_") || s.starts_with("__lingua_") {
                     self.advance();
@@ -252,8 +260,17 @@ impl Parser {
 
     // ---------- function ----------
 
-    fn parse_function_decl(&mut self) -> LocResult<FunctionDecl> {
-        self.expect_keyword("KW_FUNCTION")?;
+    fn parse_function_decl(&mut self, is_extern: bool) -> LocResult<FunctionDecl> {
+        if !is_extern {
+            self.expect_keyword("KW_FUNCTION")?;
+        } else {
+            // extern function: 'function' keyword optional
+            if matches!(self.peek(), Token::Keyword(s) if s == "KW_FUNCTION") {
+                self.advance();
+            } else if matches!(self.peek(), Token::Ident(s) if s.eq_ignore_ascii_case("function")) {
+                self.advance();
+            }
+        }
         let name = match self.advance() {
             Token::Ident(s) => s,
             t => return Err(LocError::Internal(format!("expected function name, got {:?}", t))),
@@ -270,10 +287,23 @@ impl Parser {
         };
 
         let effects = self.parse_effects_clause()?;
-        self.expect(&Token::Colon)?;
-        self.eat_newlines();
 
-        let body = self.parse_block()?;
+        let body = if is_extern {
+            // Optional trailing colon/body for extern declarations
+            if matches!(self.peek(), Token::Colon) {
+                self.advance();
+                self.eat_newlines();
+                // consume a body block if present (ignored)
+                if !matches!(self.peek(), Token::Eof) && !matches!(self.peek(), Token::Keyword(_) ) {
+                    let _ = self.parse_block();
+                }
+            }
+            Block { statements: Vec::new(), span: Span::default() }
+        } else {
+            self.expect(&Token::Colon)?;
+            self.eat_newlines();
+            self.parse_block()?
+        };
 
         Ok(FunctionDecl {
             name,
@@ -281,6 +311,7 @@ impl Parser {
             return_type,
             effects,
             body,
+            is_extern,
             span: Span::default(),
         })
     }

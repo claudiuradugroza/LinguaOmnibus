@@ -1,0 +1,9 @@
+#lingua: EN
+// FFI demo: call an external C function.
+
+extern function c_add(a: int32, b: int32) returns int32
+
+function main() returns Unit:
+    var r = c_add(10, 32)
+    print(r)
+    return ()
