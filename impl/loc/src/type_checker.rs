@@ -199,7 +199,21 @@ impl TypeChecker {
                 }
             }
             Expr::Assign { value, .. } => self.infer_expr(value),
-            Expr::Call { .. } => Type::Int32,
+            Expr::Call { callee, .. } => {
+                // Builtin SIMD intrinsics
+                if let Expr::Ident(name, _) = callee.as_ref() {
+                    match name.as_str() {
+                        "simd_load_f32x4" | "simd_add_f32x4" | "simd_mul_f32x4" | "simd_sub_f32x4" => Type::VecF32x4,
+                        "simd_load_f64x2" | "simd_add_f64x2" | "simd_mul_f64x2" => Type::VecF64x2,
+                        "simd_load_i32x4" | "simd_add_i32x4" | "simd_mul_i32x4" => Type::VecI32x4,
+                        "simd_store_f32x4" | "simd_store_i32x4" => Type::Unit,
+                        "simd_broadcast_f32" => Type::VecF32x4,
+                        _ => Type::Int32,
+                    }
+                } else {
+                    Type::Int32
+                }
+            },
             Expr::MethodCall { .. } => Type::Int32,
             Expr::FieldAccess { .. } => Type::Int32,
             Expr::Index { .. } => Type::Int32,

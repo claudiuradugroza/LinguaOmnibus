@@ -93,6 +93,7 @@ Last updated: 2026-11-23
 | stdlib | Partial (core, io, string, math, simd) |
 | security | ✅ Functional (default-deny, capabilities, lopm.toml parsing) |
 | backends (LLVM) | Functional (hello world + fibonacci + FFI via clang) |
+| SIMD intrinsics | Partial (types + FFI decls + builtins) |
 | backends (WASM) | 🟡 Experimental (WAT + wat2wasm binar) |
 | backends (ARM64) | ⚠️ Stub (QEMU user-mode testing planned) |
 | backends (RISC-V) | ⚠️ Stub (QEMU user-mode testing planned) |

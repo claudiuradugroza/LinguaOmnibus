@@ -6,23 +6,32 @@
 
 import std.core
 
-// Extern declarations for C stdio (simplified)
-extern function c_printf(msg: string) returns int32
+// Extern declarations for C stdio / io_kernels.c
 extern function c_puts(msg: string) returns int32
+extern function read_file_all(path: string) returns string
+extern function write_file_all(path: string, content: string) returns int32
+extern function file_size(path: string) returns int32
 
 /// Print to stdout.
 pub function stdout(msg: string) returns Unit:
     c_puts(msg)
     return ()
 
-/// Read a file to string (stub — full impl requires runtime support).
+/// Read a file to string.
 pub function read_file(path: string) returns string:
-    return ""
+    return read_file_all(path)
 
-/// Write a string to file (stub — full impl requires runtime support).
+/// Write a string to file.
 pub function write_file(path: string, content: string) returns Unit:
+    write_file_all(path, content)
     return ()
 
-/// Read from stdin (stub).
+/// Read from stdin (stub — requires runtime support).
 pub function stdin() returns string:
     return ""
+
+/// Check if a file exists (by size >= 0).
+pub function file_exists(path: string) returns bool:
+    if file_size(path) >= 0 then:
+        return true
+    return false
