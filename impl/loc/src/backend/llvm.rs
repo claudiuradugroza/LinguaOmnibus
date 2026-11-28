@@ -122,13 +122,14 @@ impl LlvmBackend {
                     i += 1;
                     if l.is_empty() { continue; }
                     if l == "}" {
-                        if !block_terminated { ir.push_str("  unreachable\n"); }
+                        if !block_terminated { ir.push_str("  ret void\n"); }
                         break;
                     }
                     if l == "entry:" { continue; }
                     if l.ends_with(':') && !l.contains(' ') {
                         if !block_terminated {
-                            ir.push_str("  unreachable\n");
+                            let lbl = l.trim_end_matches(':');
+                            ir.push_str(&format!("  br label %{}\n", lbl));
                         }
                         block_terminated = false;
                         ir.push_str(&format!("{}\n", l));
@@ -146,6 +147,15 @@ impl LlvmBackend {
                         match op {
                             "const.int" => {
                                 ir.push_str(&format!("  {} = add i32 0, {}\n", llvm_lhs, rest.trim()));
+                            }
+                            "alloca" => {
+                                let ty = rest.trim();
+                                let llvm_ty = self.lir_type_to_llvm(ty);
+                                ir.push_str(&format!("  {} = alloca {}\n", llvm_lhs, llvm_ty));
+                            }
+                            "load" => {
+                                let slot = rest.trim().trim_start_matches('%');
+                                ir.push_str(&format!("  {} = load i32, i32* %{}\n", llvm_lhs, slot));
                             }
                             "const.str" => {
                                 if let Some(&idx) = str_index.get(&lhs) {
@@ -245,9 +255,29 @@ impl LlvmBackend {
                     } else if l.starts_with("asm") {
                         let code = l["asm".len()..].trim().trim_matches('"');
                         ir.push_str(&format!("  call void asm sideeffect \"{}\", \"\"()\n", code));
+                    } else if l.starts_with("alloca") {
+                        if let Some(eq) = l.find('=') {
+                            let lhs = l[..eq].trim().trim_start_matches('%');
+                            let ty = l[eq+1..].trim().trim_start_matches("alloca").trim();
+                            let llvm_ty = self.lir_type_to_llvm(ty);
+                            ir.push_str(&format!("  %{} = alloca {}\n", lhs, llvm_ty));
+                        }
+                    } else if l.starts_with("load") {
+                        if let Some(eq) = l.find('=') {
+                            let lhs = l[..eq].trim().trim_start_matches('%');
+                            let rhs = l[eq+1..].trim();
+                            let slot = rhs.trim_start_matches("load").trim().trim_start_matches('%');
+                            ir.push_str(&format!("  %{} = load i32, i32* %{}\n", lhs, slot));
+                        }
                     } else if l.starts_with("store") {
-                        // store is not fully lowered in LLVM IR yet (placeholder)
-                        ir.push_str("  ; store (placeholder)\n");
+                        let parts: Vec<&str> = l.split_whitespace().collect();
+                        if parts.len() >= 4 {
+                            ir.push_str("  ; store array (placeholder)\n");
+                        } else if parts.len() >= 3 {
+                            let slot = parts[1].trim_end_matches(',').trim_start_matches('%');
+                            let val = parts[2].trim_start_matches('%');
+                            ir.push_str(&format!("  store i32 %{}, i32* %{}\n", val, slot));
+                        }
                     } else if l.starts_with("ret") {
                         let val = l["ret ".len()..].trim();
                         if val == "unit" || val.is_empty() {
