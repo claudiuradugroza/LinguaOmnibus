@@ -637,16 +637,11 @@ impl Parser {
     fn parse_block(&mut self) -> LocResult<Block> {
         let mut statements = Vec::new();
 
-        // Consume leading indentation / newline / dedent tokens
-        while matches!(self.peek(), Token::Indent | Token::Dedent | Token::Newline) {
-            self.advance();
-        }
-
         // Support both { ... } and indentation-based blocks
         if matches!(self.peek(), Token::LBrace) {
             self.advance(); // skip {
             // consume leading indentation inside the braces
-            while matches!(self.peek(), Token::Indent | Token::Dedent | Token::Newline) {
+            while matches!(self.peek(), Token::Indent | Token::Newline) {
                 self.advance();
             }
             while !matches!(self.peek(), Token::RBrace) {
@@ -668,9 +663,18 @@ impl Parser {
             self.expect(&Token::RBrace)?;
         } else {
             // Strict indentation-based block parsing
+            // Consume leading INDENT (one level) and newlines at entry
+            while matches!(self.peek(), Token::Indent | Token::Newline) {
+                self.advance();
+            }
+
             loop {
-                // Skip indentation / newline tokens
-                while matches!(self.peek(), Token::Indent | Token::Dedent | Token::Newline) {
+                // Skip newlines between statements
+                while matches!(self.peek(), Token::Newline) {
+                    self.advance();
+                }
+                // Skip stray indents
+                while matches!(self.peek(), Token::Indent) {
                     self.advance();
                 }
 
@@ -678,7 +682,7 @@ impl Parser {
                     break;
                 }
 
-                // Check for DEDENT (end of block) — already consumed above, but guard
+                // DEDENT signals end of this block: consume one level and stop
                 if matches!(self.peek(), Token::Dedent) {
                     self.advance();
                     break;
@@ -709,8 +713,8 @@ impl Parser {
     // ---------- statement ----------
 
     fn parse_statement(&mut self) -> LocResult<Statement> {
-        // Skip leading indentation/newline tokens
-        while matches!(self.peek(), Token::Indent | Token::Dedent | Token::Newline) {
+        // Skip leading indentation/newline tokens (not DEDENT, which ends a block)
+        while matches!(self.peek(), Token::Indent | Token::Newline) {
             self.advance();
         }
         let tok = self.peek();
