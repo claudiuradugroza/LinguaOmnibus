@@ -927,17 +927,19 @@ impl Parser {
     }
 
     fn parse_assign_expr(&mut self) -> LocResult<Expr> {
-        if let Token::Ident(name) = self.peek() {
-            // Check if followed by =
-            if self.peek_nth(1) == &Token::Eq {
-                let name = name.clone();
-                self.advance(); // ident
+        // Try assignment: lvalue = expr
+        let saved_pos = self.pos;
+        let lvalue = self.parse_postfix();
+        if let Ok(lhs) = lvalue {
+            if matches!(self.peek(), Token::Eq) {
                 self.advance(); // =
                 let value = self.parse_expr()?;
                 self.eat_newlines();
-                return Ok(Expr::Ident(name, Span::default()));
+                return Ok(Expr::Assign { target: Box::new(lhs), value: Box::new(value), span: Span::default() });
             }
         }
+        // Not an assignment: restore and parse normal expression
+        self.pos = saved_pos;
         self.parse_logical_or()
     }
 

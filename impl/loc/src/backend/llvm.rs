@@ -245,6 +245,9 @@ impl LlvmBackend {
                     } else if l.starts_with("asm") {
                         let code = l["asm".len()..].trim().trim_matches('"');
                         ir.push_str(&format!("  call void asm sideeffect \"{}\", \"\"()\n", code));
+                    } else if l.starts_with("store") {
+                        // store is not fully lowered in LLVM IR yet (placeholder)
+                        ir.push_str("  ; store (placeholder)\n");
                     } else if l.starts_with("ret") {
                         let val = l["ret ".len()..].trim();
                         if val == "unit" || val.is_empty() {

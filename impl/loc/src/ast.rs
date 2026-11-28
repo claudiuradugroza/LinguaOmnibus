@@ -206,6 +206,7 @@ pub enum Expr {
     Literal(Literal, Span),
     BinaryOp { op: BinaryOp, left: Box<Expr>, right: Box<Expr>, span: Span },
     UnaryOp { op: UnaryOp, operand: Box<Expr>, span: Span },
+    Assign { target: Box<Expr>, value: Box<Expr>, span: Span },
     Call { callee: Box<Expr>, args: Vec<Expr>, span: Span },
     MethodCall { object: Box<Expr>, method: String, args: Vec<Expr>, span: Span },
     FieldAccess { object: Box<Expr>, field: String, span: Span },

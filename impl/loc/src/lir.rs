@@ -243,6 +243,28 @@ impl LirEmitter {
                     format!("%{}", name)
                 }
             }
+            Expr::Assign { target, value, .. } => {
+                let val_reg = self.emit_expr(value);
+                match target.as_ref() {
+                    Expr::Ident(name, _) => {
+                        let reg = self.new_reg();
+                        self.output.push_str(&format!("    {} = move {}\n", reg, val_reg));
+                        self.var_map.insert(name.clone(), reg.clone());
+                        reg
+                    }
+                    Expr::Index { object, index, .. } => {
+                        let obj_reg = self.emit_expr(object);
+                        let idx_reg = self.emit_expr(index);
+                        let reg = self.new_reg();
+                        self.output.push_str(&format!("    {} = store {}, {}, {}\n", reg, obj_reg, idx_reg, val_reg));
+                        reg
+                    }
+                    _ => {
+                        let _ = self.emit_expr(target);
+                        val_reg
+                    }
+                }
+            }
             Expr::BinaryOp { op, left, right, .. } => {
                 let l = self.emit_expr(left);
                 let r = self.emit_expr(right);

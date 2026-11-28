@@ -280,6 +280,17 @@ impl CBackend {
         if parts.is_empty() {
             return Ok(String::new());
         }
+        if parts[0] == "store" {
+            // store %obj, %idx, %val
+            // parts: store obj, idx, val
+            if parts.len() >= 4 {
+                let obj = self.sanitize_reg(parts[1].trim_end_matches(','));
+                let idx = self.sanitize_reg(parts[2].trim_end_matches(','));
+                let val = self.sanitize_reg(parts[3]);
+                return Ok(format!("    {}[{}] = {};", obj, idx, val));
+            }
+            return Ok(String::new());
+        }
         if parts[0] == "asm" {
             // asm "code"
             let code = instr["asm".len()..].trim();

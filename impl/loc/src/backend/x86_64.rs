@@ -101,6 +101,11 @@ impl X86_64Backend {
                         continue;
                     }
 
+                    if instr.starts_with("store ") {
+                        // placeholder: skip
+                        continue;
+                    }
+
                     if instr.starts_with("asm ") {
                         let code = instr["asm".len()..].trim().trim_matches('"');
                         asm.push_str(&format!("    {}\n", code));

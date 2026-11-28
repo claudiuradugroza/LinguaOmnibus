@@ -198,6 +198,7 @@ impl TypeChecker {
                     _ => Type::Int32,
                 }
             }
+            Expr::Assign { value, .. } => self.infer_expr(value),
             Expr::Call { .. } => Type::Int32,
             Expr::MethodCall { .. } => Type::Int32,
             Expr::FieldAccess { .. } => Type::Int32,
