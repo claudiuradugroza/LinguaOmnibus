@@ -136,6 +136,7 @@ pub enum Statement {
     ContinueStmt(Span),
     QuantumBlock(Block),
     ExprStmt(Expr, Span),
+    AsmStmt(String, Span),
 }
 
 /// An if statement (KW_IF cond KW_THEN ":" block (KW_ELSE ":" block)?).
@@ -251,6 +252,8 @@ pub enum Type {
     Int8, Int16, Int32, Int64, Int128,
     Uint8, Uint16, Uint32, Uint64, Uint128,
     F32, F64,
+    // SIMD vector types
+    VecF32x4, VecF32x8, VecF64x2, VecI32x4, VecI32x8, VecI64x2,
     Bool, Char, Byte, Unit,
     String,
     Qubit, QReg, QCircuit, QState,
@@ -269,6 +272,8 @@ impl Type {
             Type::Int8 | Type::Int16 | Type::Int32 | Type::Int64 | Type::Int128
             | Type::Uint8 | Type::Uint16 | Type::Uint32 | Type::Uint64 | Type::Uint128
             | Type::F32 | Type::F64
+            | Type::VecF32x4 | Type::VecF32x8 | Type::VecF64x2
+            | Type::VecI32x4 | Type::VecI32x8 | Type::VecI64x2
             | Type::Bool | Type::Char | Type::Byte | Type::Unit
             | Type::String => true,
             Type::Qubit | Type::QReg | Type::QCircuit | Type::QState => false,
@@ -289,6 +294,9 @@ impl Type {
             Type::Uint8 => "u8".into(), Type::Uint16 => "u16".into(), Type::Uint32 => "u32".into(),
             Type::Uint64 => "u64".into(), Type::Uint128 => "u128".into(),
             Type::F32 => "f32".into(), Type::F64 => "f64".into(),
+            Type::VecF32x4 => "v4f32".into(), Type::VecF32x8 => "v8f32".into(),
+            Type::VecF64x2 => "v2f64".into(), Type::VecI32x4 => "v4i32".into(),
+            Type::VecI32x8 => "v8i32".into(), Type::VecI64x2 => "v2i64".into(),
             Type::Bool => "bool".into(), Type::Char => "char".into(), Type::Byte => "byte".into(),
             Type::Unit => "unit".into(),
             Type::String => "string".into(),

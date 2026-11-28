@@ -101,6 +101,12 @@ impl X86_64Backend {
                         continue;
                     }
 
+                    if instr.starts_with("asm ") {
+                        let code = instr["asm".len()..].trim().trim_matches('"');
+                        asm.push_str(&format!("    {}\n", code));
+                        continue;
+                    }
+
                     if instr.starts_with("ret ") {
                         let parts: Vec<&str> = instr.split_whitespace().collect();
                         if parts.len() >= 2 && parts[1] == "unit" {

@@ -122,6 +122,9 @@ impl LirEmitter {
             Statement::ExprStmt(e, _) => {
                 let _ = self.emit_expr(e);
             }
+            Statement::AsmStmt(code, _) => {
+                self.output.push_str(&format!("    asm \"{}\"\n", code.replace('"', "\\\"")));
+            }
             Statement::ReturnStmt(r) => {
                 if let Some(v) = &r.value {
                     match v {

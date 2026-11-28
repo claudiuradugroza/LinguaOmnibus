@@ -86,6 +86,7 @@ impl TypeChecker {
             let ok = declared == val_ty
                 || (matches!(declared, Type::Int8 | Type::Int16 | Type::Int32 | Type::Int64 | Type::Int128 | Type::Uint8 | Type::Uint16 | Type::Uint32 | Type::Uint64 | Type::Uint128) && matches!(val_ty, Type::Int32))
                 || (matches!(declared, Type::F32 | Type::F64) && matches!(val_ty, Type::F64))
+                || (matches!(declared, Type::VecF32x4 | Type::VecF32x8 | Type::VecF64x2 | Type::VecI32x4 | Type::VecI32x8 | Type::VecI64x2) && matches!(val_ty, Type::Int32))
                 || matches!(val, Expr::Call { .. })
                 || matches!(val, Expr::StructLit { .. });
             if !ok && v.ty.is_some() {
@@ -150,6 +151,7 @@ impl TypeChecker {
                 Ok(())
             }
             Statement::BreakStmt(_) | Statement::ContinueStmt(_) => Ok(()),
+            Statement::AsmStmt(_, _) => Ok(()),
             Statement::QuantumBlock(b) => self.check_block(b),
             Statement::ExprStmt(e, _) => {
                 let _ = self.check_expr(e);

@@ -583,6 +583,12 @@ impl Parser {
                     "uint128" => Type::Uint128,
                     "f32" => Type::F32,
                     "f64" => Type::F64,
+                    "f32x4" => Type::VecF32x4,
+                    "f32x8" => Type::VecF32x8,
+                    "f64x2" => Type::VecF64x2,
+                    "i32x4" => Type::VecI32x4,
+                    "i32x8" => Type::VecI32x8,
+                    "i64x2" => Type::VecI64x2,
                     "bool" => Type::Bool,
                     "char" => Type::Char,
                     "byte" => Type::Byte,
@@ -749,6 +755,37 @@ impl Parser {
             self.advance();
         }
         let tok = self.peek();
+
+        // Inline assembly: asm "..." or asm { "..." }
+        if let Token::Ident(s) = tok {
+            if s.eq_ignore_ascii_case("asm") {
+                self.advance(); // consume asm
+                let code = if matches!(self.peek(), Token::LBrace) {
+                    self.advance(); // skip {
+                    self.eat_newlines();
+                    let mut parts = Vec::new();
+                    while !matches!(self.peek(), Token::RBrace) {
+                        if self.is_eof() { break; }
+                        if let Token::Str(s) = self.peek() {
+                            parts.push(s.clone());
+                            self.advance();
+                        } else {
+                            self.advance();
+                        }
+                        self.eat_newlines();
+                    }
+                    self.expect(&Token::RBrace)?;
+                    parts.join(" ")
+                } else {
+                    match self.advance() {
+                        Token::Str(s) => s,
+                        t => return Err(LocError::Internal(format!("expected asm string, got {:?}", t))),
+                    }
+                };
+                self.eat_newlines();
+                return Ok(Statement::AsmStmt(code, Span::default()));
+            }
+        }
 
         match tok {
             Token::Keyword(slot) => match slot.as_str() {

@@ -242,6 +242,9 @@ impl LlvmBackend {
                             ir.push_str(&format!("  br label %{}\n", parts[1]));
                             block_terminated = true;
                         }
+                    } else if l.starts_with("asm") {
+                        let code = l["asm".len()..].trim().trim_matches('"');
+                        ir.push_str(&format!("  call void asm sideeffect \"{}\", \"\"()\n", code));
                     } else if l.starts_with("ret") {
                         let val = l["ret ".len()..].trim();
                         if val == "unit" || val.is_empty() {
@@ -272,6 +275,12 @@ impl LlvmBackend {
             "i64" | "int64" => "i64".to_string(),
             "f32" => "float".to_string(),
             "f64" | "double" => "double".to_string(),
+            "v4f32" => "<4 x float>".to_string(),
+            "v8f32" => "<8 x float>".to_string(),
+            "v2f64" => "<2 x double>".to_string(),
+            "v4i32" => "<4 x i32>".to_string(),
+            "v8i32" => "<8 x i32>".to_string(),
+            "v2i64" => "<2 x i64>".to_string(),
             "bool" => "i1".to_string(),
             "unit" => "void".to_string(),
             "string" | "str" => "i8*".to_string(),

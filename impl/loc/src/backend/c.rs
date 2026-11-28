@@ -35,7 +35,8 @@ impl CBackend {
              #include <stdint.h>\n\
              #include <stdio.h>\n\
              #include <stdlib.h>\n\
-             #include <string.h>\n\n"
+             #include <string.h>\n\
+             #include <immintrin.h>\n\n"
         )
     }
 
@@ -86,6 +87,12 @@ impl CBackend {
                             "i64" | "int64" => "int64_t",
                             "f32" => "float",
                             "f64" | "double" => "double",
+"v4f32" => "__m128",
+"v8f32" => "__m256",
+"v2f64" => "__m128d",
+"v4i32" => "__m128i",
+"v8i32" => "__m256i",
+"v2i64" => "__m128i",
                             "bool" => "int",
                             "string" | "str" => "const char*",
                             _ => "void",
@@ -107,6 +114,12 @@ impl CBackend {
                                         "i64" | "int64" => "int64_t",
                                         "f32" => "float",
                                         "f64" | "double" => "double",
+"v4f32" => "__m128",
+"v8f32" => "__m256",
+"v2f64" => "__m128d",
+"v4i32" => "__m128i",
+"v8i32" => "__m256i",
+"v2i64" => "__m128i",
                                         "bool" => "int",
                                         "string" | "str" => "const char*",
                                         _ => "int64_t",
@@ -149,6 +162,12 @@ impl CBackend {
                     "i64" | "int64" => "int64_t",
                     "f32" => "float",
                     "f64" | "double" => "double",
+"v4f32" => "__m128",
+"v8f32" => "__m256",
+"v2f64" => "__m128d",
+"v4i32" => "__m128i",
+"v8i32" => "__m256i",
+"v2i64" => "__m128i",
                     "bool" => "int",
                     "string" | "str" => "const char*",
                     _ => "void",
@@ -169,6 +188,12 @@ impl CBackend {
                                 "i64" | "int64" => "int64_t",
                                 "f32" => "float",
                                 "f64" | "double" => "double",
+"v4f32" => "__m128",
+"v8f32" => "__m256",
+"v2f64" => "__m128d",
+"v4i32" => "__m128i",
+"v8i32" => "__m256i",
+"v2i64" => "__m128i",
                                 "bool" => "int",
                                 "string" | "str" => "const char*",
                                 _ => "void*",
@@ -254,6 +279,11 @@ impl CBackend {
         let parts: Vec<&str> = instr.split_whitespace().collect();
         if parts.is_empty() {
             return Ok(String::new());
+        }
+        if parts[0] == "asm" {
+            // asm "code"
+            let code = instr["asm".len()..].trim();
+            return Ok(format!("    __asm__(\"{}\");", code.trim_matches('"')));
         }
 
         // Handle labels - prefix with function name for uniqueness
