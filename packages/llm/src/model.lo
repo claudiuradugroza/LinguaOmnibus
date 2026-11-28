@@ -1,0 +1,27 @@
+#lingua: EN
+// model.lo — tiny transformer block description
+//
+// Part of llm package.
+
+import std.io
+
+/// Hyperparameters for a tiny model.
+pub struct Config:
+    vocab: int32
+    dim: int32
+    heads: int32
+    layers: int32
+    seq: int32
+
+/// A single transformer layer (weights omitted, stored in runtime).
+pub struct Layer:
+    index: int32
+
+/// Build a default tiny config.
+pub function default_config() returns Config:
+    return Config { vocab: 65, dim: 64, heads: 4, layers: 2, seq: 32 }
+
+/// Number of parameters (rough estimate) for a config.
+pub function param_count(cfg: Config) returns int32:
+    var per_layer: int32 = cfg.dim * cfg.dim * 4
+    return cfg.layers * per_layer + cfg.vocab * cfg.dim

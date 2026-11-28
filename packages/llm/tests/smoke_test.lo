@@ -1,0 +1,9 @@
+#lingua: EN
+// smoke_test.lo — minimal smoke test for llm package
+
+import std.io
+
+function main() returns Unit:
+    var x: int32 = 42
+    print(x)
+    return ()

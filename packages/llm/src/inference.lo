@@ -1,0 +1,41 @@
+#lingua: EN
+// inference.lo — greedy decoding loop (educational)
+//
+// Part of llm package. Real matmul/attention run in the native runtime.
+
+import std.io
+
+/// A tiny KV cache descriptor.
+pub struct Cache:
+    pos: int32
+    cap: int32
+
+/// Create a cache.
+pub function new_cache(cap: int32) returns Cache:
+    return Cache { pos: 0, cap: cap }
+
+/// Next cache position, clamped to capacity (non-mutating).
+pub function next_pos(pos: int32, cap: int32) returns int32:
+    var n: int32 = pos + 1
+    if n > cap then:
+        n = cap
+    return n
+
+/// One greedy step: clamp a candidate token id to vocab range.
+pub function greedy_step(logits_size: int32, best_idx: int32) returns int32:
+    if best_idx < 0 then:
+        return 0
+    if best_idx >= logits_size then:
+        return logits_size - 1
+    return best_idx
+
+/// Run N decoding steps, returning the last token id.
+pub function decode_loop(steps: int32, start: int32, vocab: int32) returns int32:
+    var tok: int32 = start
+    var i: int32 = 0
+    while i < steps:
+        tok = tok + 1
+        if tok >= vocab then:
+            tok = 0
+        i = i + 1
+    return tok

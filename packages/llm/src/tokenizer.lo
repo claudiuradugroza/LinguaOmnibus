@@ -1,0 +1,35 @@
+#lingua: EN
+// tokenizer.lo — character-level tokenizer (tiny, educational)
+//
+// Part of llm package. A real BPE tokenizer lives in the native runtime.
+
+import std.io
+
+/// A small logits buffer.
+pub struct Logits:
+    data: [int32]
+    size: int32
+
+/// Encode a single ASCII char to its code point.
+pub function char_code(c: int32) returns int32:
+    return c
+
+/// Clamp a token id to vocab range.
+pub function clamp_token(id: int32, vocab: int32) returns int32:
+    if id < 0 then:
+        return 0
+    if id >= vocab then:
+        return vocab - 1
+    return id
+
+/// Greedy argmax over a logits buffer.
+pub function argmax(v: Logits) returns int32:
+    var best: int32 = 0
+    var best_val: int32 = v.data[0]
+    var i: int32 = 1
+    while i < v.size:
+        if v.data[i] > best_val then:
+            best_val = v.data[i]
+            best = i
+        i = i + 1
+    return best

@@ -1,0 +1,19 @@
+#lingua: EN
+// generate.lo — demo generation loop
+//
+// Part of llm package.
+
+import std.io
+
+function main() returns Unit:
+    var vocab: int32 = 65
+    var steps: int32 = 16
+    var tok: int32 = 0
+    var i: int32 = 0
+    while i < steps:
+        tok = tok + 1
+        if tok >= vocab then:
+            tok = 0
+        print(tok)
+        i = i + 1
+    return ()
